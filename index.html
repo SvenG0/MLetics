@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MLetics — Physiotherapie &amp; Sport-Osteopathie in Bochum</title>
+<meta name="description" content="MLetics: Physiotherapie und Sport-Osteopathie von Maik Liesbrock in Bochum. 16 Jahre Erfahrung im Profifußball — für Athletinnen, Athleten und Patientinnen, Patienten.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ─────────────────────────────────────────────────────────
+   MLETICS — Design Tokens
+   Bühne: neutrales Nah-Schwarz. Marke: das echte Logo-Blau
+   (aus Logo/…jpg gesampelt, Kern #2765A5). Akzent: dieselbe
+   Farbfamilie, heller/gesättigter für CTAs und aktive Zustände
+   — damit die Website die tatsächliche Marke trägt, nicht eine
+   erfundene Farbe.
+   ───────────────────────────────────────────────────────── */
+:root{
+  --bg:#0A0B0D;             /* Nah-Schwarz, neutral — nicht grün-, nicht blaustichig */
+  --bg-raise:#14171B;       /* Karten/Hover — kühles Anthrazit */
+  --text:#F2F0EA;           /* leicht cremiges Weiß, kein hartes #FFF */
+  --muted:#9BA1AA;          /* kühles Grau, aus dem Logo-Grau (#4D4D4E) für Dunkelgrund aufgehellt */
+  --brand:#2765A5;          /* echtes Logo-Blau — Marke, Trennlinien, Bildlasur */
+  --brand-light:#4A8CC9;    /* aufgehelltes Blau für Glüh-/Lichteffekte */
+  --accent:#3692F2;         /* Knallfarbe: gleiche Farbfamilie wie das Logo, kräftiger */
+  --accent-soft:#67AEFA;    /* Hover */
+  --on-accent:#08141F;      /* Text auf Akzent-Blau — 8.9:1 */
+  --line:rgba(150,180,206,.15);
+  --line-strong:rgba(160,190,214,.28);
+
+  --f-display:'Archivo',system-ui,sans-serif;
+  --f-body:'Inter',system-ui,sans-serif;
+
+  --sp-1:.5rem;  --sp-2:1rem;   --sp-3:1.5rem;
+  --sp-4:2.5rem; --sp-5:4rem;   --sp-6:6rem;
+
+  --ease:cubic-bezier(.22,1,.36,1);
+  --dur:.7s;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+/* Kein scroll-behavior:smooth hier — unsere eigenen rAF-gedrosselten
+   Scroll-Effekte (Lesefortschritt in der Kopfleiste) lesen die
+   Scrollposition direkt; der native Smooth-Scroll würde parallel dagegen
+   „ansmoothen" und leicht ruckelig wirken. Wo wir selbst weich scrollen
+   wollen, übergeben wir behavior:'smooth' gezielt per JS an
+   scrollIntoView() — siehe unten. */
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:var(--f-body);font-weight:300;font-size:1rem;line-height:1.7;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+img{max-width:100%;display:block}
+a{color:inherit}
+
+/* Fokus — sichtbar, nie entfernt */
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+
+.wrap{width:min(100% - 3rem,84rem);margin-inline:auto}
+@media(min-width:1024px){.wrap{width:min(100% - 6rem,84rem)}}
+
+/* ── Typografie ─────────────────────────────────────────── */
+.display{
+  font-family:var(--f-display);font-weight:700;
+  font-variation-settings:'wdth' 76;   /* Archivo Breiten-Achse — schmaler Schnitt */
+  font-size:clamp(2.75rem,8vw,7rem);
+  line-height:.92;letter-spacing:-.015em;margin:0;
+  text-wrap:balance;
+}
+.display--sm{font-size:clamp(2rem,4.5vw,3.5rem)}
+.lead{font-size:clamp(1.05rem,1.35vw,1.25rem);line-height:1.75;max-width:42ch;color:#D6D5D2}
+.lead--brand{color:var(--accent-soft);font-weight:500}
+.body{max-width:44ch;color:var(--muted)}
+.body + .body{margin-top:var(--sp-2)}
+
+/* Kleine Zwischenüberschrift, z. B. „Understand Body." */
+.block-h3{
+  font-family:var(--f-display);font-weight:600;font-variation-settings:'wdth' 90;
+  font-size:1.05rem;letter-spacing:-.005em;margin:0 0 .5rem;color:var(--text);
+}
+.block + .block{margin-top:2rem}
+
+/* Kapitel-Label „02 UNDERSTAND" */
+.eyebrow{
+  display:flex;align-items:center;gap:var(--sp-2);
+  font-family:var(--f-display);font-weight:600;
+  font-size:.8rem;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--muted);margin:0 0 var(--sp-3);
+}
+.eyebrow b{color:var(--accent);font-weight:700}
+.eyebrow::after{content:"";height:1px;flex:1;max-width:5rem;background:var(--line-strong)}
+
+/* ── Navigation: EINE schwebende Leiste — Marke, Links und CTA
+   in einem Container. ── */
+.nav{
+  position:fixed;inset:0 0 auto;z-index:60;
+  padding:1.35rem 0;pointer-events:none;
+}
+.bar{
+  position:relative;
+  pointer-events:auto;
+  display:flex;align-items:center;gap:.4rem;
+  padding:.45rem .45rem .45rem 1.1rem;
+  background:rgba(10,11,13,.78);
+  /* Nur Blur, kein zusätzliches saturate() — die Leiste ist fixiert und
+     läuft bei jedem Scroll-Frame neu; jeder Filter-Pass weniger hilft. */
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  border:1px solid var(--line);border-radius:999px;
+  box-shadow:0 20px 56px -28px rgba(0,0,0,.9);
+}
+
+/* Wortmarke — das echte, freigestellte Logo (assets/logo/mletics-mark-dark.png).
+   Freigestellt und für Dunkelgrund umgefärbt: Läufer + Schriftzug auf Creme,
+   das Logo-Blau bleibt original. Der Balken aus der Vorlage wurde entfernt. */
+.mark{display:inline-flex;align-items:center;text-decoration:none;line-height:1;min-height:44px}
+.mark__logo{height:56px;width:auto;display:block}
+@media(min-width:700px){.mark__logo{height:68px}}
+
+/* Lesefortschritt als Haarlinie im unteren Rand der Leiste.
+   --p wird per JS gesetzt (0–1). */
+.bar__progress{
+  position:absolute;left:1.4rem;right:1.4rem;bottom:.35rem;height:2px;
+  border-radius:2px;background:var(--line);overflow:hidden;
+}
+.bar__progress i{
+  display:block;height:100%;border-radius:2px;background:var(--accent);
+  transform:scaleX(var(--p,0));transform-origin:left;
+}
+
+.bar__nav{display:none;align-items:center;gap:.1rem;margin-left:auto}
+@media(min-width:980px){.bar__nav{display:flex}}
+.bar__nav a{
+  position:relative;padding:.65rem .8rem;text-decoration:none;
+  font-size:.68rem;font-weight:500;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--muted);white-space:nowrap;
+  transition:color .35s var(--ease);
+}
+.bar__nav a:hover{color:var(--text)}
+.bar__nav a[aria-current="true"]{color:var(--text)}
+/* Hauchfeiner Unterstrich statt Farbfläche — ruhiger, präziser */
+.bar__nav a::after{
+  content:"";position:absolute;left:.8rem;right:.8rem;bottom:.42rem;height:1px;
+  background:var(--accent);transform:scaleX(0);transform-origin:left;
+  transition:transform .4s var(--ease);
+}
+.bar__nav a[aria-current="true"]::after{transform:scaleX(1)}
+
+/* .bar-Präfix nötig: sonst überschreibt das später notierte
+   .btn{display:inline-flex} diese Regel bei gleicher Spezifität. */
+.bar .bar__cta{margin-left:.3rem;display:none}
+@media(min-width:980px){.bar .bar__cta{display:inline-flex}}
+
+.btn{
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.7rem 1.4rem;min-height:44px;border-radius:999px;
+  font-family:var(--f-body);font-size:.875rem;font-weight:500;
+  text-decoration:none;cursor:pointer;border:1px solid var(--line-strong);
+  background:transparent;color:var(--text);
+  transition:background-color .3s var(--ease),border-color .3s var(--ease),color .3s var(--ease);
+}
+.btn:hover{background:var(--text);color:var(--bg);border-color:var(--text)}
+.btn--solid{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:500}
+.btn--solid:hover{background:var(--accent-soft);border-color:var(--accent-soft);color:var(--on-accent)}
+
+/* Mobile-Menü */
+.burger{
+  margin-left:auto;
+  display:inline-flex;align-items:center;justify-content:center;
+  width:44px;height:44px;border-radius:999px;
+  border:1px solid var(--line-strong);background:transparent;
+  color:var(--text);cursor:pointer;
+  transition:background-color .3s var(--ease),border-color .3s var(--ease);
+}
+.burger:hover{background:rgba(242,240,234,.07);border-color:var(--accent)}
+@media(min-width:980px){.burger{display:none}}
+.drawer{
+  position:fixed;inset:0;z-index:70;display:grid;place-content:center;
+  gap:var(--sp-2);text-align:center;
+  background:rgba(8,9,10,.97);backdrop-filter:blur(20px);
+  opacity:0;visibility:hidden;transition:opacity .4s var(--ease),visibility .4s;
+}
+.drawer[data-open="true"]{opacity:1;visibility:visible}
+.drawer a{
+  font-family:var(--f-display);font-weight:700;font-size:1.9rem;
+  text-decoration:none;color:var(--text);padding:.35rem 1rem;
+}
+.drawer__close{position:absolute;top:var(--sp-3);right:var(--sp-3)}
+
+/* ── Kapitel-Hintergrund: läuft normal mit dem Dokument mit ──────
+   Vorher: ein fixiertes Bild pro Kapitel, das per Opacity überblendete.
+   Wirkte abgehängt vom Scrollen ("Bild bleibt stehen, verschwindet
+   abrupt") und war durch das dauerhafte Fixed-Layer-Compositing teuer.
+   Jetzt trägt jedes Kapitel sein Bild direkt in sich — es scrollt mit,
+   kein Crossfade, kein zusätzliches JS während des Scrollens nötig. */
+.chapter__bg{position:absolute;inset:0;z-index:0;overflow:hidden;background-size:cover;background-position:center}
+
+/* Foto oder Video im Kapitel. Fehlt die Datei, entfernt JS das Element
+   und der CSS-Verlauf darunter bleibt als Rückfallebene stehen. */
+.chapter__bg-img{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  object-position:var(--focus,center);
+  transform:scale(var(--zoom,1));
+  transform-origin:var(--zoom-origin,center);
+  filter:grayscale(.45) saturate(.85) contrast(1.06) brightness(.74);
+}
+/* Lasur: warmweißes Spitzlicht + dunkles Marken-Blau von oben, dazu der
+   Lesbarkeits-Schleier von links (Text sitzt links, Bild atmet rechts) —
+   alles in einer Ebene statt vorher drei getrennten. */
+.chapter__bg-grade{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(66% 78% at 72% 38%,rgba(244,236,214,.16) 0%,transparent 62%),
+    linear-gradient(180deg,rgba(10,24,38,.28) 0%,rgba(8,9,11,.52) 100%),
+    linear-gradient(100deg,rgba(8,9,10,.95) 0%,rgba(8,9,10,.86) 26%,
+      rgba(9,15,22,.44) 54%,rgba(10,20,30,.12) 82%,rgba(12,26,40,0) 100%);
+}
+@media(max-width:768px){
+  .chapter__bg-grade{
+    background:
+      radial-gradient(66% 60% at 72% 30%,rgba(244,236,214,.14) 0%,transparent 62%),
+      linear-gradient(180deg,rgba(10,15,20,.5) 0%,rgba(8,9,11,.85) 55%,rgba(8,9,11,.96) 100%);
+  }
+}
+
+/* Nur für Screenreader */
+.sr-only{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
+}
+
+/* BILD-SLOTS — mehrlagige Verläufe simulieren dramatisch ausgeleuchtete
+   Fotografie (Spitzlicht, Abfall, Vignette), falls kein Foto vorliegt.
+   Sobald die Datei existiert (siehe assets/README.md), übernimmt sie automatisch. */
+/* Maik steht links im Originalfoto — linker Bildausschnitt schiebt ihn
+   so weit wie möglich aus der Textspalte nach rechts. */
+/* Telefon: sehr schmales Fenster zeigt nur ~23 % der Bildbreite —
+   linksbündig läge Maik (17–46 %) fast außerhalb. Daher enger Ausschnitt
+   auf ihn. Ab Tablet greift wieder linksbündig. */
+.bg-01{--focus:22% center}
+@media(min-width:700px){.bg-01{--focus:left center}}
+/* Breite Fenster: Motiv nach rechts schieben (gemessen liegt Maik bei
+   17–46 % der Bildbreite). Die freigelegte linke Kante wird weich
+   ausgeblendet, darunter liegt der Verlauf — dadurch keine sichtbare Kante. */
+@media(min-width:1024px){
+  .bg-01 .chapter__bg-img{
+    transform-origin:0 0;
+    transform:translateX(26%) scale(1.45);
+    -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 20%);
+            mask-image:linear-gradient(90deg,transparent 0,#000 20%);
+  }
+}
+/* Rückfallebenen ohne Foto: das echte Logo-Blau liefert die Atmosphäre,
+   damit die Kapitel nicht zu flachem Schwarz werden. */
+.bg-01{background-image:
+  radial-gradient(38% 52% at 68% 30%,rgba(210,228,245,.20) 0%,transparent 62%),
+  radial-gradient(70% 80% at 76% 46%,#3E7FB2 0%,#1E4569 32%,#101F30 62%,#0A0B0D 88%),
+  radial-gradient(140% 120% at 50% 50%,transparent 40%,rgba(3,4,5,.78) 100%)}
+.bg-02{background-image:
+  radial-gradient(34% 46% at 30% 26%,rgba(206,224,244,.17) 0%,transparent 64%),
+  radial-gradient(78% 88% at 26% 38%,#376F9C 0%,#1B3B5C 34%,#0F1D2C 66%,#0A0B0D 90%),
+  radial-gradient(140% 120% at 50% 50%,transparent 38%,rgba(3,4,5,.80) 100%)}
+.bg-03{background-image:
+  radial-gradient(46% 34% at 52% 88%,rgba(200,218,240,.15) 0%,transparent 66%),
+  radial-gradient(90% 76% at 50% 96%,#33668F 0%,#193150 36%,#0D1B29 68%,#0A0B0D 92%),
+  radial-gradient(140% 120% at 50% 45%,transparent 36%,rgba(3,4,5,.82) 100%)}
+.bg-04{background-image:
+  radial-gradient(30% 44% at 74% 24%,rgba(216,232,248,.24) 0%,transparent 58%),
+  radial-gradient(72% 84% at 79% 34%,#4189BC 0%,#204768 30%,#111F2E 62%,#0A0B0D 88%),
+  radial-gradient(140% 120% at 50% 50%,transparent 38%,rgba(3,4,5,.78) 100%)}
+.bg-05{background-image:
+  linear-gradient(96deg,rgba(202,220,242,.14) 0%,transparent 46%),
+  radial-gradient(80% 92% at 20% 56%,#356E9A 0%,#1C3C5C 34%,#0F1D2C 66%,#0A0B0D 90%),
+  radial-gradient(140% 120% at 50% 50%,transparent 40%,rgba(3,4,5,.78) 100%)}
+
+/* ── Kapitel: Stapel-Effekt ───────────────────────────────
+   Jedes Kapitel bleibt oben stehen (position:sticky), bis das nächste
+   von unten darüber schiebt und es zudeckt — direkt und verzögerungsfrei
+   an die Scrollgeste gekoppelt (reiner Compositor, kein JS nötig für den
+   Effekt selbst). Bewusst kein position:fixed + Opacity-Crossfade mehr
+   wie vorher: das fühlte sich vom Scrollen abgekoppelt an.
+   Zusätzlich blendet jedes Kapitel beim Ankommen aus der Transparenz ein
+   (--enterOpacity, per JS an die eigene Position gekoppelt) — sonst wirkt
+   das Sticky-Überdecken wie ein hartes Blatt Papier, das über das vorige
+   geschoben wird, statt wie ein weicher Übergang.
+   WICHTIG: overflow:hidden sitzt an .chapter__bg, nicht am Kapitel selbst
+   — sonst würde längerer Text bei Sticky-Höhe abgeschnitten. */
+main{position:relative;z-index:10}
+.chapter{
+  min-height:100svh;display:flex;align-items:center;
+  padding-block:8rem var(--sp-6);
+  position:sticky;top:0;
+  background:var(--bg);
+  opacity:var(--enterOpacity,1);
+}
+.chapter .wrap{position:relative;z-index:10}
+.chapter__grid{display:grid;gap:var(--sp-5);align-items:center}
+@media(min-width:1024px){
+  .chapter__grid{grid-template-columns:minmax(0,1fr) minmax(0,.85fr)}
+}
+
+/* Scroll-Reveal — sichtbar per Voreinstellung, das ist Pflicht:
+   Läuft JavaScript aus irgendeinem Grund nicht (E-Mail-Vorschau ohne
+   Skripte, blockiertes JS, ein Fehler in der Ladekette), muss der
+   Inhalt trotzdem lesbar sein. Erst JS setzt aktiv data-in="false",
+   um die Einblend-Animation überhaupt zu starten — ohne JS bleibt es
+   bei diesem sichtbaren Grundzustand. */
+.rise{opacity:1;transform:none}
+.rise[data-in="false"]{
+  opacity:0;transform:translateY(28px);
+  transition:opacity .9s var(--ease),transform .9s var(--ease);
+}
+.rise[data-in="true"]{
+  opacity:1;transform:none;
+  transition:opacity .9s var(--ease),transform .9s var(--ease);
+}
+
+/* Vor/Zurück — sichtbare Alternative zum Scrollen, unten rechts */
+.step{
+  position:fixed;right:1.5rem;bottom:1.5rem;z-index:55;
+  display:none;align-items:center;gap:.5rem;
+  padding:.4rem;border-radius:999px;
+  background:rgba(10,11,13,.78);backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  border:1px solid var(--line);
+}
+@media(min-width:768px){.step{display:flex}}
+.step button{
+  all:unset;cursor:pointer;display:grid;place-items:center;
+  width:44px;height:44px;border-radius:50%;color:var(--text);
+  transition:background-color .3s var(--ease),color .3s var(--ease);
+}
+.step button:hover:not(:disabled){background:var(--accent);color:var(--on-accent)}
+.step button:disabled{opacity:.3;cursor:default}
+.step__count{
+  font-family:var(--f-body);font-size:.72rem;font-weight:500;letter-spacing:.16em;
+  color:var(--muted);font-variant-numeric:tabular-nums;padding-inline:.2rem;
+}
+.step__count b{color:var(--text);font-weight:500}
+
+/* Fortschritts-Anzeige rechts */
+.rail{
+  position:fixed;right:1.6rem;top:50%;transform:translateY(-50%);z-index:50;
+  display:none;flex-direction:column;gap:.85rem;
+}
+@media(min-width:1200px){.rail{display:flex}}
+.rail button{
+  all:unset;cursor:pointer;display:grid;place-items:center;
+  width:28px;height:28px;border-radius:50%;
+}
+.rail span{
+  display:block;width:6px;height:6px;border-radius:50%;
+  background:var(--line-strong);transition:all .4s var(--ease);
+}
+.rail button[aria-current="true"] span{background:var(--accent);width:8px;height:8px;box-shadow:0 0 0 4px rgba(54,146,242,.22)}
+
+/* ── Leistungen (TREAT) ─────────────────────────────────── */
+.services{display:grid;gap:1px;background:var(--line);border-block:1px solid var(--line);margin-top:var(--sp-4)}
+@media(min-width:640px){.services{grid-template-columns:1fr 1fr}}
+@media(min-width:1024px){.services{grid-template-columns:repeat(3,1fr)}}
+.service{
+  background:var(--bg);padding:2rem 2rem 2.75rem;
+  transition:background-color .45s var(--ease);
+}
+.service:hover{background:var(--bg-raise)}
+.service__no{font-family:var(--f-body);font-size:.68rem;font-weight:500;letter-spacing:.22em;color:var(--accent)}
+.service h3{font-family:var(--f-display);font-weight:700;font-variation-settings:'wdth' 88;font-size:1.28rem;margin:.85rem 0 .4rem;letter-spacing:-.005em}
+.service p{margin:0;font-size:.9rem;color:var(--muted);line-height:1.6}
+.service ul{list-style:none;margin:1.1rem 0 0;padding:0;display:grid;gap:.55rem}
+.service li{font-size:.85rem;color:var(--muted);line-height:1.5;padding-left:1rem;position:relative}
+.service li::before{content:"";position:absolute;left:0;top:.6em;width:6px;height:1px;background:var(--accent)}
+
+/* ── Kennzahlen ─────────────────────────────────────────── */
+.stats{display:grid;gap:var(--sp-3);margin-top:var(--sp-4)}
+@media(min-width:640px){.stats{grid-template-columns:repeat(3,1fr)}}
+.stat{border-top:1px solid var(--line-strong);padding-top:var(--sp-2)}
+.stat b{display:block;font-family:var(--f-display);font-weight:700;font-variation-settings:'wdth' 80;font-size:clamp(2.6rem,5vw,4rem);line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.stat span{display:block;margin-top:.5rem;font-size:.82rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+
+/* ── Kontakt ────────────────────────────────────────────── */
+.form{display:grid;gap:var(--sp-2);margin-top:var(--sp-3)}
+.row{display:grid;gap:var(--sp-2)}
+@media(min-width:640px){.row{grid-template-columns:1fr 1fr}}
+.field label{display:block;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem}
+.field input,.field select,.field textarea{
+  width:100%;min-height:48px;padding:.8rem 1rem;
+  background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:4px;
+  color:var(--text);font-family:var(--f-body);font-size:1rem;
+  transition:border-color .3s var(--ease),background-color .3s var(--ease);
+}
+.field textarea{min-height:120px;resize:vertical}
+/* Native Optionsliste erbt sonst helles Systemweiß auf dunklem Grund */
+.field select option{background:var(--bg-raise);color:var(--text)}
+.field input:hover,.field textarea:hover,.field select:hover{border-color:var(--line-strong)}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--accent);background:rgba(255,255,255,.06);outline:none}
+.hintline{font-size:.78rem;color:var(--muted);margin:.4rem 0 0}
+.consent{display:flex;gap:.75rem;align-items:flex-start;font-size:.85rem;color:var(--muted);line-height:1.6}
+.consent input{width:20px;height:20px;margin-top:.2rem;flex:none;accent-color:var(--accent)}
+
+.contact-list,.vita{display:grid;gap:var(--sp-3);margin-top:var(--sp-3)}
+.contact-list dt,.vita dt{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.contact-list dd,.vita dd{margin:.4rem 0 0;font-family:var(--f-display);font-weight:600;font-size:1.15rem}
+.vita dd{font-weight:500;font-size:1.02rem;line-height:1.4}
+/* Interaktiv: Zeile hebt sich beim Hover leicht an und rückt ein —
+   kostenlos in CSS, kein JS nötig. */
+.vita > div{
+  border-top:1px solid var(--line);padding:1rem .75rem 1rem 0;margin:0 -.75rem;
+  border-radius:4px;transition:background-color .25s var(--ease),padding-left .25s var(--ease);
+}
+.vita > div:hover{background:var(--bg-raise);padding-left:.75rem;padding-right:0}
+
+/* Kleines Standalone-Label, z. B. „Für wen?" über zwei Textblöcken */
+.tag{
+  display:block;font-family:var(--f-body);font-weight:600;font-size:.72rem;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem;
+}
+
+/* Porträt-Platzhalter-Text — bleibt sichtbar, solange keine Bilddatei greift
+   (Bühnenbilder fallen dagegen stillschweigend auf den Verlauf zurück: ein
+   Porträt braucht einen sichtbaren Hinweis). */
+.portrait__ph{
+  position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:1.5rem;
+  color:var(--muted);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;
+}
+
+/* ── MVP-Karte: die Autogrammkarte, ruhig präsentiert. ── */
+.mvp__stage{max-width:280px}
+.mvp__card{
+  position:relative;aspect-ratio:1174/1600;overflow:hidden;border-radius:6px;
+  border:1px solid var(--line-strong);background:var(--bg-raise);
+  box-shadow:0 24px 48px -20px rgba(0,0,0,.7);
+}
+.mvp__card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.contact-list a{position:relative;text-decoration:none;border-bottom:1px solid var(--line-strong);padding-bottom:2px;transition:border-color .3s}
+.contact-list a:hover{border-color:var(--accent)}
+/* Klickfläche unsichtbar auf 44px vergrößern, ohne die Optik zu ändern. */
+.contact-list a::after{content:"";position:absolute;inset:-11px -6px}
+
+/* ── Footer ─────────────────────────────────────────────── */
+footer{position:relative;z-index:10;background:var(--bg);border-top:1px solid var(--line);padding-block:var(--sp-4)}
+.foot{display:flex;flex-wrap:wrap;gap:var(--sp-3);justify-content:space-between;align-items:center;font-size:.82rem;color:var(--muted)}
+.foot nav{display:flex;gap:.5rem;flex-wrap:wrap;margin-inline:-.75rem}
+.foot a{
+  display:inline-flex;align-items:center;min-height:44px;padding-inline:.75rem;
+  text-decoration:none;transition:color .3s var(--ease);
+}
+.foot a:hover{color:var(--text)}
+
+/* ── Reduced Motion ─────────────────────────────────────── */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  /* Auch den Zwischenzustand (kurz vor dem Einblenden) überschreiben,
+     sonst blitzt der Inhalt bei reduzierter Bewegung kurz unsichtbar auf. */
+  .rise[data-in="false"]{opacity:1;transform:none}
+  .stage__layer{transition:none}
+}
+</style>
+</head>
+<body>
+
+<a href="#inhalt" class="btn" style="position:absolute;left:-9999px;top:1rem;z-index:99"
+   onfocus="this.style.left='1rem'" onblur="this.style.left='-9999px'">Zum Inhalt springen</a>
+
+<!-- Meldet Screenreadern den Kapitelwechsel. Bei Vollbildkapiteln
+     bemerkt die Vorlesesoftware den Wechsel sonst nicht. -->
+<p class="sr-only" id="announcer" aria-live="polite"></p>
+
+<!-- ── Navigation ─────────────────────────────────────── -->
+<header class="nav">
+  <div class="wrap">
+    <div class="bar">
+      <a href="#auftakt" class="mark" aria-label="MLetics — Startseite">
+        <img class="mark__logo" src="assets/logo/mletics-mark-dark.png" alt="MLetics — Osteopathie &amp; Physiotherapie">
+      </a>
+
+      <nav class="bar__nav" aria-label="Hauptnavigation">
+        <a href="#treat">Treat</a>
+        <a href="#connect">Connect</a>
+        <a href="#about">Über Maik</a>
+      </nav>
+
+      <a href="#kontakt" class="btn btn--solid bar__cta">Kontakt</a>
+
+      <button class="burger" id="burger" aria-label="Menü öffnen" aria-expanded="false" aria-controls="drawer">
+        <svg width="18" height="12" viewBox="0 0 18 12" fill="none" aria-hidden="true">
+          <path d="M0 1h18M0 6h18M0 11h18" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+      </button>
+
+      <span class="bar__progress" aria-hidden="true"><i></i></span>
+    </div>
+  </div>
+</header>
+
+<div class="drawer" id="drawer" data-open="false" role="dialog" aria-modal="true" aria-label="Navigation">
+  <button class="btn drawer__close" id="drawerClose">Schließen</button>
+  <a href="#treat">Treat</a>
+  <a href="#connect">Connect</a>
+  <a href="#about">Über Maik</a>
+  <a href="#kontakt">Kontakt</a>
+</div>
+
+<!-- Kapitel-Navigation rechts -->
+<nav class="rail" id="rail" aria-label="Kapitel">
+  <button data-go="auftakt" aria-label="Kapitel 1: Auftakt" aria-current="true"><span></span></button>
+  <button data-go="treat" aria-label="Kapitel 2: Treat"><span></span></button>
+  <button data-go="connect" aria-label="Kapitel 3: Connect"><span></span></button>
+  <button data-go="about" aria-label="Kapitel 4: Über Maik"><span></span></button>
+  <button data-go="kontakt" aria-label="Kapitel 5: Kontakt"><span></span></button>
+</nav>
+
+<main id="inhalt">
+
+<!-- ── 01 AUFTAKT ─────────────────────────────────────── -->
+<section class="chapter" id="auftakt" data-chapter="0">
+  <!-- Kapitel-Hintergrund: scrollt normal mit. Für Video das <img>
+       ersetzen durch:
+       <video class="chapter__bg-img" src="assets/01-hero.mp4" poster="assets/01-hero.jpg"
+              autoplay muted loop playsinline preload="none"></video> -->
+  <div class="chapter__bg bg-01" aria-hidden="true">
+    <img class="chapter__bg-img" src="assets/01-hero.jpg" alt="" data-media>
+    <div class="chapter__bg-grade"></div>
+  </div>
+  <div class="wrap">
+    <p class="eyebrow rise"><b>01</b> <span>MLetics by Maik Liesbrock — Bochum</span></p>
+    <h1 class="display rise">UNDERSTAND. TREAT.<br>CONNECT.</h1>
+    <p class="lead lead--brand rise" style="margin-top:1.25rem">Verstehen. Behandeln. Vernetzen.</p>
+    <p class="lead rise" style="margin-top:1.25rem">
+      Den Körper verstehen. Funktionelle Zusammenhänge erkennen. Individuell
+      behandeln. Und dort, wo weitere Expertise sinnvoll ist, die richtigen
+      Kompetenzen miteinander verbinden.
+    </p>
+    <div class="rise" style="margin-top:3rem;display:flex;gap:1rem;flex-wrap:wrap;align-items:center">
+      <a href="#kontakt" class="btn btn--solid">Termin anfragen</a>
+      <a href="#treat" class="btn">Leistungen ansehen</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── 02 TREAT (Leistungen) ──────────────────────────── -->
+<section class="chapter" id="treat" data-chapter="1">
+  <div class="chapter__bg bg-02" aria-hidden="true">
+    <img class="chapter__bg-img" src="assets/02-treat.jpg" alt="" data-media>
+    <div class="chapter__bg-grade"></div>
+  </div>
+  <div class="wrap">
+    <p class="eyebrow rise"><b>02</b> <span>Treat</span></p>
+    <h2 class="display display--sm rise">Individuelle Therapie<br>statt Behandlung nach Schema.</h2>
+    <p class="lead rise" style="margin-top:1.75rem">
+      Auf Basis der Befundung entsteht ein individuelles Behandlungskonzept.
+      Physiotherapie und osteopathische Ansätze werden dabei gezielt miteinander
+      verbunden und an Deine persönliche Situation angepasst.
+    </p>
+
+    <div class="services rise">
+      <article class="service">
+        <span class="service__no">01</span>
+        <h3>Physiotherapie</h3>
+        <p>Beschwerden behandeln, Beweglichkeit verbessern und Funktionen wiederherstellen.</p>
+        <ul>
+          <li>Akute und chronische Beschwerden</li>
+          <li>Behandlung nach Verletzungen und Operationen</li>
+          <li>Funktionelle Bewegungsanalyse</li>
+          <li>Individuelle Therapieplanung</li>
+        </ul>
+      </article>
+      <article class="service">
+        <span class="service__no">02</span>
+        <h3>Sport-Osteopathie</h3>
+        <p>Körperliche Zusammenhänge betrachten und funktionelle Einschränkungen ganzheitlich einordnen.</p>
+        <ul>
+          <li>Prävention von Sportverletzungen</li>
+          <li>Optimierung von Bewegungsabläufen</li>
+          <li>Förderung von Regeneration und Belastbarkeit</li>
+          <li>Betreuung von Freizeit- und Leistungssportlern</li>
+        </ul>
+      </article>
+      <article class="service">
+        <span class="service__no">03</span>
+        <h3>Sektorale Heilpraktik Physiotherapie</h3>
+        <p>Eigenständige physiotherapeutische Befundung und Behandlung im Rahmen der bestehenden Erlaubnis.</p>
+        <ul>
+          <li>Direkter Zugang ohne ärztliche Verordnung</li>
+          <li>Umfassende Befunderhebung</li>
+          <li>Individuelle Behandlungskonzepte</li>
+          <li>Hausbesuche nach Vereinbarung</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ── 04 CONNECT ─────────────────────────────────────── -->
+<section class="chapter" id="connect" data-chapter="2">
+  <div class="chapter__bg bg-03" aria-hidden="true">
+    <img class="chapter__bg-img" src="assets/03-connect.jpg" alt="" data-media>
+    <div class="chapter__bg-grade"></div>
+  </div>
+  <div class="wrap chapter__grid">
+    <div>
+      <p class="eyebrow rise"><b>03</b> <span>Connect</span></p>
+      <h2 class="display display--sm rise">Mehr als eine<br>Perspektive.</h2>
+      <p class="lead rise" style="margin-top:1.75rem">
+        Ich sehe meine Arbeit als Teil eines größeren Umfelds. Wo sinnvoll,
+        arbeite ich mit Athletiktrainern, Ärzten und weiteren Spezialisten
+        zusammen — nicht um Kompetenzen zu ersetzen, sondern um sie zu verbinden.
+      </p>
+    </div>
+    <div class="rise">
+      <span class="tag">Für wen?</span>
+      <div class="block">
+        <p class="block-h3">Für Athlet:innen</p>
+        <p class="body">
+          Leistungsfähigkeit braucht einen gesunden, belastbaren Körper.
+          Prävention, individuelle Behandlung und der Blick auf Belastung und
+          Regeneration halten Dich dauerhaft leistungsfähig.
+        </p>
+      </div>
+      <div class="block">
+        <p class="block-h3">Für Patient:innen</p>
+        <p class="body">
+          Beschwerden betreffen nicht nur den Körper, sondern das Wohlbefinden.
+          Gemeinsam betrachten wir körperliche und emotionale Faktoren — für
+          mehr Beweglichkeit, Belastbarkeit und Balance.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 04 ÜBER MAIK ───────────────────────────────────── -->
+<section class="chapter" id="about" data-chapter="3">
+  <div class="chapter__bg bg-04" aria-hidden="true">
+    <img class="chapter__bg-img" src="assets/04-about.jpg" alt="" data-media>
+    <div class="chapter__bg-grade"></div>
+  </div>
+  <div class="wrap chapter__grid">
+    <div>
+      <p class="eyebrow rise"><b>04</b> <span>Über Maik</span></p>
+      <h2 class="display rise">Ganzheitlich. Nachhaltig.<br>Professionell.</h2>
+      <p class="lead rise" style="margin-top:2rem">
+        Prävention beginnt vor der Verletzung. 16 Jahre Erfahrung im
+        Profifußball haben meinen Blick auf den menschlichen Körper, Belastung
+        und Regeneration geprägt.
+      </p>
+      <p class="body rise" style="margin-top:1.5rem;max-width:56ch">
+        Mein Anspruch ist es, körperliche Zusammenhänge präzise zu erfassen,
+        individuelle Belastungsfaktoren zu erkennen und gemeinsam nachhaltige
+        Lösungen zu entwickeln. Nicht erst reagieren, wenn es weh tut. Sondern
+        verstehen, was Dein Körper braucht.
+      </p>
+    </div>
+    <div class="rise mvp">
+      <div class="mvp__stage">
+        <div class="mvp__card">
+          <span class="portrait__ph" aria-hidden="true">Karte<br>Maik Liesbrock</span>
+          <img src="assets/mletics-card-maik.webp" alt="Autogrammkarte Maik Liesbrock, Physiotherapeut VfL Bochum 1848, Saison 2020/21" data-media>
+        </div>
+      </div>
+      <dl class="vita">
+        <div class="rise">
+          <dt>Qualifikation</dt>
+          <dd>Physiotherapeut, Sektoraler Heilpraktiker für Physiotherapie</dd>
+        </div>
+        <div class="rise">
+          <dt>Schwerpunkt</dt>
+          <dd>Sport-Osteopathie</dd>
+        </div>
+        <div class="rise">
+          <dt>Erfahrung</dt>
+          <dd>16 Jahre im Profifußball</dd>
+        </div>
+        <div class="rise">
+          <dt>Station</dt>
+          <dd>Physiotherapeut, VfL Bochum 1848 (Saison 2020/21)</dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<!-- ── 05 KONTAKT ─────────────────────────────────────── -->
+<section class="chapter" id="kontakt" data-chapter="4">
+  <div class="chapter__bg bg-05" aria-hidden="true">
+    <img class="chapter__bg-img" src="assets/05-kontakt.jpg" alt="" data-media>
+    <div class="chapter__bg-grade"></div>
+  </div>
+  <div class="wrap chapter__grid" style="align-items:start">
+    <div>
+      <p class="eyebrow rise"><b>05</b> <span>Kontakt</span></p>
+      <h2 class="display display--sm rise">Sprechen wir<br>über Deinen Weg.</h2>
+
+      <dl class="contact-list rise">
+        <div>
+          <dt>Telefon</dt>
+          <dd><a href="tel:+4923412345678">0234 · 123 456 78</a></dd>
+        </div>
+        <div>
+          <dt>E-Mail</dt>
+          <dd><a href="mailto:praxis@mletics.de">praxis@mletics.de</a></dd>
+        </div>
+        <div>
+          <dt>Adresse</dt>
+          <dd style="font-weight:400;font-size:1rem;line-height:1.6">
+            Musterstraße 12<br>44787 Bochum
+          </dd>
+        </div>
+        <div>
+          <dt>Sprechzeiten</dt>
+          <dd style="font-weight:400;font-size:1rem;line-height:1.6">
+            Mo – Do &nbsp;8:00 – 19:00<br>
+            Fr &nbsp;8:00 – 15:00<br>
+            Termine nach Vereinbarung
+          </dd>
+        </div>
+      </dl>
+    </div>
+
+    <div class="rise">
+      <form class="form" id="form" novalidate>
+        <div class="row">
+          <div class="field">
+            <label for="f-name">Name</label>
+            <input id="f-name" name="name" type="text" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label for="f-tel">Telefon</label>
+            <input id="f-tel" name="tel" type="tel" autocomplete="tel">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="f-mail">E-Mail</label>
+          <input id="f-mail" name="email" type="email" autocomplete="email" required>
+        </div>
+
+        <div class="field">
+          <label for="f-art">Anliegen</label>
+          <select id="f-art" name="anliegen">
+            <option>Ersttermin</option>
+            <option>Physiotherapie</option>
+            <option>Sport-Osteopathie</option>
+            <option>Sektorale Heilpraktik Physiotherapie</option>
+            <option>Sonstiges</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="f-msg">Nachricht</label>
+          <textarea id="f-msg" name="nachricht" placeholder="Was führt Dich zu uns?"></textarea>
+          <p class="hintline">Bitte keine Diagnosen oder Gesundheitsdaten im Formular senden — das klären wir persönlich.</p>
+        </div>
+
+        <label class="consent">
+          <input type="checkbox" id="f-ok" required>
+          <span>Ich bin einverstanden, dass meine Angaben zur Bearbeitung meiner Anfrage
+          gespeichert werden. Hinweise dazu in der <a href="#" style="color:var(--accent)">Datenschutzerklärung</a>.</span>
+        </label>
+
+        <button type="submit" class="btn btn--solid" style="justify-content:center">Anfrage senden</button>
+        <p class="hintline" id="formNote" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <p style="margin:0">© 2026 MLetics by Maik Liesbrock · Bochum</p>
+    <nav aria-label="Rechtliches">
+      <a href="#">Impressum</a>
+      <a href="#">Datenschutz</a>
+    </nav>
+  </div>
+</footer>
+
+<nav class="step" id="step" aria-label="Kapitel wechseln">
+  <button id="stepPrev" aria-label="Vorheriges Kapitel">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M18 15l-6-6-6 6"/>
+    </svg>
+  </button>
+  <span class="step__count"><b id="stepNow">01</b> / 05</span>
+  <button id="stepNext" aria-label="Nächstes Kapitel">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M6 9l6 6 6-6"/>
+    </svg>
+  </button>
+</nav>
+
+<!-- Kein GSAP mehr nötig — der Kapitel-Übergang läuft über CSS
+     position:sticky, keine externe Skript-Abhängigkeit mehr dafür. -->
+<script>
+function initMLetics(){
+  'use strict';
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var sections = Array.prototype.slice.call(document.querySelectorAll('.chapter'));
+
+  /* offsetTop ist bei position:sticky-Elementen KEIN verlässlicher Wert:
+     während ein Kapitel gerade „klebt" (oder das Dokumentende erreicht
+     ist), liefern Browser teils die aktuelle, scroll-abhängige Position
+     statt der echten Dokumentposition zurück — gemessen und reproduziert
+     in dieser Session (mehrfache scrollTo-Aufrufe kurz hintereinander
+     verwirrten zusätzlich die Smooth-Scroll-Animation des Browsers).
+     Deshalb: Positionen genau EINMAL messen, bei Scrollposition 0 (dort
+     kann nichts verfälscht sein), und für jede Navigation wiederverwenden
+     — nie live am Klick-Zeitpunkt neu messen. */
+  var sectionTops = [];
+  function neuVermessen(){
+    var vorher = window.scrollY;
+    if(vorher !== 0) window.scrollTo(0, 0);
+    sectionTops = sections.map(function(s){ return s.offsetTop; });
+    if(vorher !== 0) window.scrollTo(0, vorher);
+  }
+  neuVermessen();
+
+  /* Startposition selbst bestimmen, statt sich auf den Browser zu
+     verlassen: scrollRestoration:'manual' unterdrückt bei einigen Browsern
+     das automatische Anker-Scrollen ohne Ersatz — ein Aufruf mit #anker
+     landete dadurch unzuverlässig bei 0 statt am Zielkapitel. Deshalb hier
+     explizit selbst positionieren, erst wenn Schrift/Layout stehen. */
+  if('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  var ziel = location.hash && document.querySelector(location.hash);
+  var zielIndex = ziel ? sections.indexOf(ziel) : -1;
+  if(zielIndex > -1){
+    /* Layout steht erst final, wenn Schrift/Ressourcen geladen sind —
+       deshalb mehrfach neu vermessen und nachpositionieren. */
+    var zuZiel = function(){ neuVermessen(); window.scrollTo(0, sectionTops[zielIndex]); };
+    zuZiel();
+    if(document.fonts && document.fonts.ready){ document.fonts.ready.then(zuZiel); }
+    window.addEventListener('load', zuZiel);
+  } else {
+    window.scrollTo(0,0);
+  }
+
+  /* Mobile-Menü */
+  var burger = document.getElementById('burger'),
+      drawer = document.getElementById('drawer'),
+      close  = document.getElementById('drawerClose');
+  function setDrawer(open){
+    drawer.dataset.open = open;
+    burger.setAttribute('aria-expanded', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+    if(open){
+      /* Erst fokussieren, wenn das Panel wirklich sichtbar ist —
+         in visibility:hidden schlägt .focus() lautlos fehl. */
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){ close.focus(); }); });
+    } else {
+      burger.focus();
+    }
+  }
+
+  /* Fokus-Falle: bei aria-modal darf Tab das Overlay nicht verlassen */
+  drawer.addEventListener('keydown', function(e){
+    if(e.key !== 'Tab' || drawer.dataset.open !== 'true') return;
+    var f = drawer.querySelectorAll('a[href], button');
+    var first = f[0], last = f[f.length - 1];
+    if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+    else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+  });
+  burger.addEventListener('click', function(){ setDrawer(true); });
+  close .addEventListener('click', function(){ setDrawer(false); });
+  drawer.addEventListener('click', function(e){ if(e.target.tagName === 'A') setDrawer(false); });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && drawer.dataset.open === 'true') setDrawer(false);
+  });
+
+  var railBtns = Array.prototype.slice.call(document.querySelectorAll('.rail button'));
+  var pillLnks = Array.prototype.slice.call(document.querySelectorAll('.bar__nav a'));
+
+  railBtns.forEach(function(b){
+    b.addEventListener('click', function(){
+      var i = sections.indexOf(document.getElementById(b.dataset.go));
+      window.scrollTo({top: sectionTops[i], behavior: reduce ? 'auto' : 'smooth'});
+    });
+  });
+
+  /* Fehlende Bilddateien entfernen, damit statt eines kaputten Bildes
+     der CSS-Verlauf als Rückfallebene sichtbar bleibt. */
+  document.querySelectorAll('[data-media]').forEach(function(m){
+    m.addEventListener('error', function(){ m.remove(); });
+    if(m.tagName === 'IMG' && m.complete && m.naturalWidth === 0) m.remove();
+  });
+
+  var namen = ['Auftakt','Treat','Connect','Über Maik','Kontakt'];
+  var announcer = document.getElementById('announcer');
+  var stepPrev  = document.getElementById('stepPrev');
+  var stepNext  = document.getElementById('stepNext');
+  var stepNow   = document.getElementById('stepNow');
+  var current   = 0;
+
+  /* Aktives Kapitel: Navigation, Kapitel-Punkte, Zähler und
+     Screenreader-Ansage aktualisieren. Der Hintergrund selbst braucht das
+     nicht mehr — er scrollt normal mit, kein Crossfade mehr nötig. */
+  function activate(i){
+    if(i < 0 || i >= sections.length) return;
+    current = i;
+    railBtns.forEach(function(b, k){ b.setAttribute('aria-current', k === i); });
+    var id = sections[i].id;
+    pillLnks.forEach(function(a){
+      a.setAttribute('aria-current', a.getAttribute('href') === '#' + id);
+    });
+    stepNow.textContent = ('0' + (i + 1)).slice(-2);
+    stepPrev.disabled = (i === 0);
+    stepNext.disabled = (i === sections.length - 1);
+    announcer.textContent = 'Kapitel ' + (i + 1) + ' von ' + sections.length + ': ' + namen[i];
+  }
+
+  /* Lesefortschritt in der Kopfleiste — per rAF gedrosselt,
+     damit das Scrollen nicht ins Stocken gerät. */
+  var bar = document.querySelector('.bar'), ticking = false;
+  function zeichneFortschritt(){
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.setProperty('--p', max > 0 ? Math.min(1, window.scrollY / max) : 0);
+    ticking = false;
+  }
+  window.addEventListener('scroll', function(){
+    if(!ticking){ ticking = true; requestAnimationFrame(zeichneFortschritt); }
+  }, {passive: true});
+  window.addEventListener('resize', zeichneFortschritt);
+  window.addEventListener('resize', neuVermessen);
+  zeichneFortschritt();
+
+  /* Die Hero-Parallaxe von vorhin ist raus: Der Hero „klebt" jetzt per
+     position:sticky, bis ihn das nächste Kapitel zudeckt — er scrollt
+     also nicht mehr kontinuierlich durchs Bild, sondern steht still.
+     Eine Parallaxe hätte darin nichts mehr zu bewegen. */
+
+  /* Weicher Übergang beim Sticky-Stapeln: Jedes Kapitel blendet aus der
+     Transparenz ein, während es von unten heranschiebt.
+     Zwei Gegensätze unter einen Hut gebracht (beides echtes Feedback nach
+     Live-Tests): ein zu langes Fenster (volle Bildschirmhöhe) ließ beide
+     Kapitel zu lange gleichzeitig halb durchscheinen — verwirrend. Ein zu
+     kurzes Fenster (ein Drittel) ließ dafür den Bildschirm über den
+     GRÖSSTEN Teil der Scrollstrecke komplett unverändert wirken, bevor am
+     Ende alles plötzlich passiert — fühlte sich träge/reaktionslos an.
+     Lösung: größeres Fenster (mehr als die Hälfte der Bildschirmhöhe, also
+     reagiert es früh sichtbar), aber mit Ease-in-Kurve statt linear — sie
+     startet langsam (kaum Überlapp ganz am Anfang) und durchläuft die
+     kritische 40–70%-Überlapp-Zone zügig, statt dort zu verweilen. */
+  if(!reduce){
+    var fadeTicking = false;
+    var FADE_ANTEIL = 0.58; // Anteil der Bildschirmhöhe bis voll deckend
+    function kapitelEinblenden(){
+      var vh = innerHeight;
+      sections.forEach(function(sec){
+        var top = sec.getBoundingClientRect().top;
+        var linear = 1 - Math.min(1, Math.max(0, top / (vh * FADE_ANTEIL)));
+        var fortschritt = linear * linear * (3 - 2 * linear); // Smoothstep-Ease
+        sec.style.setProperty('--enterOpacity', fortschritt);
+      });
+      fadeTicking = false;
+    }
+    window.addEventListener('scroll', function(){
+      if(!fadeTicking){ fadeTicking = true; requestAnimationFrame(kapitelEinblenden); }
+    }, {passive: true});
+    window.addEventListener('resize', kapitelEinblenden);
+    kapitelEinblenden();
+  }
+
+  function goTo(i){
+    if(i < 0 || i >= sections.length) return;
+    window.scrollTo({top: sectionTops[i], behavior: reduce ? 'auto' : 'smooth'});
+  }
+  stepPrev.addEventListener('click', function(){ goTo(current - 1); });
+  stepNext.addEventListener('click', function(){ goTo(current + 1); });
+
+  /* Aktives Kapitel: NICHT über IntersectionObserver bestimmt, bewusst.
+     Bei Sticky-Stapelung überlappen sich zwei Kapitel geometrisch immer
+     kurz (das hintere klebt noch bei ~97% Sichtbarkeit, während das
+     vordere schon oben ansteht) — ein Schwellenwert-Observer kann dann
+     nicht zuverlässig sagen, welches „vorne" liegt. Stattdessen: das
+     vorderste (letzte in Dokumentreihenfolge) Kapitel, dessen Oberkante
+     bereits bei 0 klebt, ist optisch immer das oberste im Stapel. */
+  var chapterTicking = false;
+  function vorderstesKapitel(){
+    var aktiv = 0;
+    for(var i = 0; i < sections.length; i++){
+      if(sections[i].getBoundingClientRect().top <= 1) aktiv = i;
+    }
+    return aktiv;
+  }
+  function watchAktivesKapitel(){
+    activate(vorderstesKapitel());
+    chapterTicking = false;
+  }
+  window.addEventListener('scroll', function(){
+    if(!chapterTicking){ chapterTicking = true; requestAnimationFrame(watchAktivesKapitel); }
+  }, {passive: true});
+  watchAktivesKapitel();
+
+  /* Reveal-Animation separat über IntersectionObserver — hier ist
+     Mehrdeutigkeit unkritisch: ein Kapitel einmal zu früh „bereit"
+     zu markieren, bevor es vorne im Stapel ankommt, fällt nicht auf.
+     Wichtig: .rise ist per CSS-Grundzustand sichtbar (siehe oben) — erst
+     hier, wenn wir wissen, dass JS wirklich läuft, schalten wir aktiv auf
+     "unsichtbar, bis das Kapitel in Sicht kommt" um. Läuft dieser Code aus
+     irgendeinem Grund gar nicht (Skripte blockiert, Fehler, IntersectionObserver
+     fehlt), bleibt der Inhalt einfach beim sichtbaren CSS-Grundzustand stehen. */
+  if('IntersectionObserver' in window){
+    document.querySelectorAll('.rise').forEach(function(el){ el.dataset.in = 'false'; });
+
+    var revealWatch = new IntersectionObserver(function(entries, obs){
+      entries.forEach(function(en){
+        if(!en.isIntersecting) return;
+        var items = en.target.querySelectorAll('.rise');
+        items.forEach(function(el, k){
+          setTimeout(function(){ el.dataset.in = 'true'; }, k * 90);
+        });
+        obs.unobserve(en.target);
+      });
+    }, {rootMargin: '0px 0px -20% 0px'});
+
+    sections.forEach(function(sec){ revealWatch.observe(sec); });
+  }
+
+  /* Der „fließende Übergang" läuft jetzt rein über CSS position:sticky
+     (siehe .chapter) — das nächste Kapitel deckt das vorherige direkt beim
+     Scrollen zu. Vorher übernahm das GSAP mit einer Opacity/Y-Scrub-
+     Animation; die ist jetzt überflüssig und wurde entfernt (GSAP wird
+     dadurch nirgends mehr gebraucht, siehe <head> — keine externe
+     Abhängigkeit mehr, ein HTTP-Request weniger). */
+
+  /* Formular — Prototyp, versendet noch nicht */
+  document.getElementById('form').addEventListener('submit', function(e){
+    e.preventDefault();
+    document.getElementById('formNote').textContent =
+      'Prototyp: Der Versand wird angebunden, sobald Formspree oder Netlify Forms eingerichtet ist.';
+  });
+}
+
+/* Auf DOMContentLoaded warten, falls das Skript vor Ende des Markups
+   ausgeführt würde — hier nicht mehr der Fall, schadet aber nicht. */
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', initMLetics);
+} else {
+  initMLetics();
+}
+</script>
+</body>
+</html>
