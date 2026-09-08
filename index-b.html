@@ -328,21 +328,29 @@ a{color:inherit}
 }
 .drawer__close{position:absolute;top:1.25rem;right:1.25rem}
 
-/* ── Bento-Raster ───────────────────────────────────────── */
+/* ── Kartenraster ───────────────────────────────────────
+   Drei gleichwertige Leistungskarten nebeneinander. Bewusst kein
+   Bento mit unterschiedlich großen Feldern mehr: die drei Bereiche
+   stehen inhaltlich gleichrangig, also sollen sie das auch optisch
+   tun. Die Karten dehnen sich im Raster auf gleiche Höhe. */
 .bento{display:grid;gap:.75rem;grid-template-columns:1fr}
-@media(min-width:768px){
-  .bento{gap:1.25rem;grid-template-columns:repeat(3,1fr)}
-  .bento__tall{grid-row:span 2}
-  .bento__wide{grid-column:span 2}
-}
+@media(min-width:768px){ .bento{gap:1.25rem;grid-template-columns:repeat(3,1fr)} }
 .bento .card{display:flex;flex-direction:column;gap:1.5rem}
-.bento__tall{min-height:26rem;justify-content:space-between}
 .bento h3{
   font-family:var(--f-display);font-weight:700;letter-spacing:-.01em;
   font-size:1.3rem;line-height:1.25;margin:0 0 .75rem;
 }
-.bento__tall h3{font-size:clamp(1.4rem,2.2vw,1.85rem)}
 .bento p{margin:0;color:var(--muted);font-size:.92rem;line-height:1.6}
+
+/* Zwei ungleiche Karten (Für wen?) — schmal plus breit. */
+.duo{display:grid;gap:.75rem;grid-template-columns:1fr}
+@media(min-width:768px){ .duo{gap:1.25rem;grid-template-columns:1fr 2fr} }
+.duo .card{display:flex;flex-direction:column;gap:1.5rem}
+.duo h3{
+  font-family:var(--f-display);font-weight:700;letter-spacing:-.01em;
+  font-size:1.3rem;line-height:1.25;margin:0 0 .75rem;
+}
+.duo p{margin:0;color:var(--muted);font-size:.92rem;line-height:1.6}
 .ticks{list-style:none;margin:1.25rem 0 0;padding:0;display:grid;gap:.5rem}
 .ticks li{
   display:flex;gap:.6rem;font-size:.88rem;color:var(--muted);line-height:1.5;
@@ -354,8 +362,6 @@ a{color:inherit}
 /* Verweis-Karte: ganze Karte ist der Link */
 a.card{text-decoration:none;transition:border-color .25s var(--ease),background .25s var(--ease)}
 a.card:hover{border-color:var(--line-strong);background:#171B20}
-.card--link{align-items:center;justify-content:center;text-align:center;gap:1.25rem;min-height:12rem}
-.card--link .chip{width:60px;height:60px;border-radius:999px}
 
 /* ── Bildband ───────────────────────────────────────────
    Breites Foto als eigene Fläche, gleiche Radien wie die Karten.
@@ -608,7 +614,7 @@ footer{border-top:1px solid var(--line);margin-top:var(--pad)}
   </figure>
 
   <div class="bento">
-    <article class="card bento__tall rise">
+    <article class="card rise">
       <span class="card__no" aria-hidden="true">01</span>
       <span class="chip" aria-hidden="true">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.4-7-9.6A4.4 4.4 0 0 1 12 8a4.4 4.4 0 0 1 7 3.4C19 16.6 12 21 12 21z"/></svg>
@@ -625,7 +631,7 @@ footer{border-top:1px solid var(--line);margin-top:var(--pad)}
       </div>
     </article>
 
-    <article class="card bento__wide rise">
+    <article class="card rise">
       <span class="card__no" aria-hidden="true">02</span>
       <span class="chip" aria-hidden="true">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2.5-6 5 12L17 12h4"/></svg>
@@ -658,16 +664,6 @@ footer{border-top:1px solid var(--line);margin-top:var(--pad)}
         </ul>
       </div>
     </article>
-
-    <a href="#connect" class="card card--link rise">
-      <span class="chip" aria-hidden="true">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg>
-      </span>
-      <div>
-        <h3 style="margin-bottom:.35rem">Mehr als eine Perspektive</h3>
-        <p>Zusammenarbeit statt Einzelkämpfer.</p>
-      </div>
-    </a>
   </div>
 </section>
 
@@ -689,9 +685,8 @@ footer{border-top:1px solid var(--line);margin-top:var(--pad)}
 </section>
 
 <section class="band shell" aria-label="Für wen?">
-  <div class="bento" style="grid-template-columns:1fr">
-    <div class="bento" style="--x:0">
-      <article class="card bento__wide rise" style="grid-column:span 1">
+  <div class="duo">
+      <article class="card rise">
         <span class="chip" aria-hidden="true">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5.5" r="2.5"/><path d="M6 21l3-7 3 2 3-2 3 7M9 14l-2-4h10l-2 4"/></svg>
         </span>
@@ -704,7 +699,7 @@ footer{border-top:1px solid var(--line);margin-top:var(--pad)}
           </p>
         </div>
       </article>
-      <article class="card bento__wide rise" style="grid-column:span 2">
+      <article class="card rise">
         <span class="chip" aria-hidden="true">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 8.6a4.6 4.6 0 0 0-7.9-2.6l-.9.9-.9-.9A4.6 4.6 0 1 0 3.2 12l8.8 8.4 8.8-8.4c.6-.9 1-2 1-3.4z"/></svg>
         </span>
@@ -717,7 +712,6 @@ footer{border-top:1px solid var(--line);margin-top:var(--pad)}
           </p>
         </div>
       </article>
-    </div>
   </div>
 </section>
 
