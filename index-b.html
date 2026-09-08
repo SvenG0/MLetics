@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MLetics — Physiotherapie &amp; Sport-Osteopathie in Bochum</title>
+<meta name="description" content="MLetics: Physiotherapie und Sport-Osteopathie von Maik Liesbrock in Bochum. 16 Jahre Erfahrung im Profifußball — für Athletinnen, Athleten und Patientinnen, Patienten.">
+
+<!--
+  ─────────────────────────────────────────────────────────────
+  VARIANTE B — Gestaltung nach dem Template „Rivr"
+
+  Die Anordnung (große abgerundete Karten auf der Seitenfläche,
+  Pill-Buttons mit Pfeil-Chip, Icon-Chips, Bento-Raster,
+  Kennzahlen-Bande, ausgeschnittene Ecke) stammt aus:
+
+  Rivr — Copyright (c) 2026 Mohammad Shehadeh — MIT License
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in all
+  copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  SOFTWARE.
+
+  Übernommen wurde ausschließlich die Gestaltung, nativ nachgebaut
+  (kein React, kein Tailwind, kein Framer Motion — eine Datei).
+  Farben, Bilder, Schriften und sämtliche Texte sind MLetics.
+  Das Original ist hell und blau-grau; hier trägt es die dunkle
+  MLetics-Palette mit dem echten Logo-Blau.
+  ─────────────────────────────────────────────────────────────
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ─────────────────────────────────────────────────────────
+   Tokens — unverändert aus der A-Variante übernommen, damit
+   beide Fassungen dieselbe Marke tragen. Neu sind nur die
+   Radien und Flächen, die die Karten-Optik ausmachen.
+   ───────────────────────────────────────────────────────── */
+:root{
+  --bg:#0A0B0D;
+  --bg-raise:#14171B;
+  --text:#F2F0EA;
+  --muted:#9BA1AA;
+  --brand:#2765A5;
+  --brand-light:#4A8CC9;
+  --accent:#3692F2;
+  --accent-soft:#67AEFA;
+  --on-accent:#08141F;
+  --line:rgba(150,180,206,.15);
+  --line-strong:rgba(160,190,214,.28);
+
+  --f-display:'Archivo',system-ui,sans-serif;
+  --f-body:'Inter',system-ui,sans-serif;
+
+  /* Karten-Geometrie: das Kennzeichen dieser Variante. Der
+     Seitenrand (--pad) ist bewusst schmal — dadurch schwebt jede
+     Karte als eigene Fläche auf dem Seitengrund. */
+  --pad:.75rem;
+  --r-xl:1.5rem;
+  --r-lg:1.5rem;
+  --r-md:1.25rem;
+  --r-sm:.875rem;
+
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+@media(min-width:768px){
+  :root{ --pad:1.25rem; --r-xl:3rem; --r-lg:2rem; --r-md:1.5rem; }
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:var(--f-body);font-weight:300;font-size:1rem;line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;display:block}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+
+.shell{width:100%;max-width:1536px;margin-inline:auto}
+
+/* ── Typografie ─────────────────────────────────────────── */
+.display{
+  font-family:var(--f-display);font-weight:700;
+  font-variation-settings:'wdth' 88;
+  letter-spacing:-.02em;line-height:1.03;margin:0;
+  font-size:clamp(2.25rem,7vw,5rem);
+  text-wrap:balance;
+}
+.display--sm{font-size:clamp(1.9rem,4.6vw,3.25rem);line-height:1.08}
+.display--xs{font-size:clamp(1.35rem,2.6vw,2rem);line-height:1.15;font-variation-settings:'wdth' 92}
+.lead{font-size:clamp(1.02rem,1.5vw,1.2rem);line-height:1.65;color:var(--text);margin:0;max-width:60ch}
+.body{color:var(--muted);margin:0;max-width:62ch}
+.eyebrow{
+  display:flex;align-items:center;gap:.75rem;margin:0 0 1.25rem;
+  font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);
+}
+.eyebrow b{color:var(--accent);font-weight:500}
+.eyebrow i{flex:1;max-width:5rem;height:1px;background:var(--line);font-style:normal}
+
+/* ── Pill-Button mit Pfeil-Chip ─────────────────────────── */
+.pill{
+  display:inline-flex;align-items:center;gap:.65rem;
+  padding:.375rem .375rem .375rem 1.15rem;
+  border-radius:999px;text-decoration:none;font-size:.9rem;font-weight:500;
+  min-height:44px;border:1px solid transparent;
+  transition:background .25s var(--ease),border-color .25s var(--ease);
+  cursor:pointer;font-family:inherit;
+}
+.pill__chip{
+  display:flex;align-items:center;justify-content:center;
+  width:28px;height:28px;border-radius:999px;flex:0 0 auto;
+}
+.pill--solid{background:var(--accent);color:var(--on-accent)}
+.pill--solid .pill__chip{background:rgba(8,20,31,.18)}
+.pill--solid:hover{background:var(--accent-soft)}
+.pill--ghost{
+  background:rgba(20,23,27,.6);color:var(--text);
+  border-color:var(--line-strong);backdrop-filter:blur(10px);
+}
+.pill--ghost .pill__chip{background:rgba(242,240,234,.1)}
+.pill--ghost:hover{background:var(--bg-raise)}
+.pill--glass{
+  background:rgba(242,240,234,.1);color:var(--text);
+  border-color:rgba(242,240,234,.2);backdrop-filter:blur(12px);
+  padding:.6rem 1.25rem;
+}
+.pill--glass:hover{background:rgba(242,240,234,.18)}
+
+/* ── Karten ─────────────────────────────────────────────── */
+.card{
+  background:var(--bg-raise);border:1px solid var(--line);
+  border-radius:var(--r-lg);padding:1.75rem;position:relative;overflow:hidden;
+}
+@media(min-width:768px){ .card{padding:2.25rem} }
+.chip{
+  display:flex;align-items:center;justify-content:center;
+  width:48px;height:48px;border-radius:.9rem;
+  background:rgba(54,146,242,.12);color:var(--accent);
+  border:1px solid rgba(54,146,242,.2);flex:0 0 auto;
+}
+.card__no{
+  position:absolute;top:1.5rem;right:1.75rem;
+  font-family:var(--f-display);font-weight:700;font-size:3.5rem;
+  color:var(--text);opacity:.05;line-height:1;letter-spacing:-.03em;
+}
+
+/* ── Abschnittsrhythmus ─────────────────────────────────── */
+.band{padding-inline:var(--pad);padding-block:var(--pad)}
+.band--air{padding-block:clamp(2.5rem,6vw,5rem)}
+.section-head{
+  display:flex;flex-direction:column;gap:1.5rem;
+  margin-bottom:2rem;
+}
+@media(min-width:640px){
+  .section-head{flex-direction:row;align-items:flex-end;justify-content:space-between}
+  .section-head > :first-child{max-width:44rem}
+}
+@media(min-width:768px){ .section-head{margin-bottom:3rem} }
+
+/* ── Auftakt: Medienkarte über volle Höhe ───────────────── */
+.hero{padding:var(--pad);display:flex;min-height:100svh}
+.hero__card{
+  position:relative;flex:1;display:flex;flex-direction:column;
+  min-height:min(640px,90svh);border-radius:var(--r-xl);overflow:hidden;
+  background:
+    radial-gradient(38% 52% at 68% 30%,rgba(210,228,245,.20) 0%,transparent 62%),
+    radial-gradient(70% 80% at 76% 46%,#3E7FB2 0%,#1E4569 32%,#101F30 62%,#0A0B0D 88%);
+}
+.hero__media{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  object-position:22% center;
+  filter:grayscale(.4) saturate(.9) contrast(1.05) brightness(.72);
+}
+@media(min-width:700px){ .hero__media{object-position:left center} }
+/* Lasur: oben dunkel für die Navigation, unten dunkel für die
+   Karten, in der Mitte durchlässig, damit das Foto atmet. */
+.hero__grade{
+  position:absolute;inset:0;
+  background:
+    linear-gradient(180deg,rgba(8,9,11,.82) 0%,rgba(8,9,11,.25) 34%,
+      rgba(8,9,11,.42) 68%,rgba(8,9,11,.88) 100%);
+}
+.hero__inner{position:relative;z-index:2;display:flex;flex-direction:column;flex:1}
+.hero__center{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:3rem 1.5rem 9rem;
+}
+@media(min-width:768px){ .hero__center{padding:3rem 2rem 7rem} }
+.badge{
+  display:inline-flex;align-items:center;gap:.55rem;
+  padding:.5rem 1rem;border-radius:999px;margin-bottom:1.5rem;
+  background:rgba(242,240,234,.08);border:1px solid rgba(242,240,234,.16);
+  backdrop-filter:blur(12px);
+  font-size:.78rem;letter-spacing:.06em;color:var(--text);
+}
+.badge svg{color:var(--accent)}
+.hero h1{margin:0 0 1.25rem}
+.hero__sub{color:var(--accent);font-weight:500;font-size:clamp(1rem,1.8vw,1.25rem);margin:0 0 1rem}
+.hero__lead{max-width:44rem;color:rgba(242,240,234,.86);margin:0 auto}
+.hero__actions{display:flex;flex-wrap:wrap;gap:.75rem;justify-content:center;margin-top:2rem}
+
+/* Glaskarte unten links */
+.hero__stat{
+  position:absolute;left:1rem;bottom:6.5rem;z-index:3;
+  display:flex;flex-direction:column;gap:.75rem;
+  min-width:9.5rem;padding:1rem;border-radius:var(--r-md);
+  background:rgba(20,23,27,.42);border:1px solid rgba(242,240,234,.16);
+  backdrop-filter:blur(18px);
+}
+@media(min-width:768px){
+  .hero__stat{left:2rem;bottom:2rem;min-width:11.5rem;padding:1.25rem;gap:1rem}
+}
+/* Auf schmalen Schirmen ist zu wenig Platz, damit Glaskarte und die
+   mittigen Buttons nebeneinander bestehen — dort bleibt die Karte auf
+   die Kennzahl reduziert. Der Verweis „Über Maik" geht nicht verloren:
+   er steht im Menü und im Fußbereich. */
+@media(max-width:767px){
+  .hero__stat{bottom:5.5rem}
+  .hero__stat .pill{display:none}
+  /* Abstände verdichtet, damit Glaskarte und ausgeschnittene Ecke noch
+     auf den ersten Bildschirm passen — sonst wären genau die beiden
+     Gestaltungsmerkmale des Auftakts abgeschnitten. Die Schriftgröße
+     bleibt unangetastet, nur der Zeilenabstand rückt zusammen. */
+  .hero__center{padding:1.5rem 1.25rem 11rem}
+  .hero__center .badge{margin-bottom:1rem}
+  .hero h1{margin-bottom:1rem}
+  .hero__lead{line-height:1.55}
+  .hero__actions{margin-top:1.5rem}
+}
+/* Direkte Kinder ansprechen — sonst greifen die Regeln auch auf die
+   Spans im Pill-Button darunter zu. */
+.hero__stat > div{display:flex;flex-direction:column;gap:.2rem}
+.hero__stat > div > b{
+  font-family:var(--f-display);font-weight:700;font-size:1.75rem;
+  letter-spacing:-.02em;line-height:1;color:var(--text);
+}
+.hero__stat > div > span{
+  font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
+}
+
+/* Ausgeschnittene Ecke unten rechts — das Erkennungszeichen der
+   Vorlage. Die Fläche hat die Seitenfarbe; die beiden kleinen
+   SVG-Formen daneben füllen die Außenkanten mit derselben Farbe,
+   wodurch die Ecke wirkt, als sei sie aus der Karte gestanzt. */
+.carve{
+  position:absolute;right:0;bottom:0;z-index:3;
+  display:flex;align-items:center;gap:.85rem;
+  background:var(--bg);
+  border-top-left-radius:var(--r-xl);
+  padding:1rem 1rem 1rem 1.75rem;
+}
+@media(min-width:768px){ .carve{gap:1.25rem;padding:1.5rem 1.5rem 1.5rem 3rem} }
+.carve__notch{position:absolute;width:1.5rem;height:1.5rem;color:var(--bg);pointer-events:none}
+@media(min-width:768px){ .carve__notch{width:3rem;height:3rem} }
+.carve__notch--top{right:0;top:-1.5rem}
+@media(min-width:768px){ .carve__notch--top{top:-3rem} }
+.carve__notch--left{left:-1.5rem;bottom:0}
+@media(min-width:768px){ .carve__notch--left{left:-3rem} }
+.carve__ring{
+  display:flex;align-items:center;justify-content:center;
+  width:40px;height:40px;border-radius:999px;flex:0 0 auto;
+  border:1px solid var(--line-strong);background:rgba(242,240,234,.05);color:var(--text);
+}
+@media(min-width:768px){ .carve__ring{width:52px;height:52px} }
+.carve b{display:block;font-weight:500;font-size:.95rem;line-height:1.3}
+@media(min-width:768px){ .carve b{font-size:1.15rem} }
+.carve a{
+  display:inline-flex;align-items:center;gap:.25rem;
+  color:var(--muted);text-decoration:none;font-size:.8rem;
+  transition:color .2s var(--ease);
+}
+.carve a:hover{color:var(--text)}
+
+/* ── Navigation ─────────────────────────────────────────── */
+.nav{
+  position:relative;z-index:20;display:flex;align-items:center;
+  justify-content:space-between;gap:1rem;padding:1.1rem 1.25rem;
+}
+@media(min-width:768px){ .nav{padding:1.5rem 2rem} }
+.nav__mark{display:inline-flex;align-items:center;text-decoration:none;min-height:44px}
+.nav__mark img{height:44px;width:auto}
+@media(min-width:768px){ .nav__mark img{height:54px} }
+.nav__links{display:none;gap:2rem;list-style:none;margin:0;padding:0}
+@media(min-width:1024px){ .nav__links{display:flex} }
+.nav__links a{
+  text-decoration:none;color:rgba(242,240,234,.8);font-size:.9rem;
+  transition:color .2s var(--ease);
+}
+.nav__links a:hover{color:var(--text)}
+.nav__cta{display:none}
+@media(min-width:640px){ .nav__cta{display:inline-flex} }
+.burger{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:44px;height:44px;border-radius:999px;
+  background:rgba(242,240,234,.08);border:1px solid rgba(242,240,234,.18);
+  color:var(--text);cursor:pointer;backdrop-filter:blur(10px);
+}
+@media(min-width:1024px){ .burger{display:none} }
+
+.drawer{
+  position:fixed;inset:0;z-index:70;display:grid;place-content:center;
+  gap:1rem;text-align:center;background:rgba(8,9,10,.97);backdrop-filter:blur(20px);
+  opacity:0;visibility:hidden;transition:opacity .4s var(--ease),visibility .4s;
+}
+.drawer[data-open="true"]{opacity:1;visibility:visible}
+.drawer a{
+  font-family:var(--f-display);font-weight:700;font-size:1.9rem;
+  text-decoration:none;color:var(--text);padding:.35rem 1rem;
+}
+.drawer__close{position:absolute;top:1.25rem;right:1.25rem}
+
+/* ── Kennzahlen-Bande ───────────────────────────────────── */
+.metrics{
+  border:1px solid var(--line);border-radius:var(--r-xl);
+  background:rgba(242,240,234,.02);
+  padding:1.5rem;
+}
+@media(min-width:768px){ .metrics{padding:3rem} }
+.metrics dl{display:grid;grid-template-columns:1fr 1fr;margin:0}
+@media(min-width:768px){ .metrics dl{grid-template-columns:repeat(4,1fr)} }
+.metrics div{display:flex;flex-direction:column;gap:.4rem;padding:1.25rem}
+@media(min-width:768px){ .metrics div{padding:1.5rem} }
+.metrics div + div{border-left:1px solid var(--line)}
+.metrics div:nth-child(3){border-top:1px solid var(--line)}
+.metrics div:nth-child(4){border-top:1px solid var(--line)}
+@media(min-width:768px){
+  .metrics div:nth-child(3),.metrics div:nth-child(4){border-top:0}
+}
+.metrics dt{
+  font-family:var(--f-display);font-weight:700;
+  font-size:clamp(1.75rem,4vw,2.75rem);letter-spacing:-.02em;line-height:1;
+  font-variant-numeric:tabular-nums;
+}
+.metrics dd{margin:0;font-size:.85rem;color:var(--muted);line-height:1.5}
+
+/* ── Bento-Raster ───────────────────────────────────────── */
+.bento{display:grid;gap:.75rem;grid-template-columns:1fr}
+@media(min-width:768px){
+  .bento{gap:1.25rem;grid-template-columns:repeat(3,1fr)}
+  .bento__tall{grid-row:span 2}
+  .bento__wide{grid-column:span 2}
+}
+.bento .card{display:flex;flex-direction:column;gap:1.5rem}
+.bento__tall{min-height:26rem;justify-content:space-between}
+.bento h3{
+  font-family:var(--f-display);font-weight:700;letter-spacing:-.01em;
+  font-size:1.3rem;line-height:1.25;margin:0 0 .75rem;
+}
+.bento__tall h3{font-size:clamp(1.4rem,2.2vw,1.85rem)}
+.bento p{margin:0;color:var(--muted);font-size:.92rem;line-height:1.6}
+.ticks{list-style:none;margin:1.25rem 0 0;padding:0;display:grid;gap:.5rem}
+.ticks li{
+  display:flex;gap:.6rem;font-size:.88rem;color:var(--muted);line-height:1.5;
+}
+.ticks li::before{
+  content:"";flex:0 0 auto;width:5px;height:5px;border-radius:999px;
+  background:var(--accent);margin-top:.6rem;
+}
+/* Verweis-Karte: ganze Karte ist der Link */
+a.card{text-decoration:none;transition:border-color .25s var(--ease),background .25s var(--ease)}
+a.card:hover{border-color:var(--line-strong);background:#171B20}
+.card--link{align-items:center;justify-content:center;text-align:center;gap:1.25rem;min-height:12rem}
+.card--link .chip{width:60px;height:60px;border-radius:999px}
+
+/* ── Medienkarte (Connect / Abschluss) ──────────────────── */
+.media{
+  position:relative;border-radius:var(--r-xl);overflow:hidden;
+  min-height:26rem;display:flex;align-items:center;justify-content:center;
+  padding:2rem;
+  background:
+    radial-gradient(46% 34% at 52% 88%,rgba(200,218,240,.15) 0%,transparent 66%),
+    radial-gradient(90% 76% at 50% 96%,#33668F 0%,#193150 36%,#0D1B29 68%,#0A0B0D 92%);
+}
+@media(min-width:768px){ .media{min-height:34rem;padding:3rem} }
+.media img{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  filter:grayscale(.4) saturate(.9) contrast(1.05) brightness(.6);
+}
+.media__grade{
+  position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(8,9,11,.6) 0%,rgba(8,9,11,.45) 50%,rgba(8,9,11,.78) 100%);
+}
+.media__inner{position:relative;z-index:2;text-align:center;max-width:44rem}
+
+/* ── Über Maik ──────────────────────────────────────────── */
+.split{display:grid;gap:1.5rem;align-items:start}
+@media(min-width:1024px){ .split{grid-template-columns:minmax(0,1fr) minmax(0,.8fr);gap:2.5rem} }
+.portrait{
+  border-radius:var(--r-lg);overflow:hidden;border:1px solid var(--line-strong);
+  background:var(--bg-raise);aspect-ratio:1174/1600;max-width:20rem;position:relative;
+}
+.portrait img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.vita{margin:1.5rem 0 0;display:grid;gap:0}
+.vita div{
+  display:flex;flex-wrap:wrap;gap:.35rem 1rem;justify-content:space-between;
+  padding:.85rem 0;border-top:1px solid var(--line);
+}
+.vita dt{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding-top:.15rem}
+.vita dd{margin:0;font-size:.92rem;text-align:right;flex:1;min-width:12rem}
+
+/* ── Kontakt ────────────────────────────────────────────── */
+.contact{margin:0;display:grid;gap:0}
+.contact div{padding:1rem 0;border-top:1px solid var(--line)}
+.contact dt{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:.35rem}
+.contact dd{margin:0;font-size:1.05rem;font-weight:400}
+.contact dd a{text-decoration:none;border-bottom:1px solid var(--line-strong)}
+.contact dd a:hover{color:var(--accent)}
+.contact dd.small{font-size:.95rem;line-height:1.6;color:var(--muted)}
+
+.form{display:grid;gap:1rem}
+.form .row{display:grid;gap:1rem}
+@media(min-width:560px){ .form .row{grid-template-columns:1fr 1fr} }
+.field label{display:block;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem}
+.field input,.field select,.field textarea{
+  width:100%;min-height:48px;padding:.8rem 1rem;
+  background:rgba(10,11,13,.6);color:var(--text);
+  border:1px solid var(--line);border-radius:var(--r-sm);
+  font-family:inherit;font-size:1rem;
+}
+.field textarea{min-height:120px;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--accent)}
+.hintline{font-size:.8rem;color:var(--muted);margin:.5rem 0 0}
+.consent{display:flex;gap:.75rem;align-items:flex-start;font-size:.85rem;color:var(--muted)}
+.consent input{margin-top:.3rem;width:18px;height:18px;flex:0 0 auto;accent-color:var(--accent)}
+
+/* ── Fuß ────────────────────────────────────────────────── */
+footer{border-top:1px solid var(--line);margin-top:var(--pad)}
+.foot{
+  padding:3rem 1.5rem;display:flex;flex-direction:column;gap:2.5rem;
+}
+@media(min-width:768px){ .foot{flex-direction:row;justify-content:space-between;padding:4rem 2rem} }
+.foot__brand{max-width:20rem}
+.foot__brand img{height:44px;width:auto;margin-bottom:1rem}
+.foot__cols{display:grid;grid-template-columns:1fr 1fr;gap:2rem}
+@media(min-width:640px){ .foot__cols{gap:4rem} }
+.foot__cols h3{font-size:.85rem;font-weight:500;margin:0 0 1rem}
+.foot__cols ul{list-style:none;margin:0;padding:0;display:grid;gap:.65rem}
+.foot__cols a{font-size:.88rem;color:var(--muted);text-decoration:none}
+.foot__cols a:hover{color:var(--text)}
+.foot__base{
+  border-top:1px solid var(--line);padding:1.5rem;
+  font-size:.82rem;color:var(--muted);
+}
+@media(min-width:768px){ .foot__base{padding:1.5rem 2rem} }
+
+/* ── Einblenden beim Scrollen ───────────────────────────────
+   Sichtbar per Voreinstellung — Pflicht. Nur JS darf Elemente
+   kurzzeitig in den versteckten Zustand versetzen und sie dann
+   wieder einblenden. Sonst sieht ein Besucher ohne (oder mit
+   fehlgeschlagenem) JavaScript eine leere Seite; genau das ist
+   in der A-Variante einmal passiert. */
+.rise{opacity:1;transform:none}
+.rise[data-in="false"]{
+  opacity:0;transform:translateY(24px);
+  transition:opacity .7s var(--ease),transform .7s var(--ease);
+}
+.rise[data-in="true"]{
+  opacity:1;transform:none;
+  transition:opacity .7s var(--ease),transform .7s var(--ease);
+}
+
+.sr-only{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
+}
+
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  .rise[data-in="false"]{opacity:1;transform:none}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<a href="#inhalt" class="pill pill--solid" style="position:absolute;left:-9999px;top:1rem;z-index:99"
+   onfocus="this.style.left='1rem'" onblur="this.style.left='-9999px'">Zum Inhalt springen</a>
+
+<div class="drawer" id="drawer" data-open="false" role="dialog" aria-modal="true" aria-label="Navigation">
+  <button class="pill pill--ghost drawer__close" id="drawerClose">Schließen</button>
+  <a href="#treat">Treat</a>
+  <a href="#connect">Connect</a>
+  <a href="#about">Über Maik</a>
+  <a href="#kontakt">Kontakt</a>
+</div>
+
+<main id="inhalt">
+
+<!-- ── Auftakt ──────────────────────────────────────────── -->
+<section class="hero" id="auftakt">
+  <div class="hero__card">
+    <img class="hero__media" src="assets/01-hero.jpg" alt="" data-media>
+    <div class="hero__grade" aria-hidden="true"></div>
+
+    <div class="hero__inner">
+      <nav class="nav" aria-label="Hauptnavigation">
+        <a href="#auftakt" class="nav__mark" aria-label="MLetics — Startseite">
+          <img src="assets/logo/mletics-mark-dark.png" alt="MLetics — Osteopathie &amp; Physiotherapie">
+        </a>
+        <ul class="nav__links">
+          <li><a href="#treat">Treat</a></li>
+          <li><a href="#connect">Connect</a></li>
+          <li><a href="#about">Über Maik</a></li>
+          <li><a href="#kontakt">Kontakt</a></li>
+        </ul>
+        <a href="#kontakt" class="pill pill--solid nav__cta">
+          <span>Termin anfragen</span>
+          <span class="pill__chip" aria-hidden="true">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg>
+          </span>
+        </a>
+        <button class="burger" id="burger" aria-label="Menü öffnen" aria-expanded="false" aria-controls="drawer">
+          <svg width="18" height="12" viewBox="0 0 18 12" fill="none" aria-hidden="true">
+            <path d="M0 1h18M0 6h18M0 11h18" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+        </button>
+      </nav>
+
+      <div class="hero__center">
+        <p class="badge rise">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.6L19.5 10l-5.6 1.9L12 17.5 10.1 11.9 4.5 10l5.6-1.4z"/></svg>
+          MLetics by Maik Liesbrock — Bochum
+        </p>
+        <h1 class="display rise">UNDERSTAND. TREAT.<br>CONNECT.</h1>
+        <p class="hero__sub rise">Verstehen. Behandeln. Vernetzen.</p>
+        <p class="lead hero__lead rise">
+          Den Körper verstehen. Funktionelle Zusammenhänge erkennen. Individuell
+          behandeln. Und dort, wo weitere Expertise sinnvoll ist, die richtigen
+          Kompetenzen miteinander verbinden.
+        </p>
+        <div class="hero__actions rise">
+          <a href="#kontakt" class="pill pill--solid">
+            <span>Termin anfragen</span>
+            <span class="pill__chip" aria-hidden="true">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg>
+            </span>
+          </a>
+          <a href="#treat" class="pill pill--glass">Leistungen ansehen</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero__stat rise">
+      <div>
+        <b>16 Jahre</b>
+        <span>Profifußball</span>
+      </div>
+      <a href="#about" class="pill pill--solid" style="padding:.3rem .3rem .3rem .9rem;font-size:.82rem;min-height:38px">
+        <span>Über Maik</span>
+        <span class="pill__chip" style="width:24px;height:24px" aria-hidden="true">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg>
+        </span>
+      </a>
+    </div>
+
+    <div class="carve">
+      <span class="carve__notch carve__notch--top" aria-hidden="true">
+        <svg width="100%" height="100%" viewBox="0 0 56 56" fill="none"><path d="M56 56V0C56 30.9279 30.9279 56 0 56H56Z" fill="currentColor"/></svg>
+      </span>
+      <span class="carve__notch carve__notch--left" aria-hidden="true">
+        <svg width="100%" height="100%" viewBox="0 0 56 56" fill="none"><path d="M56 56H0C30.9279 56 56 30.9279 56 0V56Z" fill="currentColor"/></svg>
+      </span>
+      <span class="carve__ring" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg>
+      </span>
+      <span>
+        <b>Leistungen</b>
+        <a href="#treat">
+          Physio &amp; Osteopathie
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+        </a>
+      </span>
+    </div>
+  </div>
+</section>
+
+<!-- ── Kennzahlen ───────────────────────────────────────── -->
+<section class="band shell" aria-label="Auf einen Blick">
+  <div class="metrics rise">
+    <dl>
+      <div>
+        <dt>16</dt>
+        <dd>Jahre Erfahrung im Profifußball</dd>
+      </div>
+      <div>
+        <dt>3</dt>
+        <dd>Leistungsbereiche</dd>
+      </div>
+      <div>
+        <dt>2020/21</dt>
+        <dd>VfL Bochum 1848</dd>
+      </div>
+      <div>
+        <dt>Bochum</dt>
+        <dd>Praxisstandort</dd>
+      </div>
+    </dl>
+  </div>
+</section>
+
+<!-- ── Treat ────────────────────────────────────────────── -->
+<section class="band band--air shell" id="treat">
+  <div class="section-head rise">
+    <div>
+      <p class="eyebrow"><b>02</b> <span>Treat</span> <i></i></p>
+      <h2 class="display display--sm">Individuelle Therapie<br>statt Behandlung nach Schema.</h2>
+      <p class="lead" style="margin-top:1.5rem">
+        Auf Basis der Befundung entsteht ein individuelles Behandlungskonzept.
+        Physiotherapie und osteopathische Ansätze werden dabei gezielt miteinander
+        verbunden und an Deine persönliche Situation angepasst.
+      </p>
+    </div>
+    <a href="#kontakt" class="pill pill--ghost" style="flex:0 0 auto">
+      <span>Termin anfragen</span>
+      <span class="pill__chip" aria-hidden="true">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg>
+      </span>
+    </a>
+  </div>
+
+  <div class="bento">
+    <article class="card bento__tall rise">
+      <span class="card__no" aria-hidden="true">01</span>
+      <span class="chip" aria-hidden="true">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.4-7-9.6A4.4 4.4 0 0 1 12 8a4.4 4.4 0 0 1 7 3.4C19 16.6 12 21 12 21z"/></svg>
+      </span>
+      <div>
+        <h3>Physiotherapie</h3>
+        <p>Beschwerden behandeln, Beweglichkeit verbessern und Funktionen wiederherstellen.</p>
+        <ul class="ticks">
+          <li>Akute und chronische Beschwerden</li>
+          <li>Behandlung nach Verletzungen und Operationen</li>
+          <li>Funktionelle Bewegungsanalyse</li>
+          <li>Individuelle Therapieplanung</li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="card bento__wide rise">
+      <span class="card__no" aria-hidden="true">02</span>
+      <span class="chip" aria-hidden="true">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2.5-6 5 12L17 12h4"/></svg>
+      </span>
+      <div>
+        <h3>Sport-Osteopathie</h3>
+        <p>Körperliche Zusammenhänge betrachten und funktionelle Einschränkungen ganzheitlich einordnen.</p>
+        <ul class="ticks">
+          <li>Prävention von Sportverletzungen</li>
+          <li>Optimierung von Bewegungsabläufen</li>
+          <li>Förderung von Regeneration und Belastbarkeit</li>
+          <li>Betreuung von Freizeit- und Leistungssportlern</li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="card rise">
+      <span class="card__no" aria-hidden="true">03</span>
+      <span class="chip" aria-hidden="true">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7.5 3v5.2c0 4.4-3.1 8.3-7.5 9.3-4.4-1-7.5-4.9-7.5-9.3V6z"/><path d="M9.5 12l1.8 1.8 3.4-3.6"/></svg>
+      </span>
+      <div>
+        <h3>Sektorale Heilpraktik Physiotherapie</h3>
+        <p>Eigenständige physiotherapeutische Befundung und Behandlung im Rahmen der bestehenden Erlaubnis.</p>
+        <ul class="ticks">
+          <li>Direkter Zugang ohne ärztliche Verordnung</li>
+          <li>Umfassende Befunderhebung</li>
+          <li>Individuelle Behandlungskonzepte</li>
+          <li>Hausbesuche nach Vereinbarung</li>
+        </ul>
+      </div>
+    </article>
+
+    <a href="#connect" class="card card--link rise">
+      <span class="chip" aria-hidden="true">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg>
+      </span>
+      <div>
+        <h3 style="margin-bottom:.35rem">Mehr als eine Perspektive</h3>
+        <p>Zusammenarbeit statt Einzelkämpfer.</p>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- ── Connect ──────────────────────────────────────────── -->
+<section class="band shell" id="connect">
+  <div class="media rise">
+    <img src="assets/03-connect.jpg" alt="" data-media>
+    <div class="media__grade" aria-hidden="true"></div>
+    <div class="media__inner">
+      <p class="eyebrow" style="justify-content:center"><b>03</b> <span>Connect</span></p>
+      <h2 class="display display--sm">Mehr als eine<br>Perspektive.</h2>
+      <p class="lead" style="margin:1.5rem auto 0;color:rgba(242,240,234,.88)">
+        Ich sehe meine Arbeit als Teil eines größeren Umfelds. Wo sinnvoll,
+        arbeite ich mit Athletiktrainern, Ärzten und weiteren Spezialisten
+        zusammen — nicht um Kompetenzen zu ersetzen, sondern um sie zu verbinden.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="band shell" aria-label="Für wen?">
+  <div class="bento" style="grid-template-columns:1fr">
+    <div class="bento" style="--x:0">
+      <article class="card bento__wide rise" style="grid-column:span 1">
+        <span class="chip" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5.5" r="2.5"/><path d="M6 21l3-7 3 2 3-2 3 7M9 14l-2-4h10l-2 4"/></svg>
+        </span>
+        <div>
+          <h3>Für Athlet:innen</h3>
+          <p>
+            Leistungsfähigkeit braucht einen gesunden, belastbaren Körper.
+            Prävention, individuelle Behandlung und der Blick auf Belastung und
+            Regeneration halten Dich dauerhaft leistungsfähig.
+          </p>
+        </div>
+      </article>
+      <article class="card bento__wide rise" style="grid-column:span 2">
+        <span class="chip" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 8.6a4.6 4.6 0 0 0-7.9-2.6l-.9.9-.9-.9A4.6 4.6 0 1 0 3.2 12l8.8 8.4 8.8-8.4c.6-.9 1-2 1-3.4z"/></svg>
+        </span>
+        <div>
+          <h3>Für Patient:innen</h3>
+          <p>
+            Beschwerden betreffen nicht nur den Körper, sondern das Wohlbefinden.
+            Gemeinsam betrachten wir körperliche und emotionale Faktoren — für
+            mehr Beweglichkeit, Belastbarkeit und Balance.
+          </p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ── Über Maik ────────────────────────────────────────── -->
+<section class="band band--air shell" id="about">
+  <div class="split">
+    <div class="rise">
+      <p class="eyebrow"><b>04</b> <span>Über Maik</span> <i></i></p>
+      <h2 class="display display--sm">Ganzheitlich. Nachhaltig.<br>Professionell.</h2>
+      <p class="lead" style="margin-top:1.75rem">
+        Prävention beginnt vor der Verletzung. 16 Jahre Erfahrung im
+        Profifußball haben meinen Blick auf den menschlichen Körper, Belastung
+        und Regeneration geprägt.
+      </p>
+      <p class="body" style="margin-top:1.25rem">
+        Mein Anspruch ist es, körperliche Zusammenhänge präzise zu erfassen,
+        individuelle Belastungsfaktoren zu erkennen und gemeinsam nachhaltige
+        Lösungen zu entwickeln. Nicht erst reagieren, wenn es weh tut. Sondern
+        verstehen, was Dein Körper braucht.
+      </p>
+    </div>
+
+    <div class="card rise">
+      <div class="portrait">
+        <img src="assets/mletics-card-maik.webp" alt="Autogrammkarte Maik Liesbrock, Physiotherapeut VfL Bochum 1848, Saison 2020/21" data-media>
+      </div>
+      <dl class="vita">
+        <div>
+          <dt>Qualifikation</dt>
+          <dd>Physiotherapeut, Sektoraler Heilpraktiker für Physiotherapie</dd>
+        </div>
+        <div>
+          <dt>Schwerpunkt</dt>
+          <dd>Sport-Osteopathie</dd>
+        </div>
+        <div>
+          <dt>Erfahrung</dt>
+          <dd>16 Jahre im Profifußball</dd>
+        </div>
+        <div>
+          <dt>Station</dt>
+          <dd>Physiotherapeut, VfL Bochum 1848 (Saison 2020/21)</dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<!-- ── Abschluss-Aufruf ─────────────────────────────────── -->
+<section class="band shell">
+  <div class="media rise" style="min-height:22rem">
+    <img src="assets/01-hero.jpg" alt="" data-media style="object-position:60% center;filter:grayscale(.5) saturate(.8) contrast(1.05) brightness(.42)">
+    <div class="media__grade" aria-hidden="true"
+         style="background:linear-gradient(180deg,rgba(8,9,11,.72) 0%,rgba(8,9,11,.55) 50%,rgba(8,9,11,.8) 100%)"></div>
+    <div class="media__inner">
+      <!-- Zeile stammt wörtlich aus dem Abschnitt „Über Maik" — bewusst
+           nicht dieselbe Überschrift wie im Kontaktabschnitt darunter. -->
+      <h2 class="display display--sm">Nicht erst reagieren,<br>wenn es weh tut.</h2>
+      <div class="hero__actions" style="margin-top:1.75rem">
+        <a href="#kontakt" class="pill pill--solid">
+          <span>Termin anfragen</span>
+          <span class="pill__chip" aria-hidden="true">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg>
+          </span>
+        </a>
+        <a href="#treat" class="pill pill--glass">Leistungen ansehen</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Kontakt ──────────────────────────────────────────── -->
+<section class="band band--air shell" id="kontakt">
+  <div class="section-head rise">
+    <div>
+      <p class="eyebrow"><b>05</b> <span>Kontakt</span> <i></i></p>
+      <h2 class="display display--sm">Sprechen wir<br>über Deinen Weg.</h2>
+    </div>
+  </div>
+
+  <div class="split">
+    <div class="card rise">
+      <dl class="contact">
+        <div>
+          <dt>Telefon</dt>
+          <dd><a href="tel:+4923412345678">0234 · 123 456 78</a></dd>
+        </div>
+        <div>
+          <dt>E-Mail</dt>
+          <dd><a href="mailto:praxis@mletics.de">praxis@mletics.de</a></dd>
+        </div>
+        <div>
+          <dt>Adresse</dt>
+          <dd class="small">Musterstraße 12<br>44787 Bochum</dd>
+        </div>
+        <div>
+          <dt>Sprechzeiten</dt>
+          <dd class="small">
+            Mo – Do &nbsp;8:00 – 19:00<br>
+            Fr &nbsp;8:00 – 15:00<br>
+            Termine nach Vereinbarung
+          </dd>
+        </div>
+      </dl>
+    </div>
+
+    <div class="card rise">
+      <form class="form" id="form" novalidate>
+        <div class="row">
+          <div class="field">
+            <label for="f-name">Name</label>
+            <input id="f-name" name="name" type="text" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label for="f-tel">Telefon</label>
+            <input id="f-tel" name="tel" type="tel" autocomplete="tel">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="f-mail">E-Mail</label>
+          <input id="f-mail" name="email" type="email" autocomplete="email" required>
+        </div>
+
+        <div class="field">
+          <label for="f-art">Anliegen</label>
+          <select id="f-art" name="anliegen">
+            <option>Ersttermin</option>
+            <option>Physiotherapie</option>
+            <option>Sport-Osteopathie</option>
+            <option>Sektorale Heilpraktik Physiotherapie</option>
+            <option>Sonstiges</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="f-msg">Nachricht</label>
+          <textarea id="f-msg" name="nachricht" placeholder="Was führt Dich zu uns?"></textarea>
+          <p class="hintline">Bitte keine Diagnosen oder Gesundheitsdaten im Formular senden — das klären wir persönlich.</p>
+        </div>
+
+        <label class="consent">
+          <input type="checkbox" id="f-ok" required>
+          <span>Ich bin einverstanden, dass meine Angaben zur Bearbeitung meiner Anfrage
+          gespeichert werden. Hinweise dazu in der <a href="#" style="color:var(--accent)">Datenschutzerklärung</a>.</span>
+        </label>
+
+        <button type="submit" class="pill pill--solid" style="justify-content:center">
+          <span>Anfrage senden</span>
+          <span class="pill__chip" aria-hidden="true">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg>
+          </span>
+        </button>
+        <p class="hintline" id="formNote" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="shell">
+    <div class="foot">
+      <div class="foot__brand">
+        <img src="assets/logo/mletics-mark-dark.png" alt="MLetics" data-media>
+        <p class="body" style="font-size:.9rem">
+          Verstehen. Behandeln. Vernetzen. Physiotherapie und Sport-Osteopathie
+          in Bochum.
+        </p>
+      </div>
+      <nav class="foot__cols" aria-label="Fußbereich">
+        <div>
+          <h3>Leistungen</h3>
+          <ul>
+            <li><a href="#treat">Physiotherapie</a></li>
+            <li><a href="#treat">Sport-Osteopathie</a></li>
+            <li><a href="#treat">Sektorale Heilpraktik</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3>Praxis</h3>
+          <ul>
+            <li><a href="#about">Über Maik</a></li>
+            <li><a href="#connect">Connect</a></li>
+            <li><a href="#kontakt">Kontakt</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3>Rechtliches</h3>
+          <ul>
+            <li><a href="#">Impressum</a></li>
+            <li><a href="#">Datenschutz</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+    <div class="foot__base">© 2026 MLetics by Maik Liesbrock · Bochum</div>
+  </div>
+</footer>
+
+<script>
+function initMLeticsB(){
+  'use strict';
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* Fehlende Bilddateien entfernen, damit statt eines kaputten Bildes
+     der CSS-Verlauf darunter als Rückfallebene sichtbar bleibt. */
+  document.querySelectorAll('[data-media]').forEach(function(m){
+    m.addEventListener('error', function(){ m.remove(); });
+    if(m.tagName === 'IMG' && m.complete && m.naturalWidth === 0) m.remove();
+  });
+
+  /* Mobile-Menü */
+  var burger = document.getElementById('burger'),
+      drawer = document.getElementById('drawer'),
+      close  = document.getElementById('drawerClose');
+  function setDrawer(open){
+    drawer.dataset.open = open;
+    burger.setAttribute('aria-expanded', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+    if(open){
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){ close.focus(); }); });
+    } else {
+      burger.focus();
+    }
+  }
+  burger.addEventListener('click', function(){ setDrawer(true); });
+  close.addEventListener('click', function(){ setDrawer(false); });
+  drawer.addEventListener('click', function(e){ if(e.target.tagName === 'A') setDrawer(false); });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && drawer.dataset.open === 'true') setDrawer(false);
+  });
+  /* Fokus-Falle: bei aria-modal darf Tab das Overlay nicht verlassen */
+  drawer.addEventListener('keydown', function(e){
+    if(e.key !== 'Tab' || drawer.dataset.open !== 'true') return;
+    var f = drawer.querySelectorAll('a[href], button');
+    var first = f[0], last = f[f.length - 1];
+    if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+    else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+  });
+
+  /* Einblenden beim Scrollen. Reihenfolge ist wichtig: erst in den
+     versteckten Zustand versetzen, dann beobachten — so hängt die
+     Sichtbarkeit nie allein am Skript (siehe .rise im CSS). */
+  if(!reduce && 'IntersectionObserver' in window){
+    var rises = Array.prototype.slice.call(document.querySelectorAll('.rise'));
+    rises.forEach(function(el){ el.dataset.in = 'false'; });
+
+    var watch = new IntersectionObserver(function(eintraege){
+      eintraege.forEach(function(e){
+        if(!e.isIntersecting) return;
+        var el = e.target;
+        var geschwister = Array.prototype.slice.call(el.parentNode.children).filter(function(k){
+          return k.classList.contains('rise');
+        });
+        setTimeout(function(){ el.dataset.in = 'true'; }, geschwister.indexOf(el) * 80);
+        watch.unobserve(el);
+      });
+    }, {rootMargin: '0px 0px -12% 0px', threshold: 0.05});
+
+    rises.forEach(function(el){ watch.observe(el); });
+  }
+
+  /* Formular — Prototyp, versendet noch nicht */
+  document.getElementById('form').addEventListener('submit', function(e){
+    e.preventDefault();
+    document.getElementById('formNote').textContent =
+      'Prototyp: Der Versand wird angebunden, sobald Formspree oder Netlify Forms eingerichtet ist.';
+  });
+}
+
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', initMLeticsB);
+} else {
+  initMLeticsB();
+}
+</script>
+</body>
+</html>
