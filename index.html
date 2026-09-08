@@ -53,7 +53,7 @@ html{-webkit-text-size-adjust:100%}
 body{
   margin:0;background:var(--bg);color:var(--text);
   font-family:var(--f-body);font-weight:300;font-size:1rem;line-height:1.7;
-  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
 }
 img{max-width:100%;display:block}
 a{color:inherit}
@@ -298,6 +298,13 @@ main{position:relative;z-index:10}
   background:var(--bg);
   opacity:var(--enterOpacity,1);
 }
+/* Ist ein Kapitel höher als der Bildschirm (z.B. „Treat" mit 3 gestapelten
+   Leistungskarten auf schmalen Screens), bleibt bei position:sticky alles
+   unterhalb der ersten Bildschirmhöhe unsichtbar hinter dem Rand hängen —
+   sticky zeigt immer nur den ersten Ausschnitt, der Rest lässt sich nicht
+   herunterscrollen. Per JS (kapitelPassung) markiert; solche Kapitel
+   scrollen stattdessen normal durch, statt zu stapeln. */
+.chapter[data-fits="false"]{position:relative;opacity:1}
 .chapter .wrap{position:relative;z-index:10}
 .chapter__grid{display:grid;gap:var(--sp-5);align-items:center}
 @media(min-width:1024px){
@@ -824,6 +831,21 @@ function initMLetics(){
   }
   neuVermessen();
 
+  /* Kapitel, die höher als der Bildschirm sind (z.B. „Treat" mit 3
+     gestapelten Leistungskarten auf schmalen Screens), bekommen kein
+     position:sticky — siehe .chapter[data-fits="false"]. Sonst zeigt
+     Sticky nur die erste Bildschirmhöhe; der Rest bleibt beim Stapeln
+     permanent unsichtbar hinter dem oberen Rand hängen, ganz gleich wie
+     lange weitergescrollt wird. offsetHeight ist dafür unproblematisch,
+     anders als offsetTop: Sticky ändert nur die Malposition beim Kleben,
+     nicht die Layout-Höhe. */
+  function kapitelPassung(){
+    sections.forEach(function(sec){
+      sec.dataset.fits = sec.offsetHeight <= window.innerHeight ? 'true' : 'false';
+    });
+  }
+  kapitelPassung();
+
   /* Startposition selbst bestimmen, statt sich auf den Browser zu
      verlassen: scrollRestoration:'manual' unterdrückt bei einigen Browsern
      das automatische Anker-Scrollen ohne Ersatz — ein Aufruf mit #anker
@@ -928,6 +950,7 @@ function initMLetics(){
     if(!ticking){ ticking = true; requestAnimationFrame(zeichneFortschritt); }
   }, {passive: true});
   window.addEventListener('resize', zeichneFortschritt);
+  window.addEventListener('resize', kapitelPassung);
   window.addEventListener('resize', neuVermessen);
   zeichneFortschritt();
 
