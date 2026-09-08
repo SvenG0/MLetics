@@ -13,25 +13,30 @@ Falls ein neues Original geliefert wird, einfach dieselbe Datei ersetzen.
 
 Das Kapitel „Understand" wurde entfernt — die Seite hat jetzt 5 Kapitel.
 
-| Datei | Kapitel | Motivvorschlag |
+| Datei | Kapitel | Motiv |
 |---|---|---|
-| `01-hero.jpg` | 01 Auftakt | Maik auf dem Platz (bereits vorhanden) |
-| `02-treat.jpg` | 02 Treat | Behandlung in Aktion, Liege oder Mobilisation |
-| `03-connect.jpg` | 03 Connect | **Bereits vorhanden** — Behandlungsfoto (Betreuung am Spielfeldrand) |
-| `04-about.jpg` | 04 Über Maik | Kapitelhintergrund — separat von der Karte unten |
-| `05-kontakt.jpg` | 05 Kontakt | Praxis außen oder Empfang |
+| `01-hero.jpg` | 01 Auftakt | **Vorhanden** — Maik auf dem Platz |
+| `02-treat.jpg` | 02 Treat | **Vorhanden** — Behandlung am Bein (Quelle: `Bilder/Treat.jpg`) |
+| `03-connect.jpg` | 03 Connect | **Vorhanden** — Jubel im Stadion mit zwei Spielern (Quelle: `Bilder/connect.jpg`) |
+| `04-about.jpg` | 04 Über Maik | Fehlt noch — nur A-Variante, dort greift solange der Farbverlauf |
+| `05-kontakt.jpg` | 05 Kontakt | Fehlt noch — nur A-Variante, dort greift solange der Farbverlauf |
+
+Die B-Variante nutzt `04-…` und `05-…` nicht; dort fehlt also nichts.
 
 ## Karte „Über Maik"
 
-Kapitel 04 zeigt zusätzlich zum Kapitelhintergrund eine **interaktive Karte**
-rechts im Text — `mletics-card-maik.webp` (bereits vorhanden, aus der
-AutogrammKarte). Die Nutzungsrechte für dieses Bild sind laut Sven geklärt.
+Kapitel 04 zeigt die Autogrammkarte `mletics-card-maik.webp` (aus
+`Bilder/Maik AutogrammKarte.webp`).
 
-Beim **Behandlungsfoto** (`03-connect.jpg`, „Maik behandlung.jpeg") ist auf
-dem Trikot ein anderer Vereins-/Sponsorenkontext erkennbar (Krombacher,
-Vereinswappen) als bei der AutogrammKarte — das war nicht Teil der
-genannten Freigabe. Bitte vor dem Livegang gesondert bestätigen, dass auch
-dieses Bild verwendet werden darf.
+## Rechte
+
+Nutzungsrechte für alle eingesetzten Bilder sind laut Sven geklärt —
+zuletzt bestätigt für das Connect-Foto (2026-09-08). Auf mehreren
+Aufnahmen sind fremde Vereins- und Sponsorenkennzeichen erkennbar
+(Vereinswappen, indeed, Nike); die Freigabe deckt das laut Sven ab.
+
+Das frühere Connect-Bild („Maik behandlung.jpeg") wird **nicht mehr
+verwendet** — es wurde durch das Stadionfoto ersetzt.
 
 ## Anforderungen
 
