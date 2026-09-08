@@ -284,15 +284,23 @@ a{color:inherit}
    Ecke führt zu „Über Maik", der Fußbereich trägt die vollständige
    Navigation. Rechts steht stattdessen der Sprachumschalter. */
 .lang{
-  display:inline-flex;align-items:center;padding:3px;border-radius:999px;
+  display:inline-flex;align-items:center;gap:2px;padding:3px;border-radius:999px;
   background:rgba(20,23,27,.5);border:1px solid rgba(242,240,234,.18);
   backdrop-filter:blur(12px);flex:0 0 auto;
 }
 .lang__btn{
-  min-width:44px;min-height:38px;padding:0 .7rem;border:0;border-radius:999px;
+  /* 44px Mindesthöhe fürs Tippziel (vorher 38px) — knapp unter dem
+     Maß landete auf echten Touchscreens leicht daneben und wirkte wie
+     ein toter Button, obwohl der Klick-Handler einwandfrei lief.
+     touch-action:manipulation nimmt zusätzlich die ~300ms-Verzögerung
+     und verhindert, dass der Browser ein winziges Zittern beim Tippen
+     als Scrollgeste deutet und den Tap verwirft. */
+  min-width:46px;min-height:44px;padding:0 .7rem;border:0;border-radius:999px;
   background:transparent;color:rgba(242,240,234,.7);cursor:pointer;
   font-family:inherit;font-size:.8rem;font-weight:500;letter-spacing:.08em;
   transition:background .25s var(--ease),color .25s var(--ease);
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
 }
 .lang__btn:hover{color:var(--text)}
 .lang__btn[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
