@@ -230,10 +230,23 @@ main{position:relative;z-index:10}
       rgba(9,15,22,.44) 54%,rgba(10,20,30,.12) 82%,rgba(12,26,40,0) 100%);
 }
 @media(max-width:768px){
+  /* Die Verlaufsstufen liefen vorher in Prozent DER KAPITELHÖHE
+     (0/55/100%) — passte für kurze Kapitel, aber „Treat" ist auf dem
+     Handy z.B. ~1800px hoch bei nur ~800px Bildschirmhöhe: schon ab
+     55% der Kapitelhöhe (≈ eine Bildschirmlänge) lag praktisch der
+     GESAMTE Rest des Kapitels unter 85–96% Schwarz — das Bild
+     verschwand für den Großteil des Scrollwegs fast komplett.
+     Jetzt läuft der Verlauf über eine FESTE Strecke (100svh, also
+     etwa eine Bildschirmhöhe) und bleibt danach konstant bei einer
+     moderaten Abdunkelung — unabhängig davon, wie lang das Kapitel
+     durch seinen Text am Ende wird. */
   .chapter__bg-grade{
     background:
       radial-gradient(66% 60% at 72% 30%,rgba(244,236,214,.14) 0%,transparent 62%),
-      linear-gradient(180deg,rgba(10,15,20,.5) 0%,rgba(8,9,11,.85) 55%,rgba(8,9,11,.96) 100%);
+      linear-gradient(180deg,
+        rgba(10,15,20,.42) 0,
+        rgba(8,9,11,.64) 100svh,
+        rgba(8,9,11,.64) 100%);
   }
 }
 
