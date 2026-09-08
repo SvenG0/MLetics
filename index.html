@@ -90,13 +90,16 @@ a{color:inherit}
 .display--sm{font-size:clamp(2rem,4.5vw,3.5rem)}
 .lead{font-size:clamp(1.05rem,1.35vw,1.25rem);line-height:1.75;max-width:42ch;color:#D6D5D2}
 .lead--brand{color:var(--accent-soft);font-weight:500}
-.body{max-width:44ch;color:var(--muted)}
+/* War bisher starr 1rem, während .lead auf breiten Screens bis 1.25rem
+   mitwuchs — auf großen Bildschirmen wirkte Fließtext dadurch neben
+   der Bildgröße klein und beiläufig. Skaliert jetzt genauso mit. */
+.body{font-size:clamp(1rem,1.15vw,1.15rem);line-height:1.7;max-width:44ch;color:var(--muted)}
 .body + .body{margin-top:var(--sp-2)}
 
 /* Kleine Zwischenüberschrift, z. B. „Understand Body." */
 .block-h3{
   font-family:var(--f-display);font-weight:600;font-variation-settings:'wdth' 90;
-  font-size:1.05rem;letter-spacing:-.005em;margin:0 0 .5rem;color:var(--text);
+  font-size:clamp(1.15rem,1.5vw,1.35rem);letter-spacing:-.005em;margin:0 0 .5rem;color:var(--text);
 }
 .block + .block{margin-top:2rem}
 
@@ -223,13 +226,13 @@ main{position:relative;z-index:10}
     /* Rechts läuft die Verdunkelung bewusst NICHT mehr bis auf 0 % aus.
        Sie war ursprünglich nur für die linke Textspalte gedacht — in
        „Connect" sitzt aber auch rechts Text („Für wen?"), direkt auf dem
-       unverdeckten Bild. Beim ruhigeren alten Foto fiel das kaum auf,
-       mit dem kontrastreichen Stadionfoto war es kaum lesbar. Ein
-       Sockel von 45 % hält beide Spalten lesbar; „Über Maik" und
-       „Kontakt" nutzen rechts ohnehin eigene, blickdichte Karten/Formulare
-       — für die ändert sich optisch nichts Wahrnehmbares. */
-    linear-gradient(100deg,rgba(8,9,10,.95) 0%,rgba(8,9,10,.86) 26%,
-      rgba(9,15,22,.6) 54%,rgba(10,20,30,.5) 82%,rgba(12,26,40,.45) 100%);
+       unverdeckten Bild. Ein Sockel von 45 % reichte bei einem lauten,
+       hellen Foto (Stadion, weißes Trikot) nicht — deutlich angehoben
+       auf 78 %, „Über Maik" und „Kontakt" nutzen rechts ohnehin eigene,
+       blickdichte Karten/Formulare — für die ändert sich optisch nichts
+       Wahrnehmbares. */
+    linear-gradient(100deg,rgba(8,9,10,.95) 0%,rgba(8,9,10,.88) 26%,
+      rgba(9,15,22,.82) 54%,rgba(10,20,30,.8) 82%,rgba(12,26,40,.78) 100%);
 }
 @media(max-width:768px){
   /* Bild nie höher als ein Bildschirm — wie ein Kopf-Banner statt einer
@@ -296,6 +299,11 @@ main{position:relative;z-index:10}
   radial-gradient(46% 34% at 52% 88%,rgba(200,218,240,.15) 0%,transparent 66%),
   radial-gradient(90% 76% at 50% 96%,#33668F 0%,#193150 36%,#0D1B29 68%,#0A0B0D 92%),
   radial-gradient(140% 120% at 50% 45%,transparent 36%,rgba(3,4,5,.82) 100%)}
+/* Das Stadionfoto ist deutlich unruhiger als die anderen Kapitelbilder
+   (Menschenmenge, helles Trikot, viel feine Struktur) — dieselbe
+   Grundfilterung wie überall reichte hier nicht aus. Zusätzlich
+   entsättigt und abgedunkelt, nur für dieses eine Bild. */
+.bg-03 .chapter__bg-img{filter:grayscale(.7) saturate(.7) contrast(.98) brightness(.56)}
 .bg-04{background-image:
   radial-gradient(30% 44% at 74% 24%,rgba(216,232,248,.24) 0%,transparent 58%),
   radial-gradient(72% 84% at 79% 34%,#4189BC 0%,#204768 30%,#111F2E 62%,#0A0B0D 88%),
