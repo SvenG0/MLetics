@@ -192,13 +192,38 @@ a{color:inherit}
 }
 .drawer__close{position:absolute;top:var(--sp-3);right:var(--sp-3)}
 
-/* ── Kapitel-Hintergrund: läuft normal mit dem Dokument mit ──────
-   Vorher: ein fixiertes Bild pro Kapitel, das per Opacity überblendete.
-   Wirkte abgehängt vom Scrollen ("Bild bleibt stehen, verschwindet
-   abrupt") und war durch das dauerhafte Fixed-Layer-Compositing teuer.
-   Jetzt trägt jedes Kapitel sein Bild direkt in sich — es scrollt mit,
-   kein Crossfade, kein zusätzliches JS während des Scrollens nötig. */
-.chapter__bg{position:absolute;inset:0;z-index:0;overflow:hidden;background-size:cover;background-position:center}
+/* ── Hintergrundbühne: eine fixierte Ebene für alle Kapitel ──────
+   Der Text scrollt normal darüber. Zwei frühere Ansätze sind hier
+   eingeflossen:
+   1. Ein Bild pro Kapitel, mitscrollend (position:absolute) — dabei
+      musste jedes Kapitel per position:sticky oben festkleben, was auf
+      dem Handy Inhalte unerreichbar machte, sobald ein Kapitel höher
+      als der Bildschirm war.
+   2. Davor ein fixiertes Bild pro Kapitel mit hartem Umschalten — das
+      wirkte „abgehängt vom Scrollen": Das Bild stand still und
+      verschwand dann abrupt.
+   Diese Fassung nimmt von beidem das Gute: fixiert (also sticky-frei
+   und damit mobil unkaputtbar), aber die Ebenen blenden stufenlos
+   scrollgekoppelt ineinander UND driften dabei leicht — dadurch steht
+   nichts still und nichts springt.
+   Die Ebene ist absichtlich höher als der Bildschirm (inset:-6% 0),
+   damit die Drift keine Kanten freilegt. */
+.bgstage{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.bgstage__layer{
+  position:absolute;inset:-6% 0;
+  background-size:cover;background-position:center;
+  opacity:var(--ebene,0);
+  /* translate3d (statt translateY) hält die Ebene auf dem Compositor.
+     Zusätzliches will-change wäre hier nur doppelt und kostet auf dem
+     Handy unnötig Grafikspeicher — fünf Vollbildebenen liegen ohnehin
+     schon dauerhaft im Speicher. */
+  transform:translate3d(0,var(--drift,0px),0);
+}
+/* Ohne JavaScript bliebe die Bühne sonst komplett unsichtbar (--ebene
+   startet bei 0). Die erste Ebene ist deshalb per Voreinstellung schon
+   deckend — JS überschreibt das ohnehin sofort. Gleiche Lehre wie beim
+   Text weiter unten: Sichtbarkeit darf nie allein an JS hängen. */
+.bgstage__layer:first-child{--ebene:1}
 
 /* Foto oder Video im Kapitel. Fehlt die Datei, entfernt JS das Element
    und der CSS-Verlauf darunter bleibt als Rückfallebene stehen. */
@@ -278,33 +303,19 @@ a{color:inherit}
   radial-gradient(80% 92% at 20% 56%,#356E9A 0%,#1C3C5C 34%,#0F1D2C 66%,#0A0B0D 90%),
   radial-gradient(140% 120% at 50% 50%,transparent 40%,rgba(3,4,5,.78) 100%)}
 
-/* ── Kapitel: Stapel-Effekt ───────────────────────────────
-   Jedes Kapitel bleibt oben stehen (position:sticky), bis das nächste
-   von unten darüber schiebt und es zudeckt — direkt und verzögerungsfrei
-   an die Scrollgeste gekoppelt (reiner Compositor, kein JS nötig für den
-   Effekt selbst). Bewusst kein position:fixed + Opacity-Crossfade mehr
-   wie vorher: das fühlte sich vom Scrollen abgekoppelt an.
-   Zusätzlich blendet jedes Kapitel beim Ankommen aus der Transparenz ein
-   (--enterOpacity, per JS an die eigene Position gekoppelt) — sonst wirkt
-   das Sticky-Überdecken wie ein hartes Blatt Papier, das über das vorige
-   geschoben wird, statt wie ein weicher Übergang.
-   WICHTIG: overflow:hidden sitzt an .chapter__bg, nicht am Kapitel selbst
-   — sonst würde längerer Text bei Sticky-Höhe abgeschnitten. */
+/* ── Kapitel ──────────────────────────────────────────────
+   Ganz normaler Dokumentfluss: kein sticky, kein fixed, keine
+   Höhenbedingung. Ein Kapitel darf beliebig hoch werden, ohne dass
+   Inhalt unerreichbar wird — genau das war der Fehler der früheren
+   Stapel-Lösung auf dem Handy. Der Hintergrund liegt fixiert dahinter
+   (.bgstage), deshalb hier bewusst KEIN eigener Hintergrund: sonst
+   wäre die Bühne verdeckt. Die Lesbarkeit sichert die Lasur in der
+   Bühne (.chapter__bg-grade). */
 main{position:relative;z-index:10}
 .chapter{
   min-height:100svh;display:flex;align-items:center;
   padding-block:8rem var(--sp-6);
-  position:sticky;top:0;
-  background:var(--bg);
-  opacity:var(--enterOpacity,1);
 }
-/* Ist ein Kapitel höher als der Bildschirm (z.B. „Treat" mit 3 gestapelten
-   Leistungskarten auf schmalen Screens), bleibt bei position:sticky alles
-   unterhalb der ersten Bildschirmhöhe unsichtbar hinter dem Rand hängen —
-   sticky zeigt immer nur den ersten Ausschnitt, der Rest lässt sich nicht
-   herunterscrollen. Per JS (kapitelPassung) markiert; solche Kapitel
-   scrollen stattdessen normal durch, statt zu stapeln. */
-.chapter[data-fits="false"]{position:relative;opacity:1}
 .chapter .wrap{position:relative;z-index:10}
 .chapter__grid{display:grid;gap:var(--sp-5);align-items:center}
 @media(min-width:1024px){
@@ -521,18 +532,44 @@ footer{position:relative;z-index:10;background:var(--bg);border-top:1px solid va
   <button data-go="kontakt" aria-label="Kapitel 5: Kontakt"><span></span></button>
 </nav>
 
+<!-- ── Hintergrundbühne ────────────────────────────────────
+     Eine einzige fixierte Ebene für alle Kapitelbilder, statt eines
+     Bildes pro Kapitel. Der Text darüber scrollt völlig normal — nichts
+     klebt, nichts wird gepinnt, kein Inhalt kann dadurch unerreichbar
+     werden (genau daran scheiterten Sticky-Stapel auf dem Handy).
+     Die Bilder blenden beim Scrollen ineinander über; die Reihenfolge
+     hier muss der Kapitelreihenfolge entsprechen, weil jede Ebene die
+     darunterliegende beim Einblenden zudeckt.
+     Für Video im Auftakt das erste <img> ersetzen durch:
+     <video class="chapter__bg-img" src="assets/01-hero.mp4" poster="assets/01-hero.jpg"
+            autoplay muted loop playsinline preload="none"></video> -->
+<div class="bgstage" aria-hidden="true">
+  <div class="bgstage__layer bg-01">
+    <img class="chapter__bg-img" src="assets/01-hero.jpg" alt="" data-media>
+    <div class="chapter__bg-grade"></div>
+  </div>
+  <div class="bgstage__layer bg-02">
+    <img class="chapter__bg-img" src="assets/02-treat.jpg" alt="" data-media>
+    <div class="chapter__bg-grade"></div>
+  </div>
+  <div class="bgstage__layer bg-03">
+    <img class="chapter__bg-img" src="assets/03-connect.jpg" alt="" data-media>
+    <div class="chapter__bg-grade"></div>
+  </div>
+  <div class="bgstage__layer bg-04">
+    <img class="chapter__bg-img" src="assets/04-about.jpg" alt="" data-media>
+    <div class="chapter__bg-grade"></div>
+  </div>
+  <div class="bgstage__layer bg-05">
+    <img class="chapter__bg-img" src="assets/05-kontakt.jpg" alt="" data-media>
+    <div class="chapter__bg-grade"></div>
+  </div>
+</div>
+
 <main id="inhalt">
 
 <!-- ── 01 AUFTAKT ─────────────────────────────────────── -->
 <section class="chapter" id="auftakt" data-chapter="0">
-  <!-- Kapitel-Hintergrund: scrollt normal mit. Für Video das <img>
-       ersetzen durch:
-       <video class="chapter__bg-img" src="assets/01-hero.mp4" poster="assets/01-hero.jpg"
-              autoplay muted loop playsinline preload="none"></video> -->
-  <div class="chapter__bg bg-01" aria-hidden="true">
-    <img class="chapter__bg-img" src="assets/01-hero.jpg" alt="" data-media>
-    <div class="chapter__bg-grade"></div>
-  </div>
   <div class="wrap">
     <p class="eyebrow rise"><b>01</b> <span>MLetics by Maik Liesbrock — Bochum</span></p>
     <h1 class="display rise">UNDERSTAND. TREAT.<br>CONNECT.</h1>
@@ -551,10 +588,6 @@ footer{position:relative;z-index:10;background:var(--bg);border-top:1px solid va
 
 <!-- ── 02 TREAT (Leistungen) ──────────────────────────── -->
 <section class="chapter" id="treat" data-chapter="1">
-  <div class="chapter__bg bg-02" aria-hidden="true">
-    <img class="chapter__bg-img" src="assets/02-treat.jpg" alt="" data-media>
-    <div class="chapter__bg-grade"></div>
-  </div>
   <div class="wrap">
     <p class="eyebrow rise"><b>02</b> <span>Treat</span></p>
     <h2 class="display display--sm rise">Individuelle Therapie<br>statt Behandlung nach Schema.</h2>
@@ -604,10 +637,6 @@ footer{position:relative;z-index:10;background:var(--bg);border-top:1px solid va
 
 <!-- ── 04 CONNECT ─────────────────────────────────────── -->
 <section class="chapter" id="connect" data-chapter="2">
-  <div class="chapter__bg bg-03" aria-hidden="true">
-    <img class="chapter__bg-img" src="assets/03-connect.jpg" alt="" data-media>
-    <div class="chapter__bg-grade"></div>
-  </div>
   <div class="wrap chapter__grid">
     <div>
       <p class="eyebrow rise"><b>03</b> <span>Connect</span></p>
@@ -642,10 +671,6 @@ footer{position:relative;z-index:10;background:var(--bg);border-top:1px solid va
 
 <!-- ── 04 ÜBER MAIK ───────────────────────────────────── -->
 <section class="chapter" id="about" data-chapter="3">
-  <div class="chapter__bg bg-04" aria-hidden="true">
-    <img class="chapter__bg-img" src="assets/04-about.jpg" alt="" data-media>
-    <div class="chapter__bg-grade"></div>
-  </div>
   <div class="wrap chapter__grid">
     <div>
       <p class="eyebrow rise"><b>04</b> <span>Über Maik</span></p>
@@ -693,10 +718,6 @@ footer{position:relative;z-index:10;background:var(--bg);border-top:1px solid va
 
 <!-- ── 05 KONTAKT ─────────────────────────────────────── -->
 <section class="chapter" id="kontakt" data-chapter="4">
-  <div class="chapter__bg bg-05" aria-hidden="true">
-    <img class="chapter__bg-img" src="assets/05-kontakt.jpg" alt="" data-media>
-    <div class="chapter__bg-grade"></div>
-  </div>
   <div class="wrap chapter__grid" style="align-items:start">
     <div>
       <p class="eyebrow rise"><b>05</b> <span>Kontakt</span></p>
@@ -813,38 +834,17 @@ function initMLetics(){
 
   var sections = Array.prototype.slice.call(document.querySelectorAll('.chapter'));
 
-  /* offsetTop ist bei position:sticky-Elementen KEIN verlässlicher Wert:
-     während ein Kapitel gerade „klebt" (oder das Dokumentende erreicht
-     ist), liefern Browser teils die aktuelle, scroll-abhängige Position
-     statt der echten Dokumentposition zurück — gemessen und reproduziert
-     in dieser Session (mehrfache scrollTo-Aufrufe kurz hintereinander
-     verwirrten zusätzlich die Smooth-Scroll-Animation des Browsers).
-     Deshalb: Positionen genau EINMAL messen, bei Scrollposition 0 (dort
-     kann nichts verfälscht sein), und für jede Navigation wiederverwenden
-     — nie live am Klick-Zeitpunkt neu messen. */
+  /* Kapitelpositionen für Navigation (Punktleiste, Vor/Zurück, #anker).
+     Früher musste hier zum Messen kurz auf 0 gescrollt und zurück
+     gesprungen werden, weil offsetTop bei position:sticky-Elementen
+     scroll-abhängige Werte lieferte. Seit die Kapitel im normalen Fluss
+     liegen, ist offsetTop wieder verlässlich — der Sprung entfällt
+     (er war bei jedem Resize sichtbar). */
   var sectionTops = [];
   function neuVermessen(){
-    var vorher = window.scrollY;
-    if(vorher !== 0) window.scrollTo(0, 0);
     sectionTops = sections.map(function(s){ return s.offsetTop; });
-    if(vorher !== 0) window.scrollTo(0, vorher);
   }
   neuVermessen();
-
-  /* Kapitel, die höher als der Bildschirm sind (z.B. „Treat" mit 3
-     gestapelten Leistungskarten auf schmalen Screens), bekommen kein
-     position:sticky — siehe .chapter[data-fits="false"]. Sonst zeigt
-     Sticky nur die erste Bildschirmhöhe; der Rest bleibt beim Stapeln
-     permanent unsichtbar hinter dem oberen Rand hängen, ganz gleich wie
-     lange weitergescrollt wird. offsetHeight ist dafür unproblematisch,
-     anders als offsetTop: Sticky ändert nur die Malposition beim Kleben,
-     nicht die Layout-Höhe. */
-  function kapitelPassung(){
-    sections.forEach(function(sec){
-      sec.dataset.fits = sec.offsetHeight <= window.innerHeight ? 'true' : 'false';
-    });
-  }
-  kapitelPassung();
 
   /* Startposition selbst bestimmen, statt sich auf den Browser zu
      verlassen: scrollRestoration:'manual' unterdrückt bei einigen Browsern
@@ -950,46 +950,67 @@ function initMLetics(){
     if(!ticking){ ticking = true; requestAnimationFrame(zeichneFortschritt); }
   }, {passive: true});
   window.addEventListener('resize', zeichneFortschritt);
-  window.addEventListener('resize', kapitelPassung);
   window.addEventListener('resize', neuVermessen);
   zeichneFortschritt();
 
-  /* Die Hero-Parallaxe von vorhin ist raus: Der Hero „klebt" jetzt per
-     position:sticky, bis ihn das nächste Kapitel zudeckt — er scrollt
-     also nicht mehr kontinuierlich durchs Bild, sondern steht still.
-     Eine Parallaxe hätte darin nichts mehr zu bewegen. */
+  /* Die frühere separate Hero-Parallaxe ist raus — die Drift der
+     Hintergrundbühne (unten) übernimmt das jetzt für alle Kapitel
+     einheitlich, statt nur für den Auftakt. */
 
-  /* Weicher Übergang beim Sticky-Stapeln: Jedes Kapitel blendet aus der
-     Transparenz ein, während es von unten heranschiebt.
-     Zwei Gegensätze unter einen Hut gebracht (beides echtes Feedback nach
-     Live-Tests): ein zu langes Fenster (volle Bildschirmhöhe) ließ beide
-     Kapitel zu lange gleichzeitig halb durchscheinen — verwirrend. Ein zu
-     kurzes Fenster (ein Drittel) ließ dafür den Bildschirm über den
-     GRÖSSTEN Teil der Scrollstrecke komplett unverändert wirken, bevor am
-     Ende alles plötzlich passiert — fühlte sich träge/reaktionslos an.
-     Lösung: größeres Fenster (mehr als die Hälfte der Bildschirmhöhe, also
-     reagiert es früh sichtbar), aber mit Ease-in-Kurve statt linear — sie
-     startet langsam (kaum Überlapp ganz am Anfang) und durchläuft die
-     kritische 40–70%-Überlapp-Zone zügig, statt dort zu verweilen. */
-  if(!reduce){
-    var fadeTicking = false;
-    var FADE_ANTEIL = 0.58; // Anteil der Bildschirmhöhe bis voll deckend
-    function kapitelEinblenden(){
-      var vh = innerHeight;
-      sections.forEach(function(sec){
-        var top = sec.getBoundingClientRect().top;
-        var linear = 1 - Math.min(1, Math.max(0, top / (vh * FADE_ANTEIL)));
-        var fortschritt = linear * linear * (3 - 2 * linear); // Smoothstep-Ease
-        sec.style.setProperty('--enterOpacity', fortschritt);
-      });
-      fadeTicking = false;
-    }
-    window.addEventListener('scroll', function(){
-      if(!fadeTicking){ fadeTicking = true; requestAnimationFrame(kapitelEinblenden); }
-    }, {passive: true});
-    window.addEventListener('resize', kapitelEinblenden);
-    kapitelEinblenden();
+  /* Hintergrundbühne mischen — der eigentliche Kapitelübergang.
+     Jede Ebene blendet ein, während ihr Kapitel heranscrollt, und bleibt
+     dann deckend: Weil spätere Ebenen im Markup über den früheren liegen,
+     deckt die einblendende die vorige von selbst zu. Deshalb muss nichts
+     ausgeblendet werden — sonst würde mitten im Übergang der dunkle
+     Seitengrund durchscheinen.
+
+     Die Kurve stammt unverändert aus dem Feintuning am alten
+     Stapel-Effekt (beides echtes Feedback nach Live-Tests): ein zu langes
+     Fenster (volle Bildschirmhöhe) ließ zwei Kapitel zu lange gleichzeitig
+     halb durchscheinen — verwirrend. Ein zu kurzes Fenster (ein Drittel)
+     ließ dafür den größten Teil der Scrollstrecke unverändert wirken,
+     bevor am Ende alles plötzlich passiert — träge. Lösung: großes
+     Fenster (58 % der Bildschirmhöhe, reagiert also früh sichtbar), aber
+     mit Smoothstep statt linear — startet sanft und durchläuft die
+     kritische Überlappzone zügig.
+
+     Dazu die Drift: die Ebene wandert über ihre Lebensdauer ~50 px nach
+     oben. Das behebt den anderen alten Kritikpunkt („das Bild geht nicht
+     mit hoch, sondern verschwindet abrupt") — der Hintergrund bewegt sich
+     jetzt sichtbar mit dem Scrollen, nur langsamer als der Text, was die
+     Tiefenwirkung erzeugt. Nur opacity und transform, also reiner
+     Compositor: auch auf älteren Handys flüssig. */
+  var ebenen = Array.prototype.slice.call(document.querySelectorAll('.bgstage__layer'));
+  var FADE_ANTEIL = 0.58; // Anteil der Bildschirmhöhe bis voll deckend
+  var DRIFT = 50;         // px, die eine Ebene über ihre Lebensdauer wandert
+  var bgTicking = false;
+
+  function hintergrundMischen(){
+    var vh = innerHeight;
+    sections.forEach(function(sec, i){
+      var ebene = ebenen[i];
+      if(!ebene) return;
+      var top = sec.getBoundingClientRect().top;
+      var linear = 1 - Math.min(1, Math.max(0, top / (vh * FADE_ANTEIL)));
+      /* Reduzierte Bewegung: hart umschalten statt überblenden/driften. */
+      if(reduce){
+        ebene.style.setProperty('--ebene', top <= vh * 0.5 ? 1 : 0);
+        return;
+      }
+      ebene.style.setProperty('--ebene', linear * linear * (3 - 2 * linear));
+      /* Drift läuft über die volle Durchlaufstrecke, nicht nur übers
+         Einblendfenster — sonst stünde das Bild danach wieder still. */
+      var durchlauf = Math.min(1, Math.max(0, (vh - top) / (vh + sec.offsetHeight)));
+      ebene.style.setProperty('--drift', (0.5 - durchlauf) * DRIFT + 'px');
+    });
+    bgTicking = false;
   }
+
+  window.addEventListener('scroll', function(){
+    if(!bgTicking){ bgTicking = true; requestAnimationFrame(hintergrundMischen); }
+  }, {passive: true});
+  window.addEventListener('resize', hintergrundMischen);
+  hintergrundMischen();
 
   function goTo(i){
     if(i < 0 || i >= sections.length) return;
@@ -1047,12 +1068,11 @@ function initMLetics(){
     sections.forEach(function(sec){ revealWatch.observe(sec); });
   }
 
-  /* Der „fließende Übergang" läuft jetzt rein über CSS position:sticky
-     (siehe .chapter) — das nächste Kapitel deckt das vorherige direkt beim
-     Scrollen zu. Vorher übernahm das GSAP mit einer Opacity/Y-Scrub-
-     Animation; die ist jetzt überflüssig und wurde entfernt (GSAP wird
-     dadurch nirgends mehr gebraucht, siehe <head> — keine externe
-     Abhängigkeit mehr, ein HTTP-Request weniger). */
+  /* Den „fließenden Übergang" macht die Hintergrundbühne oben
+     (hintergrundMischen). Vorher übernahm das GSAP mit einer Opacity/
+     Y-Scrub-Animation; die ist überflüssig und wurde entfernt — GSAP
+     wird nirgends mehr gebraucht (siehe <head>), also keine externe
+     Abhängigkeit und ein HTTP-Request weniger. */
 
   /* Formular — Prototyp, versendet noch nicht */
   document.getElementById('form').addEventListener('submit', function(e){
