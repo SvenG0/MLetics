@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MLetics — Physiotherapie &amp; Sport-Osteopathie in Bochum</title>
-<meta name="description" content="MLetics: Physiotherapie und Sport-Osteopathie von Maik Liesbrock in Bochum. 16 Jahre Erfahrung im Profifußball — für Athletinnen, Athleten und Patientinnen, Patienten.">
+<title data-en="MLetics — Physiotherapy &amp; Sports Osteopathy in Bochum">MLetics — Physiotherapie &amp; Sport-Osteopathie in Bochum</title>
+<meta name="description" data-en-content="MLetics: physiotherapy and sports osteopathy by Maik Liesbrock in Bochum. 16 years of experience in professional football — for athletes and patients alike." content="MLetics: Physiotherapie und Sport-Osteopathie von Maik Liesbrock in Bochum. 16 Jahre Erfahrung im Profifußball — für Athletinnen, Athleten und Patientinnen, Patienten.">
 
 <!--
   ─────────────────────────────────────────────────────────────
@@ -218,41 +218,15 @@ a{color:inherit}
 .hero__lead{max-width:44rem;color:rgba(242,240,234,.86);margin:0 auto}
 .hero__actions{display:flex;flex-wrap:wrap;gap:.75rem;justify-content:center;margin-top:2rem}
 
-/* Glaskarte unten links */
-.hero__stat{
-  position:absolute;left:1rem;bottom:6.5rem;z-index:3;
-  display:flex;flex-direction:column;gap:.75rem;
-  min-width:9.5rem;padding:1rem;border-radius:var(--r-md);
-  background:rgba(20,23,27,.42);border:1px solid rgba(242,240,234,.16);
-  backdrop-filter:blur(18px);
-}
-@media(min-width:768px){
-  .hero__stat{left:2rem;bottom:2rem;min-width:11.5rem;padding:1.25rem;gap:1rem}
-}
-/* Auf schmalen Schirmen entfällt die Glaskarte ganz. Sie hätte dort
-   neben den mittigen Buttons keinen Platz, und reduziert auf die reine
-   Kennzahl wirkte sie wie ein anklickbares Feld, das nichts tut. Die
-   Angabe steht ohnehin im Abschnitt „Über Maik". */
+/* Abstände auf schmalen Schirmen verdichtet, damit die ausgeschnittene
+   Ecke noch auf den ersten Bildschirm passt. Die Schriftgröße bleibt
+   unangetastet, nur der Zeilenabstand rückt zusammen. */
 @media(max-width:767px){
-  .hero__stat{display:none}
-  /* Abstände verdichtet, damit die ausgeschnittene Ecke noch auf den
-     ersten Bildschirm passt. Die Schriftgröße bleibt unangetastet,
-     nur der Zeilenabstand rückt zusammen. */
   .hero__center{padding:1.5rem 1.25rem 8rem}
   .hero__center .badge{margin-bottom:1rem}
   .hero h1{margin-bottom:1rem}
   .hero__lead{line-height:1.55}
   .hero__actions{margin-top:1.5rem}
-}
-/* Direkte Kinder ansprechen — sonst greifen die Regeln auch auf die
-   Spans im Pill-Button darunter zu. */
-.hero__stat > div{display:flex;flex-direction:column;gap:.2rem}
-.hero__stat > div > b{
-  font-family:var(--f-display);font-weight:700;font-size:1.75rem;
-  letter-spacing:-.02em;line-height:1;color:var(--text);
-}
-.hero__stat > div > span{
-  font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
 }
 
 /* Ausgeschnittene Ecke unten rechts — das Erkennungszeichen der
@@ -304,18 +278,24 @@ a{color:inherit}
   transition:color .2s var(--ease);
 }
 .nav__links a:hover{color:var(--text)}
-/* Kein Menü-Button: Die Seite ist ein einziger Verlauf, und auf dem
-   Handy führt die Handlungsschaltfläche direkt zum Ziel. Zu den
-   Abschnitten kommt man über die Auftakt-Buttons, die ausgeschnittene
-   Ecke und den Fußbereich. Deshalb steht die Schaltfläche hier auf
-   jeder Breite — sie ersetzt das frühere Overlay-Menü.
-   Auf sehr schmalen Schirmen verkürzt sie sich auf „Termin", damit sie
-   neben dem Logo Platz hat. */
-@media(max-width:479px){
-  .nav__cta{padding-left:.9rem;font-size:.82rem}
-  .nav__cta .nav__cta-lang{display:none}
+/* Kopfzeile bewusst schlank: kein Menü-Button und keine Handlungs-
+   schaltfläche. Beides wäre hier doppelt — „Termin anfragen" und
+   „Leistungen ansehen" stehen mittig im Auftakt, die ausgeschnittene
+   Ecke führt zu „Über Maik", der Fußbereich trägt die vollständige
+   Navigation. Rechts steht stattdessen der Sprachumschalter. */
+.lang{
+  display:inline-flex;align-items:center;padding:3px;border-radius:999px;
+  background:rgba(20,23,27,.5);border:1px solid rgba(242,240,234,.18);
+  backdrop-filter:blur(12px);flex:0 0 auto;
 }
-@media(min-width:480px){ .nav__cta .nav__cta-kurz{display:none} }
+.lang__btn{
+  min-width:44px;min-height:38px;padding:0 .7rem;border:0;border-radius:999px;
+  background:transparent;color:rgba(242,240,234,.7);cursor:pointer;
+  font-family:inherit;font-size:.8rem;font-weight:500;letter-spacing:.08em;
+  transition:background .25s var(--ease),color .25s var(--ease);
+}
+.lang__btn:hover{color:var(--text)}
+.lang__btn[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
 
 /* ── Kartenraster ───────────────────────────────────────
    Drei gleichwertige Leistungskarten nebeneinander. Bewusst kein
@@ -516,53 +496,37 @@ footer{border-top:1px solid var(--line);margin-top:var(--pad)}
         <ul class="nav__links">
           <li><a href="#treat">Treat</a></li>
           <li><a href="#connect">Connect</a></li>
-          <li><a href="#about">Über Maik</a></li>
-          <li><a href="#kontakt">Kontakt</a></li>
+          <li><a href="#about" data-en="About Maik">Über Maik</a></li>
+          <li><a href="#kontakt" data-en="Contact">Kontakt</a></li>
         </ul>
-        <a href="#kontakt" class="pill pill--solid nav__cta">
-          <span class="nav__cta-lang">Termin anfragen</span>
-          <span class="nav__cta-kurz">Termin</span>
-          <span class="pill__chip" aria-hidden="true">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg>
-          </span>
-        </a>
+        <div class="lang" role="group" aria-label="Sprache / Language">
+          <button type="button" class="lang__btn" data-lang="de" aria-pressed="true">DE</button>
+          <button type="button" class="lang__btn" data-lang="en" aria-pressed="false">EN</button>
+        </div>
       </nav>
 
       <div class="hero__center">
         <p class="badge rise">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.6L19.5 10l-5.6 1.9L12 17.5 10.1 11.9 4.5 10l5.6-1.4z"/></svg>
-          MLetics by Maik Liesbrock — Bochum
+          <span data-en="MLetics by Maik Liesbrock — Bochum">MLetics by Maik Liesbrock — Bochum</span>
         </p>
         <h1 class="display rise">UNDERSTAND. TREAT.<br>CONNECT.</h1>
-        <p class="hero__sub rise">Verstehen. Behandeln. Vernetzen.</p>
-        <p class="lead hero__lead rise">
+        <p class="hero__sub rise" data-en="Understand. Treat. Connect.">Verstehen. Behandeln. Vernetzen.</p>
+        <p class="lead hero__lead rise" data-en="Understanding the body. Recognising how things connect. Treating each person individually. And wherever further expertise helps, bringing the right people together.">
           Den Körper verstehen. Funktionelle Zusammenhänge erkennen. Individuell
           behandeln. Und dort, wo weitere Expertise sinnvoll ist, die richtigen
           Kompetenzen miteinander verbinden.
         </p>
         <div class="hero__actions rise">
           <a href="#kontakt" class="pill pill--solid">
-            <span>Termin anfragen</span>
+            <span data-en="Request an appointment">Termin anfragen</span>
             <span class="pill__chip" aria-hidden="true">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg>
             </span>
           </a>
-          <a href="#treat" class="pill pill--glass">Leistungen ansehen</a>
+          <a href="#treat" class="pill pill--glass" data-en="View services">Leistungen ansehen</a>
         </div>
       </div>
-    </div>
-
-    <div class="hero__stat rise">
-      <div>
-        <b>16 Jahre</b>
-        <span>Profifußball</span>
-      </div>
-      <a href="#about" class="pill pill--solid" style="padding:.3rem .3rem .3rem .9rem;font-size:.82rem;min-height:38px">
-        <span>Über Maik</span>
-        <span class="pill__chip" style="width:24px;height:24px" aria-hidden="true">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg>
-        </span>
-      </a>
     </div>
 
     <div class="carve">
@@ -576,11 +540,8 @@ footer{border-top:1px solid var(--line);margin-top:var(--pad)}
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg>
       </span>
       <span>
-        <b>Leistungen</b>
-        <a href="#treat">
-          Physio &amp; Osteopathie
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
-        </a>
+        <b data-en="About Maik">Über Maik</b>
+        <a href="#about"><span data-en="Sports osteopathy">Sport-Osteopathie</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></a>
       </span>
     </div>
   </div>
@@ -591,15 +552,15 @@ footer{border-top:1px solid var(--line);margin-top:var(--pad)}
   <div class="section-head rise">
     <div>
       <p class="eyebrow"><b>02</b> <span>Treat</span> <i></i></p>
-      <h2 class="display display--sm">Individuelle Therapie<br>statt Behandlung nach Schema.</h2>
-      <p class="lead" style="margin-top:1.5rem">
+      <h2 class="display display--sm" data-en="Individual therapy<br>instead of one-size-fits-all.">Individuelle Therapie<br>statt Behandlung nach Schema.</h2>
+      <p class="lead" style="margin-top:1.5rem" data-en="An individual treatment plan grows out of the assessment. Physiotherapy and osteopathic approaches are deliberately combined and adapted to your personal situation.">
         Auf Basis der Befundung entsteht ein individuelles Behandlungskonzept.
         Physiotherapie und osteopathische Ansätze werden dabei gezielt miteinander
         verbunden und an Deine persönliche Situation angepasst.
       </p>
     </div>
     <a href="#kontakt" class="pill pill--ghost" style="flex:0 0 auto">
-      <span>Termin anfragen</span>
+      <span data-en="Request an appointment">Termin anfragen</span>
       <span class="pill__chip" aria-hidden="true">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg>
       </span>
@@ -607,7 +568,7 @@ footer{border-top:1px solid var(--line);margin-top:var(--pad)}
   </div>
 
   <figure class="shot rise">
-    <img src="assets/02-treat.jpg" alt="Maik Liesbrock behandelt das Bein eines Athleten auf der Behandlungsliege" data-media>
+    <img src="assets/02-treat.jpg" alt="Maik Liesbrock behandelt das Bein eines Athleten auf der Behandlungsliege" data-en-alt="Maik Liesbrock treating an athlete's leg on the treatment table" data-media>
   </figure>
 
   <div class="bento">
@@ -617,13 +578,13 @@ footer{border-top:1px solid var(--line);margin-top:var(--pad)}
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.4-7-9.6A4.4 4.4 0 0 1 12 8a4.4 4.4 0 0 1 7 3.4C19 16.6 12 21 12 21z"/></svg>
       </span>
       <div>
-        <h3>Physiotherapie</h3>
-        <p>Beschwerden behandeln, Beweglichkeit verbessern und Funktionen wiederherstellen.</p>
+        <h3 data-en="Physiotherapy">Physiotherapie</h3>
+        <p data-en="Treating complaints, improving mobility and restoring function.">Beschwerden behandeln, Beweglichkeit verbessern und Funktionen wiederherstellen.</p>
         <ul class="ticks">
-          <li>Akute und chronische Beschwerden</li>
-          <li>Behandlung nach Verletzungen und Operationen</li>
-          <li>Funktionelle Bewegungsanalyse</li>
-          <li>Individuelle Therapieplanung</li>
+          <li data-en="Acute and chronic complaints">Akute und chronische Beschwerden</li>
+          <li data-en="Treatment after injury and surgery">Behandlung nach Verletzungen und Operationen</li>
+          <li data-en="Functional movement analysis">Funktionelle Bewegungsanalyse</li>
+          <li data-en="Individual therapy planning">Individuelle Therapieplanung</li>
         </ul>
       </div>
     </article>
@@ -634,13 +595,13 @@ footer{border-top:1px solid var(--line);margin-top:var(--pad)}
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2.5-6 5 12L17 12h4"/></svg>
       </span>
       <div>
-        <h3>Sport-Osteopathie</h3>
-        <p>Körperliche Zusammenhänge betrachten und funktionelle Einschränkungen ganzheitlich einordnen.</p>
+        <h3 data-en="Sports osteopathy">Sport-Osteopathie</h3>
+        <p data-en="Looking at how the body connects and placing functional limitations in a wider context.">Körperliche Zusammenhänge betrachten und funktionelle Einschränkungen ganzheitlich einordnen.</p>
         <ul class="ticks">
-          <li>Prävention von Sportverletzungen</li>
-          <li>Optimierung von Bewegungsabläufen</li>
-          <li>Förderung von Regeneration und Belastbarkeit</li>
-          <li>Betreuung von Freizeit- und Leistungssportlern</li>
+          <li data-en="Preventing sports injuries">Prävention von Sportverletzungen</li>
+          <li data-en="Optimising movement patterns">Optimierung von Bewegungsabläufen</li>
+          <li data-en="Supporting recovery and resilience">Förderung von Regeneration und Belastbarkeit</li>
+          <li data-en="Care for recreational and competitive athletes">Betreuung von Freizeit- und Leistungssportlern</li>
         </ul>
       </div>
     </article>
@@ -651,13 +612,13 @@ footer{border-top:1px solid var(--line);margin-top:var(--pad)}
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7.5 3v5.2c0 4.4-3.1 8.3-7.5 9.3-4.4-1-7.5-4.9-7.5-9.3V6z"/><path d="M9.5 12l1.8 1.8 3.4-3.6"/></svg>
       </span>
       <div>
-        <h3>Sektorale Heilpraktik Physiotherapie</h3>
-        <p>Eigenständige physiotherapeutische Befundung und Behandlung im Rahmen der bestehenden Erlaubnis.</p>
+        <h3 data-en="Direct-access physiotherapy (Sektorale Heilpraktik)">Sektorale Heilpraktik Physiotherapie</h3>
+        <p data-en="Independent physiotherapeutic assessment and treatment within the scope of the existing licence.">Eigenständige physiotherapeutische Befundung und Behandlung im Rahmen der bestehenden Erlaubnis.</p>
         <ul class="ticks">
-          <li>Direkter Zugang ohne ärztliche Verordnung</li>
-          <li>Umfassende Befunderhebung</li>
-          <li>Individuelle Behandlungskonzepte</li>
-          <li>Hausbesuche nach Vereinbarung</li>
+          <li data-en="Direct access without a doctor's referral">Direkter Zugang ohne ärztliche Verordnung</li>
+          <li data-en="Comprehensive assessment">Umfassende Befunderhebung</li>
+          <li data-en="Individual treatment plans">Individuelle Behandlungskonzepte</li>
+          <li data-en="Home visits by arrangement">Hausbesuche nach Vereinbarung</li>
         </ul>
       </div>
     </article>
@@ -672,8 +633,8 @@ footer{border-top:1px solid var(--line);margin-top:var(--pad)}
   <div class="section-head rise">
     <div>
       <p class="eyebrow"><b>03</b> <span>Connect</span> <i></i></p>
-      <h2 class="display display--sm">Mehr als eine<br>Perspektive.</h2>
-      <p class="lead" style="margin-top:1.5rem">
+      <h2 class="display display--sm" data-en="More than one<br>perspective.">Mehr als eine<br>Perspektive.</h2>
+      <p class="lead" style="margin-top:1.5rem" data-en="I see my work as part of a wider network. Where it helps, I work alongside athletic trainers, doctors and other specialists — not to replace their expertise, but to connect it.">
         Ich sehe meine Arbeit als Teil eines größeren Umfelds. Wo sinnvoll,
         arbeite ich mit Athletiktrainern, Ärzten und weiteren Spezialisten
         zusammen — nicht um Kompetenzen zu ersetzen, sondern um sie zu verbinden.
@@ -682,7 +643,7 @@ footer{border-top:1px solid var(--line);margin-top:var(--pad)}
   </div>
 
   <figure class="shot rise">
-    <img src="assets/03-connect.jpg" alt="Maik Liesbrock feiert gemeinsam mit zwei Spielern im Stadion" data-media>
+    <img src="assets/03-connect.jpg" alt="Maik Liesbrock feiert gemeinsam mit zwei Spielern im Stadion" data-en-alt="Maik Liesbrock celebrating with two players in the stadium" data-media>
   </figure>
 
   <div class="duo">
@@ -691,10 +652,10 @@ footer{border-top:1px solid var(--line);margin-top:var(--pad)}
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5.5" r="2.5"/><path d="M6 21l3-7 3 2 3-2 3 7M9 14l-2-4h10l-2 4"/></svg>
         </span>
         <div>
-          <p class="audience__tag">Für wen?</p>
-          <h3>Für Athlet:innen</h3>
-          <p class="audience__hook">Leistungsfähigkeit braucht einen gesunden, belastbaren Körper.</p>
-          <p>
+          <p class="audience__tag" data-en="Who is it for?">Für wen?</p>
+          <h3 data-en="For athletes">Für Athlet:innen</h3>
+          <p class="audience__hook" data-en="Performance needs a healthy body that can take the load.">Leistungsfähigkeit braucht einen gesunden, belastbaren Körper.</p>
+          <p data-en="Prevention, individual treatment and an eye on load and recovery keep you performing over the long run.">
             Prävention, individuelle Behandlung und der Blick auf Belastung und
             Regeneration halten Dich dauerhaft leistungsfähig.
           </p>
@@ -705,10 +666,10 @@ footer{border-top:1px solid var(--line);margin-top:var(--pad)}
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 8.6a4.6 4.6 0 0 0-7.9-2.6l-.9.9-.9-.9A4.6 4.6 0 1 0 3.2 12l8.8 8.4 8.8-8.4c.6-.9 1-2 1-3.4z"/></svg>
         </span>
         <div>
-          <p class="audience__tag">Für wen?</p>
-          <h3>Für Patient:innen</h3>
-          <p class="audience__hook">Beschwerden betreffen nicht nur den Körper, sondern das Wohlbefinden.</p>
-          <p>
+          <p class="audience__tag" data-en="Who is it for?">Für wen?</p>
+          <h3 data-en="For patients">Für Patient:innen</h3>
+          <p class="audience__hook" data-en="Complaints affect more than the body — they affect how you feel.">Beschwerden betreffen nicht nur den Körper, sondern das Wohlbefinden.</p>
+          <p data-en="Together we look at physical and emotional factors — for more mobility, resilience and balance.">
             Gemeinsam betrachten wir körperliche und emotionale Faktoren — für
             mehr Beweglichkeit, Belastbarkeit und Balance.
           </p>
@@ -721,14 +682,14 @@ footer{border-top:1px solid var(--line);margin-top:var(--pad)}
 <section class="band band--air shell" id="about">
   <div class="split">
     <div class="rise">
-      <p class="eyebrow"><b>04</b> <span>Über Maik</span> <i></i></p>
-      <h2 class="display display--sm">Ganzheitlich. Nachhaltig.<br>Professionell.</h2>
-      <p class="lead" style="margin-top:1.75rem">
+      <p class="eyebrow"><b>04</b> <span data-en="About Maik">Über Maik</span> <i></i></p>
+      <h2 class="display display--sm" data-en="Holistic. Sustainable.<br>Professional.">Ganzheitlich. Nachhaltig.<br>Professionell.</h2>
+      <p class="lead" style="margin-top:1.75rem" data-en="Prevention starts before the injury. Sixteen years in professional football have shaped how I look at the human body, load and recovery.">
         Prävention beginnt vor der Verletzung. 16 Jahre Erfahrung im
         Profifußball haben meinen Blick auf den menschlichen Körper, Belastung
         und Regeneration geprägt.
       </p>
-      <p class="body" style="margin-top:1.25rem">
+      <p class="body" style="margin-top:1.25rem" data-en="My aim is to read the body precisely, identify individual load factors and develop lasting solutions together. Not reacting once it hurts — but understanding what your body needs.">
         Mein Anspruch ist es, körperliche Zusammenhänge präzise zu erfassen,
         individuelle Belastungsfaktoren zu erkennen und gemeinsam nachhaltige
         Lösungen zu entwickeln. Nicht erst reagieren, wenn es weh tut. Sondern
@@ -738,24 +699,24 @@ footer{border-top:1px solid var(--line);margin-top:var(--pad)}
 
     <div class="card rise">
       <div class="portrait">
-        <img src="assets/mletics-card-maik.webp" alt="Autogrammkarte Maik Liesbrock, Physiotherapeut VfL Bochum 1848, Saison 2020/21" data-media>
+        <img src="assets/mletics-card-maik.webp" alt="Autogrammkarte Maik Liesbrock, Physiotherapeut VfL Bochum 1848, Saison 2020/21" data-en-alt="Autograph card of Maik Liesbrock, physiotherapist at VfL Bochum 1848, 2020/21 season" data-media>
       </div>
       <dl class="vita">
         <div>
-          <dt>Qualifikation</dt>
-          <dd>Physiotherapeut, Sektoraler Heilpraktiker für Physiotherapie</dd>
+          <dt data-en="Qualification">Qualifikation</dt>
+          <dd data-en="Physiotherapist, licensed for direct-access physiotherapy">Physiotherapeut, Sektoraler Heilpraktiker für Physiotherapie</dd>
         </div>
         <div>
-          <dt>Schwerpunkt</dt>
-          <dd>Sport-Osteopathie</dd>
+          <dt data-en="Focus">Schwerpunkt</dt>
+          <dd data-en="Sports osteopathy">Sport-Osteopathie</dd>
         </div>
         <div>
-          <dt>Erfahrung</dt>
-          <dd>16 Jahre im Profifußball</dd>
+          <dt data-en="Experience">Erfahrung</dt>
+          <dd data-en="16 years in professional football">16 Jahre im Profifußball</dd>
         </div>
         <div>
-          <dt>Station</dt>
-          <dd>Physiotherapeut, VfL Bochum 1848 (Saison 2020/21)</dd>
+          <dt data-en="Position">Station</dt>
+          <dd data-en="Physiotherapist, VfL Bochum 1848 (2020/21 season)">Physiotherapeut, VfL Bochum 1848 (Saison 2020/21)</dd>
         </div>
       </dl>
     </div>
@@ -765,21 +726,21 @@ footer{border-top:1px solid var(--line);margin-top:var(--pad)}
 <!-- ── Abschluss-Aufruf ─────────────────────────────────── -->
 <section class="band shell">
   <div class="media rise" style="min-height:22rem">
-    <img src="assets/01-hero.jpg" alt="" data-media style="object-position:60% center;filter:grayscale(.5) saturate(.8) contrast(1.05) brightness(.42)">
+    <img src="assets/01-hero.jpg" alt="" aria-hidden="true" data-media style="object-position:60% center;filter:grayscale(.5) saturate(.8) contrast(1.05) brightness(.42)">
     <div class="media__grade" aria-hidden="true"
          style="background:linear-gradient(180deg,rgba(8,9,11,.72) 0%,rgba(8,9,11,.55) 50%,rgba(8,9,11,.8) 100%)"></div>
     <div class="media__inner">
       <!-- Zeile stammt wörtlich aus dem Abschnitt „Über Maik" — bewusst
            nicht dieselbe Überschrift wie im Kontaktabschnitt darunter. -->
-      <h2 class="display display--sm">Nicht erst reagieren,<br>wenn es weh tut.</h2>
+      <h2 class="display display--sm" data-en="Not reacting once<br>it already hurts.">Nicht erst reagieren,<br>wenn es weh tut.</h2>
       <div class="hero__actions" style="margin-top:1.75rem">
         <a href="#kontakt" class="pill pill--solid">
-          <span>Termin anfragen</span>
+          <span data-en="Request an appointment">Termin anfragen</span>
           <span class="pill__chip" aria-hidden="true">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg>
           </span>
         </a>
-        <a href="#treat" class="pill pill--glass">Leistungen ansehen</a>
+        <a href="#treat" class="pill pill--glass" data-en="View services">Leistungen ansehen</a>
       </div>
     </div>
   </div>
@@ -789,8 +750,8 @@ footer{border-top:1px solid var(--line);margin-top:var(--pad)}
 <section class="band band--air shell" id="kontakt">
   <div class="section-head rise">
     <div>
-      <p class="eyebrow"><b>05</b> <span>Kontakt</span> <i></i></p>
-      <h2 class="display display--sm">Sprechen wir<br>über Deinen Weg.</h2>
+      <p class="eyebrow"><b>05</b> <span data-en="Contact">Kontakt</span> <i></i></p>
+      <h2 class="display display--sm" data-en="Let's talk about<br>your next step.">Sprechen wir<br>über Deinen Weg.</h2>
     </div>
   </div>
 
@@ -798,20 +759,20 @@ footer{border-top:1px solid var(--line);margin-top:var(--pad)}
     <div class="card rise">
       <dl class="contact">
         <div>
-          <dt>Telefon</dt>
+          <dt data-en="Phone">Telefon</dt>
           <dd><a href="tel:+4923412345678">0234 · 123 456 78</a></dd>
         </div>
         <div>
-          <dt>E-Mail</dt>
+          <dt data-en="Email">E-Mail</dt>
           <dd><a href="mailto:praxis@mletics.de">praxis@mletics.de</a></dd>
         </div>
         <div>
-          <dt>Adresse</dt>
+          <dt data-en="Address">Adresse</dt>
           <dd class="small">Musterstraße 12<br>44787 Bochum</dd>
         </div>
         <div>
-          <dt>Sprechzeiten</dt>
-          <dd class="small">
+          <dt data-en="Opening hours">Sprechzeiten</dt>
+          <dd class="small" data-en="Mon – Thu &nbsp;8:00 – 19:00<br>Fri &nbsp;8:00 – 15:00<br>By appointment">
             Mo – Do &nbsp;8:00 – 19:00<br>
             Fr &nbsp;8:00 – 15:00<br>
             Termine nach Vereinbarung
@@ -824,45 +785,45 @@ footer{border-top:1px solid var(--line);margin-top:var(--pad)}
       <form class="form" id="form" novalidate>
         <div class="row">
           <div class="field">
-            <label for="f-name">Name</label>
+            <label for="f-name" data-en="Name">Name</label>
             <input id="f-name" name="name" type="text" autocomplete="name" required>
           </div>
           <div class="field">
-            <label for="f-tel">Telefon</label>
+            <label for="f-tel" data-en="Phone">Telefon</label>
             <input id="f-tel" name="tel" type="tel" autocomplete="tel">
           </div>
         </div>
 
         <div class="field">
-          <label for="f-mail">E-Mail</label>
+          <label for="f-mail" data-en="Email">E-Mail</label>
           <input id="f-mail" name="email" type="email" autocomplete="email" required>
         </div>
 
         <div class="field">
-          <label for="f-art">Anliegen</label>
+          <label for="f-art" data-en="Reason for enquiry">Anliegen</label>
           <select id="f-art" name="anliegen">
-            <option>Ersttermin</option>
-            <option>Physiotherapie</option>
-            <option>Sport-Osteopathie</option>
-            <option>Sektorale Heilpraktik Physiotherapie</option>
-            <option>Sonstiges</option>
+            <option data-en="First appointment">Ersttermin</option>
+            <option data-en="Physiotherapy">Physiotherapie</option>
+            <option data-en="Sports osteopathy">Sport-Osteopathie</option>
+            <option data-en="Direct-access physiotherapy">Sektorale Heilpraktik Physiotherapie</option>
+            <option data-en="Something else">Sonstiges</option>
           </select>
         </div>
 
         <div class="field">
-          <label for="f-msg">Nachricht</label>
-          <textarea id="f-msg" name="nachricht" placeholder="Was führt Dich zu uns?"></textarea>
-          <p class="hintline">Bitte keine Diagnosen oder Gesundheitsdaten im Formular senden — das klären wir persönlich.</p>
+          <label for="f-msg" data-en="Message">Nachricht</label>
+          <textarea id="f-msg" name="nachricht" placeholder="Was führt Dich zu uns?" data-en-placeholder="What brings you here?"></textarea>
+          <p class="hintline" data-en="Please don't send diagnoses or health data through this form — we'll discuss that in person.">Bitte keine Diagnosen oder Gesundheitsdaten im Formular senden — das klären wir persönlich.</p>
         </div>
 
         <label class="consent">
           <input type="checkbox" id="f-ok" required>
-          <span>Ich bin einverstanden, dass meine Angaben zur Bearbeitung meiner Anfrage
-          gespeichert werden. Hinweise dazu in der <a href="#" style="color:var(--accent)">Datenschutzerklärung</a>.</span>
+          <span><span data-en="I agree that my details may be stored in order to process my enquiry. See the ">Ich bin einverstanden, dass meine Angaben zur Bearbeitung meiner Anfrage
+          gespeichert werden. Hinweise dazu in der </span><a href="#" style="color:var(--accent)" data-en="privacy policy">Datenschutzerklärung</a>.</span>
         </label>
 
         <button type="submit" class="pill pill--solid" style="justify-content:center">
-          <span>Anfrage senden</span>
+          <span data-en="Send enquiry">Anfrage senden</span>
           <span class="pill__chip" aria-hidden="true">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg>
           </span>
@@ -880,33 +841,33 @@ footer{border-top:1px solid var(--line);margin-top:var(--pad)}
     <div class="foot">
       <div class="foot__brand">
         <img src="assets/logo/mletics-mark-dark.png" alt="MLetics" data-media>
-        <p class="body" style="font-size:.9rem">
+        <p class="body" style="font-size:.9rem" data-en="Understand. Treat. Connect. Physiotherapy and sports osteopathy in Bochum.">
           Verstehen. Behandeln. Vernetzen. Physiotherapie und Sport-Osteopathie
           in Bochum.
         </p>
       </div>
       <nav class="foot__cols" aria-label="Fußbereich">
         <div>
-          <h3>Leistungen</h3>
+          <h3 data-en="Services">Leistungen</h3>
           <ul>
-            <li><a href="#treat">Physiotherapie</a></li>
-            <li><a href="#treat">Sport-Osteopathie</a></li>
-            <li><a href="#treat">Sektorale Heilpraktik</a></li>
+            <li><a href="#treat" data-en="Physiotherapy">Physiotherapie</a></li>
+            <li><a href="#treat" data-en="Sports osteopathy">Sport-Osteopathie</a></li>
+            <li><a href="#treat" data-en="Direct-access physiotherapy">Sektorale Heilpraktik</a></li>
           </ul>
         </div>
         <div>
-          <h3>Praxis</h3>
+          <h3 data-en="Practice">Praxis</h3>
           <ul>
-            <li><a href="#about">Über Maik</a></li>
+            <li><a href="#about" data-en="About Maik">Über Maik</a></li>
             <li><a href="#connect">Connect</a></li>
-            <li><a href="#kontakt">Kontakt</a></li>
+            <li><a href="#kontakt" data-en="Contact">Kontakt</a></li>
           </ul>
         </div>
         <div>
-          <h3>Rechtliches</h3>
+          <h3 data-en="Legal">Rechtliches</h3>
           <ul>
-            <li><a href="#">Impressum</a></li>
-            <li><a href="#">Datenschutz</a></li>
+            <li><a href="#" data-en="Legal notice">Impressum</a></li>
+            <li><a href="#" data-en="Privacy">Datenschutz</a></li>
           </ul>
         </div>
       </nav>
@@ -926,6 +887,72 @@ function initMLeticsB(){
     m.addEventListener('error', function(){ m.remove(); });
     if(m.tagName === 'IMG' && m.complete && m.naturalWidth === 0) m.remove();
   });
+
+  /* ── Sprachumschaltung ───────────────────────────────────
+     Deutsch steht im Markup, Englisch daneben in data-en. Ohne
+     JavaScript bleibt die Seite also vollständig deutsch lesbar —
+     nichts hängt an einem Skript, das nicht lädt.
+     Bewusst kein innerHTML: Die Übersetzungen dürfen nur Text und
+     <br> enthalten, deshalb werden Zeilenumbrüche als echte Elemente
+     eingefügt. So kann über die Attribute niemals Markup in die Seite
+     gelangen, auch wenn später jemand Texte pflegt. */
+  function textLesen(el){
+    var raus = '';
+    Array.prototype.forEach.call(el.childNodes, function(k){
+      if(k.nodeType === 3) raus += k.nodeValue;
+      else if(k.nodeName === 'BR') raus += '<br>';
+      else raus += k.textContent;
+    });
+    return raus.replace(/\s+/g, ' ').trim();
+  }
+  function textSetzen(el, wert){
+    el.textContent = '';
+    wert.split('<br>').forEach(function(teil, i){
+      if(i) el.appendChild(document.createElement('br'));
+      el.appendChild(document.createTextNode(teil));
+    });
+  }
+
+  var uebersetzbar = Array.prototype.slice.call(document.querySelectorAll('[data-en]'));
+  uebersetzbar.forEach(function(el){ el.dataset.de = textLesen(el); });
+
+  /* Attribute (alt, placeholder, content) getrennt behandeln — sie
+     tragen keinen Kindtext, den man austauschen könnte. */
+  var attribute = [['data-en-alt','alt'], ['data-en-placeholder','placeholder'], ['data-en-content','content']];
+  attribute.forEach(function(paar){
+    document.querySelectorAll('[' + paar[0] + ']').forEach(function(el){
+      el.dataset.deWert = el.getAttribute(paar[1]) || '';
+    });
+  });
+
+  var schalter = Array.prototype.slice.call(document.querySelectorAll('.lang__btn'));
+
+  function spracheSetzen(code){
+    uebersetzbar.forEach(function(el){
+      textSetzen(el, code === 'en' ? el.dataset.en : el.dataset.de);
+    });
+    attribute.forEach(function(paar){
+      document.querySelectorAll('[' + paar[0] + ']').forEach(function(el){
+        el.setAttribute(paar[1], code === 'en' ? el.getAttribute(paar[0]) : el.dataset.deWert);
+      });
+    });
+    document.documentElement.lang = code;
+    schalter.forEach(function(b){
+      b.setAttribute('aria-pressed', b.dataset.lang === code ? 'true' : 'false');
+    });
+    try { localStorage.setItem('mletics-sprache', code); } catch(e){}
+  }
+
+  schalter.forEach(function(b){
+    b.addEventListener('click', function(){ spracheSetzen(b.dataset.lang); });
+  });
+
+  /* Gespeicherte Wahl wiederherstellen; sonst Englisch anbieten, wenn
+     der Browser kein Deutsch bevorzugt. */
+  var gemerkt = null;
+  try { gemerkt = localStorage.getItem('mletics-sprache'); } catch(e){}
+  var start = gemerkt || ((navigator.language || 'de').toLowerCase().indexOf('de') === 0 ? 'de' : 'en');
+  if(start === 'en') spracheSetzen('en');
 
   /* Einblenden beim Scrollen. Reihenfolge ist wichtig: erst in den
      versteckten Zustand versetzen, dann beobachten — so hängt die
