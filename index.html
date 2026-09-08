@@ -230,23 +230,26 @@ main{position:relative;z-index:10}
       rgba(9,15,22,.44) 54%,rgba(10,20,30,.12) 82%,rgba(12,26,40,0) 100%);
 }
 @media(max-width:768px){
-  /* Die Verlaufsstufen liefen vorher in Prozent DER KAPITELHÖHE
-     (0/55/100%) — passte für kurze Kapitel, aber „Treat" ist auf dem
-     Handy z.B. ~1800px hoch bei nur ~800px Bildschirmhöhe: schon ab
-     55% der Kapitelhöhe (≈ eine Bildschirmlänge) lag praktisch der
-     GESAMTE Rest des Kapitels unter 85–96% Schwarz — das Bild
-     verschwand für den Großteil des Scrollwegs fast komplett.
-     Jetzt läuft der Verlauf über eine FESTE Strecke (100svh, also
-     etwa eine Bildschirmhöhe) und bleibt danach konstant bei einer
-     moderaten Abdunkelung — unabhängig davon, wie lang das Kapitel
-     durch seinen Text am Ende wird. */
+  /* Bild nie höher als ein Bildschirm — wie ein Kopf-Banner statt einer
+     Vollbild-Tapete. Vorher deckte .chapter__bg die GESAMTE (oft sehr
+     lange) Kapitelhöhe ab: object-fit:cover musste ein 1280×853-Foto
+     auf eine bis zu 1800px hohe, nur 375px schmale Box strecken —
+     dadurch wurde nur noch ein winziger, stark hochskalierter (und
+     entsprechend unscharfer) Bildausschnitt sichtbar, „man sieht nur
+     einen kleinen Teil vom Bild". Mit der Deckelung auf höchstens eine
+     Bildschirmhöhe bleibt der Ausschnitt moderat; der restliche,
+     oft längere Kapiteltext läuft danach auf normalem dunklem
+     Seitengrund weiter — die Lasur blendet dorthin aus. Kurze Kapitel
+     (z.B. der Auftakt, der schon nah an einer Bildschirmhöhe liegt)
+     bleiben durch min(100%, 100svh) praktisch unverändert. */
+  .chapter__bg{height:min(100%, 100svh)}
   .chapter__bg-grade{
     background:
       radial-gradient(66% 60% at 72% 30%,rgba(244,236,214,.14) 0%,transparent 62%),
       linear-gradient(180deg,
-        rgba(10,15,20,.42) 0,
-        rgba(8,9,11,.64) 100svh,
-        rgba(8,9,11,.64) 100%);
+        rgba(10,15,20,.42) 0%,
+        rgba(8,9,11,.6) 60%,
+        rgba(8,9,11,1) 100%);
   }
 }
 
