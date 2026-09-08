@@ -168,6 +168,7 @@ a{color:inherit}
 .section-head{
   display:flex;flex-direction:column;gap:1.5rem;
   margin-bottom:2rem;
+  align-items:flex-start; /* sonst dehnt der Pill-Button sich mobil auf volle Breite */
 }
 @media(min-width:640px){
   .section-head{flex-direction:row;align-items:flex-end;justify-content:space-between}
@@ -327,30 +328,6 @@ a{color:inherit}
 }
 .drawer__close{position:absolute;top:1.25rem;right:1.25rem}
 
-/* ── Kennzahlen-Bande ───────────────────────────────────── */
-.metrics{
-  border:1px solid var(--line);border-radius:var(--r-xl);
-  background:rgba(242,240,234,.02);
-  padding:1.5rem;
-}
-@media(min-width:768px){ .metrics{padding:3rem} }
-.metrics dl{display:grid;grid-template-columns:1fr 1fr;margin:0}
-@media(min-width:768px){ .metrics dl{grid-template-columns:repeat(4,1fr)} }
-.metrics div{display:flex;flex-direction:column;gap:.4rem;padding:1.25rem}
-@media(min-width:768px){ .metrics div{padding:1.5rem} }
-.metrics div + div{border-left:1px solid var(--line)}
-.metrics div:nth-child(3){border-top:1px solid var(--line)}
-.metrics div:nth-child(4){border-top:1px solid var(--line)}
-@media(min-width:768px){
-  .metrics div:nth-child(3),.metrics div:nth-child(4){border-top:0}
-}
-.metrics dt{
-  font-family:var(--f-display);font-weight:700;
-  font-size:clamp(1.75rem,4vw,2.75rem);letter-spacing:-.02em;line-height:1;
-  font-variant-numeric:tabular-nums;
-}
-.metrics dd{margin:0;font-size:.85rem;color:var(--muted);line-height:1.5}
-
 /* ── Bento-Raster ───────────────────────────────────────── */
 .bento{display:grid;gap:.75rem;grid-template-columns:1fr}
 @media(min-width:768px){
@@ -379,6 +356,20 @@ a.card{text-decoration:none;transition:border-color .25s var(--ease),background 
 a.card:hover{border-color:var(--line-strong);background:#171B20}
 .card--link{align-items:center;justify-content:center;text-align:center;gap:1.25rem;min-height:12rem}
 .card--link .chip{width:60px;height:60px;border-radius:999px}
+
+/* ── Bildband ───────────────────────────────────────────
+   Breites Foto als eigene Fläche, gleiche Radien wie die Karten.
+   Auf schmalen Schirmen 16:9, ab Tablet flacher (21:9) — sonst
+   frisst das Band auf dem Handy den halben Bildschirm. */
+.shot{
+  margin:0 0 .75rem;border-radius:var(--r-xl);overflow:hidden;
+  border:1px solid var(--line);background:var(--bg-raise);aspect-ratio:16/9;
+}
+@media(min-width:768px){ .shot{margin-bottom:1.25rem;aspect-ratio:21/9} }
+.shot img{
+  width:100%;height:100%;object-fit:cover;object-position:center 34%;
+  filter:grayscale(1) contrast(1.06) brightness(.82);
+}
 
 /* ── Medienkarte (Connect / Abschluss) ──────────────────── */
 .media{
@@ -592,30 +583,6 @@ footer{border-top:1px solid var(--line);margin-top:var(--pad)}
   </div>
 </section>
 
-<!-- ── Kennzahlen ───────────────────────────────────────── -->
-<section class="band shell" aria-label="Auf einen Blick">
-  <div class="metrics rise">
-    <dl>
-      <div>
-        <dt>16</dt>
-        <dd>Jahre Erfahrung im Profifußball</dd>
-      </div>
-      <div>
-        <dt>3</dt>
-        <dd>Leistungsbereiche</dd>
-      </div>
-      <div>
-        <dt>2020/21</dt>
-        <dd>VfL Bochum 1848</dd>
-      </div>
-      <div>
-        <dt>Bochum</dt>
-        <dd>Praxisstandort</dd>
-      </div>
-    </dl>
-  </div>
-</section>
-
 <!-- ── Treat ────────────────────────────────────────────── -->
 <section class="band band--air shell" id="treat">
   <div class="section-head rise">
@@ -635,6 +602,10 @@ footer{border-top:1px solid var(--line);margin-top:var(--pad)}
       </span>
     </a>
   </div>
+
+  <figure class="shot rise">
+    <img src="assets/02-treat.jpg" alt="Maik Liesbrock behandelt das Bein eines Athleten auf der Behandlungsliege" data-media>
+  </figure>
 
   <div class="bento">
     <article class="card bento__tall rise">
