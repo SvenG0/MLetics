@@ -229,18 +229,16 @@ a{color:inherit}
 @media(min-width:768px){
   .hero__stat{left:2rem;bottom:2rem;min-width:11.5rem;padding:1.25rem;gap:1rem}
 }
-/* Auf schmalen Schirmen ist zu wenig Platz, damit Glaskarte und die
-   mittigen Buttons nebeneinander bestehen — dort bleibt die Karte auf
-   die Kennzahl reduziert. Der Verweis „Über Maik" geht nicht verloren:
-   er steht im Menü und im Fußbereich. */
+/* Auf schmalen Schirmen entfällt die Glaskarte ganz. Sie hätte dort
+   neben den mittigen Buttons keinen Platz, und reduziert auf die reine
+   Kennzahl wirkte sie wie ein anklickbares Feld, das nichts tut. Die
+   Angabe steht ohnehin im Abschnitt „Über Maik". */
 @media(max-width:767px){
-  .hero__stat{bottom:5.5rem}
-  .hero__stat .pill{display:none}
-  /* Abstände verdichtet, damit Glaskarte und ausgeschnittene Ecke noch
-     auf den ersten Bildschirm passen — sonst wären genau die beiden
-     Gestaltungsmerkmale des Auftakts abgeschnitten. Die Schriftgröße
-     bleibt unangetastet, nur der Zeilenabstand rückt zusammen. */
-  .hero__center{padding:1.5rem 1.25rem 11rem}
+  .hero__stat{display:none}
+  /* Abstände verdichtet, damit die ausgeschnittene Ecke noch auf den
+     ersten Bildschirm passt. Die Schriftgröße bleibt unangetastet,
+     nur der Zeilenabstand rückt zusammen. */
+  .hero__center{padding:1.5rem 1.25rem 8rem}
   .hero__center .badge{margin-bottom:1rem}
   .hero h1{margin-bottom:1rem}
   .hero__lead{line-height:1.55}
@@ -306,27 +304,18 @@ a{color:inherit}
   transition:color .2s var(--ease);
 }
 .nav__links a:hover{color:var(--text)}
-.nav__cta{display:none}
-@media(min-width:640px){ .nav__cta{display:inline-flex} }
-.burger{
-  display:inline-flex;align-items:center;justify-content:center;
-  width:44px;height:44px;border-radius:999px;
-  background:rgba(242,240,234,.08);border:1px solid rgba(242,240,234,.18);
-  color:var(--text);cursor:pointer;backdrop-filter:blur(10px);
+/* Kein Menü-Button: Die Seite ist ein einziger Verlauf, und auf dem
+   Handy führt die Handlungsschaltfläche direkt zum Ziel. Zu den
+   Abschnitten kommt man über die Auftakt-Buttons, die ausgeschnittene
+   Ecke und den Fußbereich. Deshalb steht die Schaltfläche hier auf
+   jeder Breite — sie ersetzt das frühere Overlay-Menü.
+   Auf sehr schmalen Schirmen verkürzt sie sich auf „Termin", damit sie
+   neben dem Logo Platz hat. */
+@media(max-width:479px){
+  .nav__cta{padding-left:.9rem;font-size:.82rem}
+  .nav__cta .nav__cta-lang{display:none}
 }
-@media(min-width:1024px){ .burger{display:none} }
-
-.drawer{
-  position:fixed;inset:0;z-index:70;display:grid;place-content:center;
-  gap:1rem;text-align:center;background:rgba(8,9,10,.97);backdrop-filter:blur(20px);
-  opacity:0;visibility:hidden;transition:opacity .4s var(--ease),visibility .4s;
-}
-.drawer[data-open="true"]{opacity:1;visibility:visible}
-.drawer a{
-  font-family:var(--f-display);font-weight:700;font-size:1.9rem;
-  text-decoration:none;color:var(--text);padding:.35rem 1rem;
-}
-.drawer__close{position:absolute;top:1.25rem;right:1.25rem}
+@media(min-width:480px){ .nav__cta .nav__cta-kurz{display:none} }
 
 /* ── Kartenraster ───────────────────────────────────────
    Drei gleichwertige Leistungskarten nebeneinander. Bewusst kein
@@ -511,14 +500,6 @@ footer{border-top:1px solid var(--line);margin-top:var(--pad)}
 <a href="#inhalt" class="pill pill--solid" style="position:absolute;left:-9999px;top:1rem;z-index:99"
    onfocus="this.style.left='1rem'" onblur="this.style.left='-9999px'">Zum Inhalt springen</a>
 
-<div class="drawer" id="drawer" data-open="false" role="dialog" aria-modal="true" aria-label="Navigation">
-  <button class="pill pill--ghost drawer__close" id="drawerClose">Schließen</button>
-  <a href="#treat">Treat</a>
-  <a href="#connect">Connect</a>
-  <a href="#about">Über Maik</a>
-  <a href="#kontakt">Kontakt</a>
-</div>
-
 <main id="inhalt">
 
 <!-- ── Auftakt ──────────────────────────────────────────── -->
@@ -539,16 +520,12 @@ footer{border-top:1px solid var(--line);margin-top:var(--pad)}
           <li><a href="#kontakt">Kontakt</a></li>
         </ul>
         <a href="#kontakt" class="pill pill--solid nav__cta">
-          <span>Termin anfragen</span>
+          <span class="nav__cta-lang">Termin anfragen</span>
+          <span class="nav__cta-kurz">Termin</span>
           <span class="pill__chip" aria-hidden="true">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg>
           </span>
         </a>
-        <button class="burger" id="burger" aria-label="Menü öffnen" aria-expanded="false" aria-controls="drawer">
-          <svg width="18" height="12" viewBox="0 0 18 12" fill="none" aria-hidden="true">
-            <path d="M0 1h18M0 6h18M0 11h18" stroke="currentColor" stroke-width="1.5"/>
-          </svg>
-        </button>
       </nav>
 
       <div class="hero__center">
@@ -948,35 +925,6 @@ function initMLeticsB(){
   document.querySelectorAll('[data-media]').forEach(function(m){
     m.addEventListener('error', function(){ m.remove(); });
     if(m.tagName === 'IMG' && m.complete && m.naturalWidth === 0) m.remove();
-  });
-
-  /* Mobile-Menü */
-  var burger = document.getElementById('burger'),
-      drawer = document.getElementById('drawer'),
-      close  = document.getElementById('drawerClose');
-  function setDrawer(open){
-    drawer.dataset.open = open;
-    burger.setAttribute('aria-expanded', open);
-    document.body.style.overflow = open ? 'hidden' : '';
-    if(open){
-      requestAnimationFrame(function(){ requestAnimationFrame(function(){ close.focus(); }); });
-    } else {
-      burger.focus();
-    }
-  }
-  burger.addEventListener('click', function(){ setDrawer(true); });
-  close.addEventListener('click', function(){ setDrawer(false); });
-  drawer.addEventListener('click', function(e){ if(e.target.tagName === 'A') setDrawer(false); });
-  document.addEventListener('keydown', function(e){
-    if(e.key === 'Escape' && drawer.dataset.open === 'true') setDrawer(false);
-  });
-  /* Fokus-Falle: bei aria-modal darf Tab das Overlay nicht verlassen */
-  drawer.addEventListener('keydown', function(e){
-    if(e.key !== 'Tab' || drawer.dataset.open !== 'true') return;
-    var f = drawer.querySelectorAll('a[href], button');
-    var first = f[0], last = f[f.length - 1];
-    if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
-    else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
   });
 
   /* Einblenden beim Scrollen. Reihenfolge ist wichtig: erst in den
