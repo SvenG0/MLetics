@@ -23,7 +23,7 @@
   --bg:#0A0B0D;             /* Nah-Schwarz, neutral — nicht grün-, nicht blaustichig */
   --bg-raise:#14171B;       /* Karten/Hover — kühles Anthrazit */
   --text:#F2F0EA;           /* leicht cremiges Weiß, kein hartes #FFF */
-  --muted:#9BA1AA;          /* kühles Grau, aus dem Logo-Grau (#4D4D4E) für Dunkelgrund aufgehellt */
+  --muted:#ADB3BB;          /* kühles Grau, aus dem Logo-Grau (#4D4D4E) für Dunkelgrund aufgehellt — etwas heller als zuvor (#9BA1AA), damit Fließtext auf Fotos genug Kontrast behält */
   --brand:#2765A5;          /* echtes Logo-Blau — Marke, Trennlinien, Bildlasur */
   --brand-light:#4A8CC9;    /* aufgehelltes Blau für Glüh-/Lichteffekte */
   --accent:#3692F2;         /* Knallfarbe: gleiche Farbfamilie wie das Logo, kräftiger */
@@ -63,6 +63,21 @@ a{color:inherit}
 
 .wrap{width:min(100% - 3rem,84rem);margin-inline:auto}
 @media(min-width:1024px){.wrap{width:min(100% - 6rem,84rem)}}
+
+/* Lesbarkeit über Fotos: Schatten statt Fläche. Eine feste Box hinter
+   dem Text hätte verlässlichen Kontrast gebracht, aber das Bild dahinter
+   zugedeckt — genau das wollten wir nicht. text-shadow vererbt sich an
+   alle Kindelemente, kostet an Stellen mit ohnehin blickdichtem
+   Untergrund (Leistungskarten, Formularfelder, Autogrammkarte) nichts
+   und gibt dem Text auf dem Foto einen klaren, dunklen Rand: eng und
+   scharf für die Kantenschärfe, dazu weich und breit gegen unruhige
+   Bildstellen (z.B. das helle Trikot im Connect-Foto). */
+.chapter .wrap{
+  text-shadow:
+    0 1px 3px rgba(0,0,0,.9),
+    0 3px 14px rgba(0,0,0,.6),
+    0 0 32px rgba(0,0,0,.4);
+}
 
 /* ── Typografie ─────────────────────────────────────────── */
 .display{
