@@ -26,9 +26,20 @@
   --muted:#ADB3BB;          /* kühles Grau, aus dem Logo-Grau (#4D4D4E) für Dunkelgrund aufgehellt — etwas heller als zuvor (#9BA1AA), damit Fließtext auf Fotos genug Kontrast behält */
   --brand:#2765A5;          /* echtes Logo-Blau — Marke, Trennlinien, Bildlasur */
   --brand-light:#4A8CC9;    /* aufgehelltes Blau für Glüh-/Lichteffekte */
-  --accent:#3692F2;         /* Knallfarbe: gleiche Farbfamilie wie das Logo, kräftiger */
-  --accent-soft:#67AEFA;    /* Hover */
-  --on-accent:#08141F;      /* Text auf Akzent-Blau — 8.9:1 */
+  /* War #3692F2 — bewusst kräftiger/heller als das echte Logo-Blau
+     gewählt, für mehr "Pop" auf Buttons. Feedback: das wirkte dann aber
+     nicht mehr wie dieselbe Farbe wie im Logo. Jetzt identisch mit
+     --brand — Buttons, Linien und Akzente tragen jetzt exakt das echte
+     Logo-Blau. --on-accent musste dafür von dunklem auf helles Text
+     wechseln: die dunklere Farbe reicht als Hintergrund für dunklen
+     Text nicht mehr aus (nur noch 3.1:1 statt vorher 8.9:1), mit hellem
+     Text auf --accent sind es 5.3:1. --accent-soft (Hover) nur noch
+     leicht aufgehellt statt stark: heller als etwa 7% Richtung Weiß
+     würde den Kontrast zum hellen Button-Text wieder unter 4.5:1
+     drücken. */
+  --accent:#2765A5;
+  --accent-soft:#346EAA;
+  --on-accent:#F2F0EA;      /* Text auf Akzent-Blau — 5.3:1 */
   --line:rgba(150,180,206,.15);
   --line-strong:rgba(160,190,214,.28);
 
@@ -1268,25 +1279,43 @@ function initMLetics(){
      das Feature aus, vermutlich weil ein einzelnes Signal je nach
      Ansichts-Kontext (Safari direkt vs. Quick-Look-Vorschau aus
      Mail/Nachrichten) nicht zuverlässig war. Reicht eines der drei
-     Signale, gilt das Gerät als „kein echtes Hover" — dann übernimmt
-     die Karte automatisch denselben Zustand wie :hover (Klasse
-     .is-inview, siehe .service/.audience__card weiter oben), sobald
-     sie beim Scrollen die Bildschirmmitte durchläuft. Auf echten
-     Maus-/Trackpad-Geräten bleiben alle drei Signale negativ, dort
-     läuft dieser Code gar nicht erst. */
+     Signale, gilt das Gerät als „kein echtes Hover".
+
+     Erst mit IntersectionObserver + prozentualem rootMargin gebaut —
+     in einer eingebetteten Ansicht (z.B. WhatsApp-Artefakt-Vorschau)
+     blieben dann mehrere Karten gleichzeitig aktiv, vermutlich weil
+     der Beobachtungsbereich dort nicht dem tatsächlich sichtbaren
+     Ausschnitt entspricht. Jetzt robuster: direkt beim Scrollen
+     gemessen, welche Karte ihrer Mitte nach am nächsten an der
+     Bildschirmmitte liegt — das hängt nur von getBoundingClientRect()
+     und innerHeight ab, nicht von der Interpretation eines
+     Beobachtungs-„root" durch die jeweilige Ansicht, und markiert
+     garantiert immer nur genau eine Karte aktiv. rAF-gedrosselt wie
+     der Lesefortschritt oben, aus demselben Grund (iOS verzögert
+     scroll-gebundene Skripte sonst während des Wischens). */
   var keinEchtesHover =
     matchMedia('(hover: none)').matches ||
     matchMedia('(pointer: coarse)').matches ||
     ('ontouchstart' in window);
-  if('IntersectionObserver' in window && keinEchtesHover){
-    var cardWatch = new IntersectionObserver(function(entries){
-      entries.forEach(function(en){
-        en.target.classList.toggle('is-inview', en.isIntersecting);
+  if(keinEchtesHover){
+    var karten = document.querySelectorAll('.service, .audience__card');
+    var kartenTicking = false;
+    function aktiveKarteAktualisieren(){
+      var mitte = innerHeight / 2;
+      var beste = null, besterAbstand = Infinity;
+      karten.forEach(function(k){
+        var r = k.getBoundingClientRect();
+        if(r.bottom <= 0 || r.top >= innerHeight) return;
+        var abstand = Math.abs((r.top + r.height / 2) - mitte);
+        if(abstand < besterAbstand){ besterAbstand = abstand; beste = k; }
       });
-    }, {rootMargin: '-40% 0px -40% 0px'});
-    document.querySelectorAll('.service, .audience__card').forEach(function(el){
-      cardWatch.observe(el);
-    });
+      karten.forEach(function(k){ k.classList.toggle('is-inview', k === beste); });
+      kartenTicking = false;
+    }
+    window.addEventListener('scroll', function(){
+      if(!kartenTicking){ kartenTicking = true; requestAnimationFrame(aktiveKarteAktualisieren); }
+    }, {passive: true});
+    aktiveKarteAktualisieren();
   }
 
   /* Der Vor/Zurück-Button schwebt fest unten rechts und würde sonst
