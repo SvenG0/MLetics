@@ -484,8 +484,13 @@ main{position:relative;z-index:10}
   font-size:1.28rem;margin:0 0 .9rem;letter-spacing:-.005em;
   padding-bottom:.9rem;position:relative;border-bottom:1px solid var(--line);
 }
+/* Lief bisher nur 2.25rem breit ein, während die graue Linie darunter
+   (border-bottom von .service h3) über die volle Breite läuft — genau
+   dasselbe Problem wie beim Karten-Rahmen zuvor, nur eine Etage
+   tiefer: ein "Stück" Balken über einer ganzen Linie wirkt unfertig.
+   Läuft jetzt komplett über die volle Breite ein. */
 .service h3::after{
-  content:"";position:absolute;left:0;bottom:-1px;height:2px;width:2.25rem;
+  content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;
   background:var(--accent);transform:scaleX(0);transform-origin:left;
   transition:transform .55s var(--ease);
 }
