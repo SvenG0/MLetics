@@ -20,7 +20,7 @@ siehe unten).
 | `01-hero.jpg` | 01 Auftakt | **Vorhanden** — Maik auf dem Platz |
 | `02-treat.jpg` | 02 Treat | **Vorhanden** — Behandlung am Bein (Quelle: `Bilder/Treat.jpg`) |
 | `03-connect.jpg` | 03 Connect | **Vorhanden** — Jubel im Stadion mit zwei Spielern (Quelle: `Bilder/connect.jpg`) |
-| `04-about.jpg` | 04 Über Maik | Fehlt noch — nur A-Variante, dort greift solange der Farbverlauf |
+| `04-about.jpg` | 04 Über Maik | **Vorhanden** — Maik winkt lachend ins Stadion, bereits Schwarz-Weiß (Quelle: `Bilder/Über Maik Schwarz Weiß.jpg`) |
 | — | 05 Galerie | Zeigt keinen eigenen Kapitelhintergrund, siehe eigener Abschnitt unten |
 | `06-kontakt.jpg` | 06 Kontakt | Fehlt noch — nur A-Variante, dort greift solange der Farbverlauf. **Achtung:** hieß vor der Galerie-Ergänzung `05-kontakt.jpg` — falls schon eine Datei dafür vorbereitet war, bitte auf `06-kontakt.jpg` umbenennen. |
 
@@ -49,13 +49,13 @@ Format/Auflösung wie bei den Kapitelbildern (siehe unten), Seitenverhältnis
 im Karussell ist 16:9 — am besten schon in etwa so zuschneiden, sonst
 schneidet `object-fit:cover` automatisch (mittig) zu.
 
-## Karte „Über Maik"
+## „Über Maik" — kein Vordergrundbild mehr
 
-Kapitel 04 zeigt (nur A-Version) das Reportage-Foto `about-maik.jpg` (aus
-`Bilder/Über Maik Schwarz Weiß.jpg`, bereits Schwarz-Weiß, kein zusätzlicher
-Filter nötig) — Maik winkt lachend ins Stadion. Ersetzt die frühere
-Autogrammkarte; das Kartenformat ist jetzt quer statt hochkant (Foto im
-Querformat, `.mvp__card` in `index.html` entsprechend angepasst).
+Kapitel 04 zeigte früher eine Autogrammkarte im Vordergrund (kleine Karte
+neben dem Lebenslauf). Jetzt läuft das Foto stattdessen als Kapitel-
+hintergrund, genau wie bei Auftakt/Treat/Connect (`04-about.jpg`, siehe
+oben) — der Lebenslauf (`dl.vita`) steht frei auf dem Foto, ohne eigene
+Bildkarte davor.
 
 `mletics-card-maik.webp` (die alte Autogrammkarte) wird in Variante A nicht
 mehr verwendet, liegt aber weiter in `assets/` und wird in Variante B
