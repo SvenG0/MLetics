@@ -512,10 +512,15 @@ main{position:relative;z-index:10}
   color:var(--muted);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;
 }
 
-/* ── MVP-Karte: die Autogrammkarte, ruhig präsentiert. ── */
-.mvp__stage{max-width:280px}
+/* ── MVP-Karte: Reportage-Foto (winkt ins Stadion) statt Autogrammkarte —
+   seitenverhältnis daher dem Querformat des Fotos angepasst (vorher hoch-
+   formatig, exakt auf die alte Kartengrafik zugeschnitten) und deutlich
+   breiter, damit das Foto als eigenständiges Bild wirkt statt als
+   Miniatur neben dem Lebenslauf. Das Bild selbst ist bereits Schwarz-
+   Weiß — kein zusätzlicher CSS-Filter nötig. */
+.mvp__stage{max-width:460px}
 .mvp__card{
-  position:relative;aspect-ratio:1174/1600;overflow:hidden;border-radius:6px;
+  position:relative;aspect-ratio:1400/938;overflow:hidden;border-radius:10px;
   border:1px solid var(--line-strong);background:var(--bg-raise);
   box-shadow:0 24px 48px -20px rgba(0,0,0,.7);
 }
@@ -830,8 +835,8 @@ footer{position:relative;z-index:10;background:var(--bg);border-top:1px solid va
     <div class="rise mvp">
       <div class="mvp__stage">
         <div class="mvp__card">
-          <span class="portrait__ph" aria-hidden="true">Karte<br>Maik Liesbrock</span>
-          <img src="assets/mletics-card-maik.webp" alt="Autogrammkarte Maik Liesbrock, Physiotherapeut VfL Bochum 1848, Saison 2020/21" data-media>
+          <span class="portrait__ph" aria-hidden="true">Foto<br>Maik Liesbrock</span>
+          <img src="assets/about-maik.jpg" alt="Maik Liesbrock winkt lachend ins Stadion" data-media>
         </div>
       </div>
       <dl class="vita">

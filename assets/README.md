@@ -51,8 +51,15 @@ schneidet `object-fit:cover` automatisch (mittig) zu.
 
 ## Karte „Über Maik"
 
-Kapitel 04 zeigt die Autogrammkarte `mletics-card-maik.webp` (aus
-`Bilder/Maik AutogrammKarte.webp`).
+Kapitel 04 zeigt (nur A-Version) das Reportage-Foto `about-maik.jpg` (aus
+`Bilder/Über Maik Schwarz Weiß.jpg`, bereits Schwarz-Weiß, kein zusätzlicher
+Filter nötig) — Maik winkt lachend ins Stadion. Ersetzt die frühere
+Autogrammkarte; das Kartenformat ist jetzt quer statt hochkant (Foto im
+Querformat, `.mvp__card` in `index.html` entsprechend angepasst).
+
+`mletics-card-maik.webp` (die alte Autogrammkarte) wird in Variante A nicht
+mehr verwendet, liegt aber weiter in `assets/` und wird in Variante B
+(`index-b.html`) weiterhin gezeigt.
 
 ## Rechte
 
