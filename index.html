@@ -348,8 +348,15 @@ main{position:relative;z-index:10}
 /* Die Galerie ist ein Werkzeug-Kapitel, kein Foto-Hintergrund mit
    zentriertem Text — sie braucht die großzügige 8rem-Polsterung der
    anderen Kapitel nicht (die ist für Zentrierung in einem hohen
-   Bild gedacht) und passt dadurch eher auf einen Bildschirm. */
-#galerie{padding-block:6rem 2.5rem}
+   Bild gedacht) und passt dadurch eher auf einen Bildschirm.
+   Unten 5.25rem statt eines knappen Werts: der fixierte Vor/Zurück-
+   Button (.step, bottom:1.5rem + ca. 59px hoch) schwebt auf JEDER
+   Bildschirmgröße rechts unten — bei knapperem Abstand landete die
+   Miniaturleiste dahinter und war dort nicht mehr antippbar.
+   galHoeheAnpassen() liest die Polsterung live aus, das Bild wird
+   also automatisch kleiner statt dass hier eine zweite Zahl gepflegt
+   werden müsste. */
+#galerie{padding-block:6rem 5.5rem}
 .chapter__grid{display:grid;gap:var(--sp-5);align-items:center}
 @media(min-width:1024px){
   .chapter__grid{grid-template-columns:minmax(0,1fr) minmax(0,.85fr)}
@@ -382,7 +389,13 @@ main{position:relative;z-index:10}
   background:rgba(10,11,13,.78);backdrop-filter:blur(10px);
   -webkit-backdrop-filter:blur(10px);
   border:1px solid var(--line);
+  opacity:1;transition:opacity .3s var(--ease);
 }
+/* Sobald der Fußbereich in Sicht kommt, gibt es kein „nächstes Kapitel"
+   mehr, zu dem der Button führen könnte — er blendet aus, statt weiter
+   unten rechts zu schweben und dort die Fußzeilen-Links (Impressum/
+   Datenschutz) zu verdecken. JS setzt data-hidden per IntersectionObserver. */
+.step[data-hidden="true"]{opacity:0;pointer-events:none}
 .step button{
   all:unset;cursor:pointer;display:grid;place-items:center;
   width:44px;height:44px;border-radius:50%;color:var(--text);
@@ -603,6 +616,19 @@ main{position:relative;z-index:10}
 @media(min-width:640px){
   .gallery__thumb{flex-basis:40px;height:64px}
   .gallery__thumb[aria-current="true"]{flex-basis:128px}
+}
+/* Handy im Querformat (~375–430px Fensterhöhe): Label und Miniaturen
+   beanspruchen sonst so viel von der knappen Höhe, dass für das
+   eigentliche Bild kaum noch etwas übrig bleibt. Nur oben lässt sich
+   Polsterung sparen (unten muss der Abstand zum fixierten Vor/Zurück-
+   Button erhalten bleiben, siehe #galerie oben). */
+@media(max-height:440px){
+  #galerie{padding-top:5rem}
+  #galerie .eyebrow{margin-bottom:.6rem}
+  .gallery{margin-top:.65rem}
+  .gallery__thumbs{margin-top:.5rem}
+  .gallery__thumb{flex-basis:30px;height:40px}
+  .gallery__thumb[aria-current="true"]{flex-basis:84px}
 }
 
 /* ── Footer ─────────────────────────────────────────────── */
@@ -1197,6 +1223,22 @@ function initMLetics(){
     sections.forEach(function(sec){ revealWatch.observe(sec); });
   }
 
+  /* Der Vor/Zurück-Button schwebt fest unten rechts und würde sonst
+     dauerhaft über der Fußzeile liegen, sobald man ganz nach unten
+     scrollt — dort verdeckte er den Datenschutz-Link. Da es im
+     Fußbereich kein weiteres Kapitel mehr gibt, zu dem er führen
+     könnte, blendet er hier einfach aus. */
+  var footerEl = document.querySelector('footer');
+  var stepEl = document.getElementById('step');
+  if('IntersectionObserver' in window && footerEl && stepEl){
+    var footerWatch = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        stepEl.dataset.hidden = en.isIntersecting ? 'true' : 'false';
+      });
+    }, {rootMargin: '0px 0px -10% 0px'});
+    footerWatch.observe(footerEl);
+  }
+
   /* Kein GSAP mehr nötig — die Kapitelbilder liegen fest im Dokument
      (siehe .chapter__bg), kein Scroll-Handler übernimmt hier mehr
      irgendeine Animation. GSAP wird dadurch nirgends mehr gebraucht
@@ -1261,7 +1303,17 @@ function initMLetics(){
       var polsterung = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
       var restInhalt = galWrap.offsetHeight - basisHoehe;
       var verfuegbar = innerHeight - polsterung - restInhalt - 8;
-      var hoehe = Math.max(240, Math.min(verfuegbar, innerHeight * 0.82));
+      /* Ab 240px Bildhöhe greift wie gehabt der übliche Mindestwert
+         (genug Platz vorhanden) — reicht der Platz nicht (sehr flaches
+         Fenster, z.B. Handy im Querformat), schrumpft das Bild lieber
+         weiter (bis zu einem kleinen Sicherheitswert von 90px), statt
+         über den verfügbaren Platz hinauszuwachsen: die Polsterung
+         unten ist fest für den Abstand zum fixierten Vor/Zurück-Button
+         reserviert (siehe #galerie) und darf dafür nicht verdrängt
+         werden. */
+      var hoehe = verfuegbar >= 240
+        ? Math.min(verfuegbar, innerHeight * 0.82)
+        : Math.max(verfuegbar, 90);
       galSlides.forEach(function(s){ s.style.height = Math.round(hoehe) + 'px'; });
     }
     galHoeheAnpassen();
