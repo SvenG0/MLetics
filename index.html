@@ -1201,6 +1201,28 @@ function initMLetics(){
       b.addEventListener('click', function(){ galSpringeZu(+b.dataset.index); });
     });
     galAktualisieren();
+
+    /* Bildhöhe: der CSS-Wert (min(48svh,520px)) ist nur ein Fallback für
+       den ersten Sekundenbruchteil und für Besucher ohne JavaScript —
+       eine feste Zahl muss zwangsläufig auf JEDEM Bildschirm passen,
+       also blieb auf großen Monitoren viel Platz ungenutzt. Hier wird
+       stattdessen gemessen, wie viel Höhe nach Kopfzeile, Beschriftung,
+       Miniaturen und Innenabstand tatsächlich noch übrig ist, und genau
+       das ausgenutzt — ohne dabei über den Bildschirmrand zu wachsen. */
+    var galChapter = document.getElementById('galerie');
+    var galWrap = galChapter.querySelector('.wrap');
+    function galHoeheAnpassen(){
+      galSlides.forEach(function(s){ s.style.height = ''; });
+      var basisHoehe = galSlides[0].offsetHeight;
+      var cs = getComputedStyle(galChapter);
+      var polsterung = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
+      var restInhalt = galWrap.offsetHeight - basisHoehe;
+      var verfuegbar = innerHeight - polsterung - restInhalt - 8;
+      var hoehe = Math.max(240, Math.min(verfuegbar, innerHeight * 0.82));
+      galSlides.forEach(function(s){ s.style.height = Math.round(hoehe) + 'px'; });
+    }
+    galHoeheAnpassen();
+    window.addEventListener('resize', galHoeheAnpassen);
   }
 
   /* Formular — Prototyp, versendet noch nicht */
