@@ -221,6 +221,14 @@ main{position:relative;z-index:10}
 .chapter__bg-grade{
   position:absolute;inset:0;
   background:
+    /* Rand-Verblassung oben/unten: jedes Kapitelbild blendet zur echten
+       Seitenfarbe (--bg) aus, bevor es an die Kapitelgrenze stößt. Vorher
+       stießen zwei Fotos an der Grenze hart aufeinander („hart von Bild
+       zu Bild") — jetzt laufen beide Seiten der Grenze zur selben
+       dunklen Fläche aus, der Schnitt wirkt wie eine weiche Überblendung
+       statt eines harten Schnitts. */
+    linear-gradient(to bottom,var(--bg) 0%,transparent 14%),
+    linear-gradient(to top,var(--bg) 0%,transparent 20%),
     radial-gradient(66% 78% at 72% 38%,rgba(244,236,214,.16) 0%,transparent 62%),
     linear-gradient(180deg,rgba(10,24,38,.28) 0%,rgba(8,9,11,.52) 100%),
     /* Rechts läuft die Verdunkelung bewusst NICHT mehr bis auf 0 % aus.
@@ -250,6 +258,11 @@ main{position:relative;z-index:10}
   .chapter__bg{height:min(100%, 100svh)}
   .chapter__bg-grade{
     background:
+      /* Oberer Rand blendet zur Seitenfarbe aus, genau wie am unteren
+         Rand (der bereits über das bestehende 180deg-Verlauf bei 100%
+         praktisch --bg erreicht) — sonst bleibt der harte Bildschnitt
+         oben an jeder Kapitelgrenze bestehen, unten aber nicht. */
+      linear-gradient(to bottom,var(--bg) 0%,transparent 18%),
       radial-gradient(66% 60% at 72% 30%,rgba(244,236,214,.14) 0%,transparent 62%),
       linear-gradient(180deg,
         rgba(10,15,20,.42) 0%,
