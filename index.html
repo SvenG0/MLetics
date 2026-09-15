@@ -908,13 +908,8 @@ footer{position:relative;z-index:10;background:var(--bg);border-top:1px solid va
       <h2 class="display rise">Ganzheitlich. Nachhaltig.<br>Professionell.</h2>
       <p class="lead rise" style="margin-top:2rem">
         Prävention beginnt vor der Verletzung. 16 Jahre Erfahrung im
-        Profifußball haben meinen Blick auf den menschlichen Körper, Belastung
-        und Regeneration geprägt.
-      </p>
-      <p class="body rise" style="margin-top:1.5rem;max-width:56ch">
-        Mein Anspruch ist es, körperliche Zusammenhänge präzise zu erfassen,
-        individuelle Belastungsfaktoren zu erkennen und gemeinsam nachhaltige
-        Lösungen zu entwickeln. Nicht erst reagieren, wenn es weh tut. Sondern
+        Profifußball prägen meinen Blick auf Körper, Belastung und
+        Regeneration — nicht erst reagieren, wenn es weh tut, sondern
         verstehen, was Dein Körper braucht.
       </p>
     </div>
@@ -1298,6 +1293,31 @@ function initMLetics(){
     }, {rootMargin: '0px 0px -20% 0px'});
 
     sections.forEach(function(sec){ revealWatch.observe(sec); });
+
+    /* Sicherheitsnetz: Klickt man einen Nav-Link an (z.B. direkt zu
+       „Galerie"), springt der Browser nativ und SOFORT dorthin (kein
+       scroll-behavior:smooth, siehe Begründung oben bei den
+       Design-Tokens) — dabei wird nie ein Frame gerendert, in dem die
+       übersprungenen Kapitel (Treat, Connect, …) kurz im Sichtfenster
+       stehen. Der IntersectionObserver oben bekommt für sie dadurch nie
+       ein "jetzt sichtbar"-Ereignis und sie blieben für immer bei
+       opacity:0 hängen — obwohl man längst daran vorbeigescrollt ist.
+       Gleiches gilt für einen Deep-Link mit #anker beim ersten Laden.
+       Hier deshalb ein Nachtrag: alles, was bereits im oder über dem
+       Sichtfenster liegt, sofort sichtbar schalten (ohne die
+       gestaffelte Animation — die ist ohnehin nicht zu sehen, wenn man
+       nie dort vorbeigescrollt ist). */
+    var riseNachtragTicking = false;
+    function riseNachtragen(){
+      document.querySelectorAll('.rise[data-in="false"]').forEach(function(el){
+        if(el.getBoundingClientRect().top < innerHeight){ el.dataset.in = 'true'; }
+      });
+    }
+    riseNachtragen();
+    window.addEventListener('scroll', function(){
+      if(!riseNachtragTicking){ riseNachtragTicking = true; requestAnimationFrame(function(){ riseNachtragen(); riseNachtragTicking = false; }); }
+    }, {passive: true});
+    window.addEventListener('hashchange', riseNachtragen);
   }
 
   /* Treat-/„Für wen?"-Karten: der Hervorhebungs-Zustand (Rahmen, Ziffer,
