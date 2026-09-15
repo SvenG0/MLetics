@@ -1263,14 +1263,22 @@ function initMLetics(){
   /* Treat-/„Für wen?"-Karten: der Hervorhebungs-Zustand (Rahmen, Ziffer,
      Unterstreichung) hängt bisher an :hover — auf Touch-Geräten gibt es
      kein echtes Hover, dort passierte beim Antippen/Scrollen also gar
-     nichts. matchMedia('(hover: none)') erkennt genau diesen Fall (kein
-     Zeigegerät, das dauerhaft über einem Element stehen kann) und lässt
-     dann stattdessen die Karte automatisch aktiv werden, sobald sie beim
-     Scrollen die Bildschirmmitte durchläuft — dieselben CSS-Regeln wie
-     :hover greifen dann über die zusätzliche Klasse .is-inview (siehe
-     .service/.audience__card weiter oben). Auf Geräten mit echtem Hover
-     bleibt alles wie gehabt, dieser Code läuft dort gar nicht erst. */
-  if('IntersectionObserver' in window && matchMedia('(hover: none)').matches){
+     nichts. Erkennung bewusst über drei Signale statt nur
+     matchMedia('(hover: none)') allein: auf einem echten iPhone blieb
+     das Feature aus, vermutlich weil ein einzelnes Signal je nach
+     Ansichts-Kontext (Safari direkt vs. Quick-Look-Vorschau aus
+     Mail/Nachrichten) nicht zuverlässig war. Reicht eines der drei
+     Signale, gilt das Gerät als „kein echtes Hover" — dann übernimmt
+     die Karte automatisch denselben Zustand wie :hover (Klasse
+     .is-inview, siehe .service/.audience__card weiter oben), sobald
+     sie beim Scrollen die Bildschirmmitte durchläuft. Auf echten
+     Maus-/Trackpad-Geräten bleiben alle drei Signale negativ, dort
+     läuft dieser Code gar nicht erst. */
+  var keinEchtesHover =
+    matchMedia('(hover: none)').matches ||
+    matchMedia('(pointer: coarse)').matches ||
+    ('ontouchstart' in window);
+  if('IntersectionObserver' in window && keinEchtesHover){
     var cardWatch = new IntersectionObserver(function(entries){
       entries.forEach(function(en){
         en.target.classList.toggle('is-inview', en.isIntersecting);
