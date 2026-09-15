@@ -808,12 +808,12 @@ footer{position:relative;z-index:10;background:var(--bg);border-top:1px solid va
 <!-- ── 05 GALERIE ─────────────────────────────────────── -->
 <section class="chapter" id="galerie" data-chapter="4">
   <div class="wrap">
-    <!-- Bewusst kein sichtbarer Text hier — nur die Bilder. Die
-         Überschrift bleibt als sr-only erhalten: Screenreader-Nutzer
-         sollen trotzdem wissen, welches Kapitel das ist (die Navigation
-         nennt es ohnehin schon „Galerie", das hier ist nur die
-         zusätzliche Ansage direkt am Kapitelanfang). -->
-    <h2 class="sr-only">Galerie: Einblicke in die Praxis</h2>
+    <!-- Nur das kleine Kapitel-Label, wie bei den anderen Kapiteln —
+         der große Titel und Fließtext bleiben bewusst weg, „nur die
+         Bilder". h2 trägt die sichtbare Überschrift selbst (nicht mehr
+         sr-only), damit sie zugleich als echte Dokument-Überschrift zählt. -->
+    <p class="eyebrow rise"><b>05</b> <span>Galerie</span></p>
+    <h2 class="sr-only">Galerie</h2>
 
     <div class="gallery rise">
       <div class="gallery__stage">
