@@ -511,11 +511,21 @@ main{position:relative;z-index:10}
      Foto bleibt immer sichtbar, egal wie die Box gerade zugeschnitten ist. */
   max-height:min(48svh,520px);
 }
+/* Rand bei object-fit:contain: der bg-0X-Farbverlauf allein wirkte wie
+   eine zufällige Fläche, die nichts mit dem Foto zu tun hat. Jetzt füllt
+   stattdessen eine unscharfe, abgedunkelte Version DESSELBEN Fotos den
+   Rand — dasselbe Prinzip wie Vollbild-Player bei YouTube oder Instagram.
+   Braucht zwingend ein zweites Element mit demselben Bild als
+   background-image (Inline-style im Markup) — CSS kann das src eines
+   <img> nicht selbst als Hintergrund eines anderen Elements lesen. */
+.gallery__backdrop{
+  position:absolute;inset:-4%;background-size:cover;background-position:center;
+  filter:blur(28px) brightness(.5) saturate(1.15);
+  transform:scale(1.12); /* verdeckt die unscharfe Kante am Rand */
+}
 .gallery__slide img{
-  position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
-  /* contain lässt links/rechts (oder oben/unten) Rand offen, statt zu
-     beschneiden — der Rand zeigt den bg-0X-Farbverlauf der Figure
-     darunter durch, wirkt dadurch gestaltet statt leer. */
+  position:relative;z-index:1;
+  display:block;width:100%;height:100%;object-fit:contain;
 }
 /* Platzhalter-Hinweistext — bleibt sichtbar, bis eine echte Datei greift
    (gleiches Prinzip wie .portrait__ph: eine Galerie-Kachel braucht
@@ -798,12 +808,12 @@ footer{position:relative;z-index:10;background:var(--bg);border-top:1px solid va
 <!-- ── 05 GALERIE ─────────────────────────────────────── -->
 <section class="chapter" id="galerie" data-chapter="4">
   <div class="wrap">
-    <p class="eyebrow rise"><b>05</b> <span>Galerie</span></p>
-    <h2 class="display display--sm rise">Einblicke in<br>die Praxis.</h2>
-    <p class="lead rise" style="margin-top:1rem">
-      Ein paar Momentaufnahmen aus Behandlung, Aufbau und Alltag —
-      wird laufend ergänzt.
-    </p>
+    <!-- Bewusst kein sichtbarer Text hier — nur die Bilder. Die
+         Überschrift bleibt als sr-only erhalten: Screenreader-Nutzer
+         sollen trotzdem wissen, welches Kapitel das ist (die Navigation
+         nennt es ohnehin schon „Galerie", das hier ist nur die
+         zusätzliche Ansage direkt am Kapitelanfang). -->
+    <h2 class="sr-only">Galerie: Einblicke in die Praxis</h2>
 
     <div class="gallery rise">
       <div class="gallery__stage">
@@ -813,42 +823,52 @@ footer{position:relative;z-index:10;background:var(--bg);border-top:1px solid va
         <div class="gallery__track" id="galTrack">
           <figure class="gallery__slide bg-01">
             <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
+            <div class="gallery__backdrop" style="background-image:url('assets/galerie/01.jpg')" aria-hidden="true"></div>
             <img src="assets/galerie/01.jpg" alt="Physiotherapeutisches Team im Gespräch nach dem Spiel" data-media loading="eager">
           </figure>
           <figure class="gallery__slide bg-02">
             <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
+            <div class="gallery__backdrop" style="background-image:url('assets/galerie/02.jpg')" aria-hidden="true"></div>
             <img src="assets/galerie/02.jpg" alt="Medizinisches Team versorgt einen Spieler auf dem Platz" data-media loading="lazy">
           </figure>
           <figure class="gallery__slide bg-03">
             <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
+            <div class="gallery__backdrop" style="background-image:url('assets/galerie/03.jpg')" aria-hidden="true"></div>
             <img src="assets/galerie/03.jpg" alt="Physiotherapeuten laufen mit der Notfalltasche aufs Spielfeld" data-media loading="lazy">
           </figure>
           <figure class="gallery__slide bg-04">
             <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
+            <div class="gallery__backdrop" style="background-image:url('assets/galerie/04.jpg')" aria-hidden="true"></div>
             <img src="assets/galerie/04.jpg" alt="Betreuer geben Entwarnung nach einer Spielerverletzung" data-media loading="lazy">
           </figure>
           <figure class="gallery__slide bg-05">
             <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
+            <div class="gallery__backdrop" style="background-image:url('assets/galerie/05.jpg')" aria-hidden="true"></div>
             <img src="assets/galerie/05.jpg" alt="Behandlung eines Spielers direkt auf dem Rasen" data-media loading="lazy">
           </figure>
           <figure class="gallery__slide bg-01">
             <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
+            <div class="gallery__backdrop" style="background-image:url('assets/galerie/06.jpg')" aria-hidden="true"></div>
             <img src="assets/galerie/06.jpg" alt="Jubelumarmung mit einem Spieler an der Seitenlinie" data-media loading="lazy">
           </figure>
           <figure class="gallery__slide bg-02">
             <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
+            <div class="gallery__backdrop" style="background-image:url('assets/galerie/07.jpg')" aria-hidden="true"></div>
             <img src="assets/galerie/07.jpg" alt="Nachdenklicher Moment auf der Ersatzbank im Stadion" data-media loading="lazy">
           </figure>
           <figure class="gallery__slide bg-03">
             <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
+            <div class="gallery__backdrop" style="background-image:url('assets/galerie/08.jpg')" aria-hidden="true"></div>
             <img src="assets/galerie/08.jpg" alt="Versorgung eines verletzten Spielers am Spielfeldrand" data-media loading="lazy">
           </figure>
           <figure class="gallery__slide bg-04">
             <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
+            <div class="gallery__backdrop" style="background-image:url('assets/galerie/09.jpg')" aria-hidden="true"></div>
             <img src="assets/galerie/09.jpg" alt="Faustgruß zwischen zwei Betreuern im Stadion" data-media loading="lazy">
           </figure>
           <figure class="gallery__slide bg-05">
             <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
+            <div class="gallery__backdrop" style="background-image:url('assets/galerie/10.jpg')" aria-hidden="true"></div>
             <img src="assets/galerie/10.jpg" alt="Jubel mit der Aufstiegs-Meisterschale" data-media loading="lazy">
           </figure>
         </div>
