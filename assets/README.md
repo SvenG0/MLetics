@@ -28,24 +28,22 @@ Die B-Variante nutzt `04-…` und `06-…` nicht; dort fehlt also nichts.
 
 ## Galerie (neu, A-Version)
 
-Kapitel 05 zeigt einen Filmstreifen-Karussell mit aktuell 6 Platzhalter-Kacheln.
-Bilder ablegen unter:
+Kapitel 05 zeigt ein Filmstreifen-Karussell. **Bereits befüllt** mit 10 echten
+Fotos aus `Bilder/Galerie 1.jpg` bis `Galerie 10.jpg` (Physio-Einsätze am
+Spielfeldrand, VfL Bochum, Eintracht Frankfurt, Aufstiegsfeier) — verkleinert
+auf 1600px Breite und als JPEG komprimiert (Quelle bleibt im Original in
+`Bilder/` erhalten):
 
 ```
-assets/galerie/01.jpg
-assets/galerie/02.jpg
-assets/galerie/03.jpg
-assets/galerie/04.jpg
-assets/galerie/05.jpg
-assets/galerie/06.jpg
+assets/galerie/01.jpg … 10.jpg
 ```
 
-Sobald eine Datei existiert, ersetzt sie automatisch die Platzhalter-Kachel
-an derselben Stelle (Hinweistext „Foto folgt" verschwindet dann von selbst).
-Mehr als 6 Bilder gewünscht? In `index.html` im Abschnitt „05 GALERIE" ein
-weiteres `<figure class="gallery__slide">` (Bild-Track) **und** einen
-passenden `<button class="gallery__thumb">` (Miniaturleiste) ergänzen —
-beide Listen müssen dieselbe Reihenfolge haben.
+Weitere Bilder ergänzen: Datei unter `assets/galerie/11.jpg` (usw.) ablegen
+und in `index.html` im Abschnitt „05 GALERIE" ein weiteres
+`<figure class="gallery__slide">` (Bild-Track) **und** einen passenden
+`<button class="gallery__thumb">` (Miniaturleiste, mit eigenem `<img>` darin)
+ergänzen — beide Listen müssen dieselbe Reihenfolge haben. Für den Alt-Text
+kurz beschreiben, was auf dem Bild passiert (nicht nur „Foto 11").
 
 Format/Auflösung wie bei den Kapitelbildern (siehe unten), Seitenverhältnis
 im Karussell ist 16:9 — am besten schon in etwa so zuschneiden, sonst
