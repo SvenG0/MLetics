@@ -504,11 +504,19 @@ main{position:relative;z-index:10}
      16:9-bei-voller-Breite das Bild allein schon höher als der ganze
      restliche Bildschirm — Überschrift und Miniaturen rutschen dann aus
      dem sichtbaren Bereich, man muss um die Galerie herum scrollen.
-     max-height hält das Bild an der Bildschirmhöhe fest; object-fit:cover
-     schneidet dann eben etwas mehr rechts/links statt oben/unten ab. */
-  max-height:min(40svh,440px);
+     max-height hält die Box an der Bildschirmhöhe fest. object-fit:cover
+     hätte dabei stur weiter zugeschnitten, bis vom Foto kaum noch etwas
+     zu erkennen war — das war der eigentliche Fehler, nicht behoben durch
+     eine kleinere Zahl, sondern durch object-fit:contain unten: das ganze
+     Foto bleibt immer sichtbar, egal wie die Box gerade zugeschnitten ist. */
+  max-height:min(48svh,520px);
 }
-.gallery__slide img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.gallery__slide img{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
+  /* contain lässt links/rechts (oder oben/unten) Rand offen, statt zu
+     beschneiden — der Rand zeigt den bg-0X-Farbverlauf der Figure
+     darunter durch, wirkt dadurch gestaltet statt leer. */
+}
 /* Platzhalter-Hinweistext — bleibt sichtbar, bis eine echte Datei greift
    (gleiches Prinzip wie .portrait__ph: eine Galerie-Kachel braucht
    einen sichtbaren Hinweis, anders als ein reiner Kapitelhintergrund). */
