@@ -26,20 +26,26 @@
   --muted:#ADB3BB;          /* kühles Grau, aus dem Logo-Grau (#4D4D4E) für Dunkelgrund aufgehellt — etwas heller als zuvor (#9BA1AA), damit Fließtext auf Fotos genug Kontrast behält */
   --brand:#2765A5;          /* echtes Logo-Blau — Marke, Trennlinien, Bildlasur */
   --brand-light:#4A8CC9;    /* aufgehelltes Blau für Glüh-/Lichteffekte */
-  /* War #3692F2 — bewusst kräftiger/heller als das echte Logo-Blau
-     gewählt, für mehr "Pop" auf Buttons. Feedback: das wirkte dann aber
-     nicht mehr wie dieselbe Farbe wie im Logo. Jetzt identisch mit
-     --brand — Buttons, Linien und Akzente tragen jetzt exakt das echte
-     Logo-Blau. --on-accent musste dafür von dunklem auf helles Text
-     wechseln: die dunklere Farbe reicht als Hintergrund für dunklen
-     Text nicht mehr aus (nur noch 3.1:1 statt vorher 8.9:1), mit hellem
-     Text auf --accent sind es 5.3:1. --accent-soft (Hover) nur noch
-     leicht aufgehellt statt stark: heller als etwa 7% Richtung Weiß
-     würde den Kontrast zum hellen Button-Text wieder unter 4.5:1
-     drücken. */
   --accent:#2765A5;
   --accent-soft:#346EAA;
   --on-accent:#F2F0EA;      /* Text auf Akzent-Blau — 5.3:1 */
+  /* Das Logo-PNG ist bewusst teiltransparent gerendert (kein einziges
+     Blau-Pixel darin ist voll deckend, größtenteils ~65-70% Deckkraft)
+     — auf dem dunklen Seitenhintergrund verrechnet sich diese
+     Transparenz zu einem sichtbar DUNKLEREN Blau, als der pure
+     Pixelwert zeigt. --accent oben (#2765A5, wie er im rohen Bild
+     steckt) wirkte deshalb neben dem Logo im Header spürbar zu hell —
+     "blass" im Vergleich zum tatsächlich wahrgenommenen Logo-Blau.
+     Eigene Buttonfarbe hier rechnerisch aus Blau-über-Schwarz ermittelt
+     (Logo-Pixel mit ihrer echten Deckkraft auf --bg verrechnet,
+     gemittelt über alle Blau-Pixel des Logos: #042F7A) — das ist die
+     Farbe, die man auf der Seite tatsächlich sieht, nicht die im PNG
+     gespeicherte. Eigene Tokens statt --accent zu überschreiben: als
+     Linien-/Text-Akzent (Ziffern, Aufzählungspunkte, Fokus-Ring) bleibt
+     --accent bewusst heller — bei #042F7A wäre der Fokus-Ring auf
+     dunklem Grund kaum noch sichtbar (nur 1.6:1 statt mindestens 3:1). */
+  --btn-blue:#042F7A;
+  --btn-blue-soft:#2A4E8E;  /* Hover, 15% Richtung Weiß — 7.2:1 zu hellem Text */
   --line:rgba(150,180,206,.15);
   --line-strong:rgba(160,190,214,.28);
 
@@ -125,9 +131,13 @@ a{color:inherit}
 .eyebrow::after{content:"";height:1px;flex:1;max-width:5rem;background:var(--line-strong)}
 
 /* ── Navigation: EINE schwebende Leiste — Marke, Links und CTA
-   in einem Container. ── */
+   in einem Container. Bewusst NICHT fixed: auf Wunsch nicht mehr
+   dauerhaft sichtbar beim Scrollen, sondern nur oben auf der Seite —
+   position:absolute setzt sie einmalig an den Seitenanfang und lässt
+   sie dann normal mit dem Dokument nach oben aus dem Bild scrollen,
+   statt am Bildschirm zu kleben wie bei position:fixed. */
 .nav{
-  position:fixed;inset:0 0 auto;z-index:60;
+  position:absolute;inset:0 0 auto;z-index:60;
   padding:1.35rem 0;pointer-events:none;
 }
 .bar{
@@ -196,8 +206,16 @@ a{color:inherit}
   transition:background-color .3s var(--ease),border-color .3s var(--ease),color .3s var(--ease);
 }
 .btn:hover{background:var(--text);color:var(--bg);border-color:var(--text)}
-.btn--solid{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:500}
-.btn--solid:hover{background:var(--accent-soft);border-color:var(--accent-soft);color:var(--on-accent)}
+/* Eigene, dunklere Tokens (--btn-blue) statt --accent — siehe Begründung
+   bei den Farbvariablen oben. Dezentes Glühen darunter, weil die
+   dunklere Farbe für sich genommen auf dem fast schwarzen Seitengrund
+   weniger heraussticht als die vorige hellere Variante — soll trotzdem
+   klar als primärer Button erkennbar bleiben. */
+.btn--solid{
+  background:var(--btn-blue);border-color:var(--btn-blue);color:var(--text);font-weight:500;
+  box-shadow:0 8px 24px -8px rgba(4,47,122,.6);
+}
+.btn--solid:hover{background:var(--btn-blue-soft);border-color:var(--btn-blue-soft);color:var(--text)}
 
 
 /* ── Kapitel-Hintergrund: läuft normal mit dem Dokument mit ──────
@@ -414,6 +432,17 @@ main{position:relative;z-index:10}
 }
 .step button:hover:not(:disabled){background:var(--accent);color:var(--on-accent)}
 .step button:disabled{opacity:.3;cursor:default}
+/* War auf kleinen Screens unnötig groß und fiel dadurch stärker auf,
+   als eine reine Zusatz-Navigation sollte. 36px statt 44px unterschreitet
+   die 44px-Empfehlung zwar knapp, bleibt aber noch komfortabel tippbar —
+   der Rest der Seite hat auf schmalen Screens ohnehin schon genug
+   große Touch-Ziele (Buttons, Nav-Leiste). */
+@media(max-width:640px){
+  .step{padding:.3rem;gap:.3rem;right:1rem;bottom:1rem}
+  .step button{width:36px;height:36px}
+  .step button svg{width:16px;height:16px}
+  .step__count{font-size:.64rem;padding-inline:.1rem}
+}
 .step__count{
   font-family:var(--f-body);font-size:.72rem;font-weight:500;letter-spacing:.16em;
   color:var(--muted);font-variant-numeric:tabular-nums;padding-inline:.2rem;
