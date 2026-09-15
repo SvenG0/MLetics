@@ -461,6 +461,17 @@ main{position:relative;z-index:10}
   .service:nth-child(3){border-top:0;border-left:1px solid var(--line)}
 }
 .service{position:relative;padding:2.25rem 2rem 2.5rem}
+/* Hover war bisher kaum wahrzunehmen (nur Ziffer + eine 2.25rem breite
+   Unterstreichung unter der Überschrift) — jetzt zieht zusätzlich eine
+   volle, kartenbreite Akzentlinie am oberen Rand ein: deutlich
+   sichtbar, aber weiterhin nur eine Linie statt einer Fläche, die
+   das Foto wieder verdecken würde. */
+.service::before{
+  content:"";position:absolute;top:-1px;left:0;right:0;height:2px;
+  background:var(--accent);transform:scaleX(0);transform-origin:left;
+  transition:transform .45s var(--ease);
+}
+.service:hover::before{transform:scaleX(1)}
 .service__no{
   display:block;font-family:var(--f-display);font-weight:700;font-variation-settings:'wdth' 78;
   font-size:3.25rem;line-height:1;letter-spacing:-.02em;margin-bottom:1.4rem;
@@ -493,6 +504,14 @@ main{position:relative;z-index:10}
 .audience{display:grid;border-block:1px solid var(--line);margin-top:.2rem}
 .audience__card{position:relative;padding:1.75rem 1.5rem 2rem;border-top:1px solid var(--line)}
 .audience__card:first-child{border-top:0}
+/* Gleiche kartenbreite Akzentlinie wie bei .service, aus demselben
+   Grund: das Icon-Verschieben allein war beim Hover kaum zu sehen. */
+.audience__card::before{
+  content:"";position:absolute;top:-1px;left:0;right:0;height:2px;
+  background:var(--accent);transform:scaleX(0);transform-origin:left;
+  transition:transform .45s var(--ease);
+}
+.audience__card:hover::before{transform:scaleX(1)}
 .audience__icon{
   display:block;color:var(--accent);margin-bottom:1rem;
   transition:transform .4s var(--ease);
