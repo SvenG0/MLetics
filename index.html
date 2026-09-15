@@ -188,48 +188,6 @@ a{color:inherit}
 .btn--solid{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:500}
 .btn--solid:hover{background:var(--accent-soft);border-color:var(--accent-soft);color:var(--on-accent)}
 
-/* ── Liquid-Glass-Test ──────────────────────────────────────
-   Nachgebaut mit reinem CSS + SVG-Filter (#glass-distortion, siehe
-   <body>-Anfang) statt der React/shadcn-Komponente — dieses Projekt
-   hat keinen React/Tailwind/shadcn-Stack, nur HTML/CSS/JS. Die
-   Verzerrung (feTurbulence/feDisplacementMap über
-   backdrop-filter:…url(#glass-distortion)) rendert aktuell nur in
-   Chromium-Browsern (Chrome/Edge); die @supports-Abfrage sorgt dafür,
-   dass andere Browser (Safari, Firefox) stattdessen einen ruhigen
-   Frost-Glas-Look ohne Verzerrung bekommen — sieht dort weiterhin wie
-   ein normaler Button aus, nichts bricht.
-   z-index:0 auf .btn--glass selbst ist nötig, damit das ::before
-   (z-index:-1) zuverlässig HINTER dem eigenen Button-Text bleibt,
-   statt in den Stapelkontext eines Vorfahren zu entkommen (klassische
-   z-index:-1-Falle ohne eigenen Stapelkontext). */
-.btn--glass{
-  position:relative;z-index:0;overflow:hidden;
-  background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.24);
-  box-shadow:
-    0 3px 14px rgba(0,0,0,.28),
-    inset 1px 1px 1px -.5px rgba(255,255,255,.75),
-    inset -1px -1px 1px -.5px rgba(255,255,255,.3),
-    inset 0 0 8px 8px rgba(255,255,255,.05);
-  transition:transform .35s var(--ease),background-color .35s var(--ease),box-shadow .35s var(--ease);
-}
-.btn--glass::before{
-  content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;
-  backdrop-filter:blur(8px) saturate(160%);
-  -webkit-backdrop-filter:blur(8px) saturate(160%);
-}
-@supports (backdrop-filter:url(#glass-distortion)){
-  .btn--glass::before{backdrop-filter:blur(8px) saturate(160%) url(#glass-distortion)}
-}
-.btn--glass:hover{
-  background:rgba(255,255,255,.13);color:var(--text);
-  transform:scale(1.045);
-  box-shadow:
-    0 6px 20px rgba(0,0,0,.32),
-    inset 1px 1px 1px -.5px rgba(255,255,255,.85),
-    inset -1px -1px 1px -.5px rgba(255,255,255,.35),
-    inset 0 0 8px 8px rgba(255,255,255,.07);
-}
-
 
 /* ── Kapitel-Hintergrund: läuft normal mit dem Dokument mit ──────
    Jedes Kapitel trägt sein Bild direkt in sich (position:absolute
@@ -727,19 +685,6 @@ footer{position:relative;z-index:10;background:var(--bg);border-top:1px solid va
 </head>
 <body>
 
-<!-- Liquid-Glass-Test (.btn--glass, siehe CSS): Verzerrungsfilter für
-     den Frost-Glas-Effekt hinter den Buttons. Nur Definition, kein
-     sichtbares Element — rendert nichts von sich aus. -->
-<svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true" focusable="false">
-  <defs>
-    <filter id="glass-distortion" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
-      <feTurbulence type="fractalNoise" baseFrequency="0.012 0.03" numOctaves="1" seed="2" result="turbulence"/>
-      <feGaussianBlur in="turbulence" stdDeviation="2" result="blurredNoise"/>
-      <feDisplacementMap in="SourceGraphic" in2="blurredNoise" scale="26" xChannelSelector="R" yChannelSelector="B"/>
-    </filter>
-  </defs>
-</svg>
-
 <a href="#inhalt" class="btn" style="position:absolute;left:-9999px;top:1rem;z-index:99"
    onfocus="this.style.left='1rem'" onblur="this.style.left='-9999px'">Zum Inhalt springen</a>
 
@@ -762,7 +707,7 @@ footer{position:relative;z-index:10;background:var(--bg);border-top:1px solid va
         <a href="#galerie">Galerie</a>
       </nav>
 
-      <a href="#kontakt" class="btn btn--glass bar__cta">Kontakt</a>
+      <a href="#kontakt" class="btn btn--solid bar__cta">Kontakt</a>
 
       <span class="bar__progress" aria-hidden="true"><i></i></span>
     </div>
@@ -802,7 +747,7 @@ footer{position:relative;z-index:10;background:var(--bg);border-top:1px solid va
     </p>
     <div class="rise" style="margin-top:3rem;display:flex;gap:1rem;flex-wrap:wrap;align-items:center">
       <a href="#kontakt" class="btn btn--solid">Termin anfragen</a>
-      <a href="#treat" class="btn btn--glass">Leistungen ansehen</a>
+      <a href="#treat" class="btn">Leistungen ansehen</a>
     </div>
   </div>
 </section>
