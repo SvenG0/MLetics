@@ -413,64 +413,64 @@ main{position:relative;z-index:10}
 .rail button[aria-current="true"] span{background:var(--accent);width:8px;height:8px;box-shadow:0 0 0 4px rgba(54,146,242,.22)}
 
 /* ── Leistungen (TREAT) ─────────────────────────────────────
-   Vorher: drei Zellen in einem nüchternen Tabellenraster (1px-Linien,
-   flache Nummer) — wirkte wie eine PowerPoint-Folie. Jetzt: eigenständige
-   Karten mit Icon-Badge, weicher Kante und Hover-Lift; die Kennziffer
-   sitzt als große, nur umrandete Ziffer im Hintergrund (Konturschrift via
-   -webkit-text-stroke) statt als kleines Funktionslabel — dekorativ,
-   kein Informationsverlust falls ein Browser das nicht unterstützt. */
-.services{display:grid;gap:1.25rem;margin-top:var(--sp-4)}
+   Zwei Anläufe verworfen: das ursprüngliche Tabellenraster wirkte wie
+   eine PowerPoint-Folie, die darauf folgenden Karten mit Icon-Badge,
+   Radius und Hover-Lift dagegen wie ein generisches SaaS-Template
+   ("sieht zu billig nach KI aus"). Jetzt redaktionell statt
+   komponentenhaft: dünne Trennlinien zwischen den Spalten (per
+   gap+background — dieselbe robuste Technik wie beim allerersten
+   Raster, adaptiert automatisch bei 1/2/3 Spalten), keine Radius/
+   Schatten/Badges mehr. Die große, nur umrandete Ziffer ist das
+   einzige Grafikelement und füllt sich beim Hover mit der Akzentfarbe;
+   die Überschrift bekommt beim Hover eine schmale Unterstreichung, die
+   von links einzieht — kein Icon-Badge (Symbol dafür, dass es "wie KI"
+   wirkte), keine bewegte Fläche. */
+.services{display:grid;gap:1px;background:var(--line);border-block:1px solid var(--line);margin-top:var(--sp-4)}
 @media(min-width:640px){.services{grid-template-columns:1fr 1fr}}
 @media(min-width:1024px){.services{grid-template-columns:repeat(3,1fr)}}
 .service{
-  position:relative;overflow:hidden;
-  background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.01));
-  border:1px solid var(--line);border-radius:16px;
-  padding:2rem 1.9rem 2.25rem;
-  transition:transform .45s var(--ease),border-color .45s var(--ease),background-color .45s var(--ease);
+  position:relative;background:var(--bg);padding:2.25rem 2rem 2.5rem;
+  transition:background-color .5s var(--ease);
 }
-/* Akzentlinie fährt beim Hover von links ein — dezenter Bewegungsreiz,
-   der Bewegung/Fortschritt andeutet statt nur die Fläche einzufärben. */
-.service::before{
-  content:"";position:absolute;top:0;left:1.9rem;right:1.9rem;height:2px;
-  background:var(--accent);border-radius:2px;
-  transform:scaleX(0);transform-origin:left;transition:transform .5s var(--ease);
-}
-.service:hover{transform:translateY(-6px);border-color:var(--line-strong);background:var(--bg-raise)}
-.service:hover::before{transform:scaleX(1)}
+.service:hover{background:var(--bg-raise)}
 .service__no{
-  position:absolute;top:.15rem;right:1.1rem;z-index:0;
-  font-family:var(--f-display);font-weight:700;font-variation-settings:'wdth' 80;
-  font-size:4.5rem;line-height:1;letter-spacing:-.02em;
-  color:transparent;-webkit-text-stroke:1px var(--line-strong);
-  pointer-events:none;
+  display:block;font-family:var(--f-display);font-weight:700;font-variation-settings:'wdth' 78;
+  font-size:3.25rem;line-height:1;letter-spacing:-.02em;margin-bottom:1.4rem;
+  color:transparent;-webkit-text-stroke:1.5px var(--line-strong);
+  transition:color .5s var(--ease),-webkit-text-stroke-color .5s var(--ease);
 }
-.service__icon{
-  position:relative;display:grid;place-items:center;width:2.75rem;height:2.75rem;border-radius:10px;
-  background:rgba(54,146,242,.14);color:var(--accent);margin-bottom:1.1rem;
+.service:hover .service__no{color:var(--accent);-webkit-text-stroke-color:var(--accent)}
+.service h3{
+  font-family:var(--f-display);font-weight:700;font-variation-settings:'wdth' 88;
+  font-size:1.28rem;margin:0 0 .9rem;letter-spacing:-.005em;
+  padding-bottom:.9rem;position:relative;border-bottom:1px solid var(--line);
 }
-.service h3{font-family:var(--f-display);font-weight:700;font-variation-settings:'wdth' 88;font-size:1.28rem;margin:0 0 .4rem;letter-spacing:-.005em;position:relative}
-.service p{margin:0;font-size:.9rem;color:var(--muted);line-height:1.6;position:relative}
-.service ul{list-style:none;margin:1.1rem 0 0;padding:0;display:grid;gap:.55rem;position:relative}
+.service h3::after{
+  content:"";position:absolute;left:0;bottom:-1px;height:2px;width:2.25rem;
+  background:var(--accent);transform:scaleX(0);transform-origin:left;
+  transition:transform .55s var(--ease);
+}
+.service:hover h3::after{transform:scaleX(1)}
+.service p{margin:0;font-size:.9rem;color:var(--muted);line-height:1.6}
+.service ul{list-style:none;margin:1.1rem 0 0;padding:0;display:grid;gap:.55rem}
 .service li{font-size:.85rem;color:var(--muted);line-height:1.5;padding-left:1rem;position:relative}
 .service li::before{content:"";position:absolute;left:0;top:.6em;width:6px;height:1px;background:var(--accent)}
 
-/* „Für wen?" (CONNECT) — zwei Karten statt reinem Text-Stapel, gleiche
-   Bildsprache wie die Leistungskarten oben (Icon-Badge, Rahmen,
-   Hover-Lift), nur kompakter für die schmalere Spalte. */
-.audience{display:grid;gap:1rem;margin-top:.2rem}
+/* „Für wen?" (CONNECT) — gleiche redaktionelle Sprache wie TREAT:
+   Trennlinien statt Karten, freistehendes Icon in Akzentfarbe statt
+   Icon-in-Badge (die eingefärbte Kachel war der auffälligste
+   "generische KI-Baustein"). */
+.audience{display:grid;gap:1px;background:var(--line);border-block:1px solid var(--line);margin-top:.2rem}
 .audience__card{
-  position:relative;
-  background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.01));
-  border:1px solid var(--line);border-radius:16px;
-  padding:1.6rem 1.75rem 1.85rem;
-  transition:transform .45s var(--ease),border-color .45s var(--ease),background-color .45s var(--ease);
+  position:relative;background:var(--bg);padding:1.75rem 1.5rem 2rem;
+  transition:background-color .5s var(--ease);
 }
-.audience__card:hover{transform:translateY(-4px);border-color:var(--line-strong);background:var(--bg-raise)}
+.audience__card:hover{background:var(--bg-raise)}
 .audience__icon{
-  display:grid;place-items:center;width:2.5rem;height:2.5rem;border-radius:10px;
-  background:rgba(54,146,242,.14);color:var(--accent);margin-bottom:.9rem;
+  display:block;color:var(--accent);margin-bottom:1rem;
+  transition:transform .4s var(--ease);
 }
+.audience__card:hover .audience__icon{transform:translateX(3px)}
 
 /* ── Kennzahlen ─────────────────────────────────────────── */
 .stats{display:grid;gap:var(--sp-3);margin-top:var(--sp-4)}
@@ -712,9 +712,6 @@ footer{position:relative;z-index:10;background:var(--bg);border-top:1px solid va
     <div class="services">
       <article class="service rise">
         <span class="service__no">01</span>
-        <span class="service__icon" aria-hidden="true">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-        </span>
         <h3>Physiotherapie</h3>
         <p>Beschwerden behandeln, Beweglichkeit verbessern und Funktionen wiederherstellen.</p>
         <ul>
@@ -726,9 +723,6 @@ footer{position:relative;z-index:10;background:var(--bg);border-top:1px solid va
       </article>
       <article class="service rise">
         <span class="service__no">02</span>
-        <span class="service__icon" aria-hidden="true">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>
-        </span>
         <h3>Sport-Osteopathie</h3>
         <p>Körperliche Zusammenhänge betrachten und funktionelle Einschränkungen ganzheitlich einordnen.</p>
         <ul>
@@ -740,9 +734,6 @@ footer{position:relative;z-index:10;background:var(--bg);border-top:1px solid va
       </article>
       <article class="service rise">
         <span class="service__no">03</span>
-        <span class="service__icon" aria-hidden="true">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7.5-4.2-7.5-10.1V6.2L12 3l7.5 3.2v4.7C19.5 16.8 12 21 12 21z"/><path d="M9 11.5l2 2 4-4.2"/></svg>
-        </span>
         <h3>Sektorale Heilpraktik Physiotherapie</h3>
         <p>Eigenständige physiotherapeutische Befundung und Behandlung im Rahmen der bestehenden Erlaubnis.</p>
         <ul>
@@ -777,7 +768,7 @@ footer{position:relative;z-index:10;background:var(--bg);border-top:1px solid va
       <div class="audience">
         <div class="audience__card rise">
           <span class="audience__icon" aria-hidden="true">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M23 6l-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/></svg>
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 6l-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/></svg>
           </span>
           <p class="block-h3">Für Athlet:innen</p>
           <p class="body">
@@ -788,7 +779,7 @@ footer{position:relative;z-index:10;background:var(--bg);border-top:1px solid va
         </div>
         <div class="audience__card rise">
           <span class="audience__icon" aria-hidden="true">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
           </span>
           <p class="block-h3">Für Patient:innen</p>
           <p class="body">
