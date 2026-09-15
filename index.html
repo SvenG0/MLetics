@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MLetics — Physiotherapie &amp; Sport-Osteopathie in Bochum</title>
+<meta name="description" content="MLetics: Physiotherapie und Sport-Osteopathie von Maik Liesbrock in Bochum. 16 Jahre Erfahrung im Profifußball — für Athletinnen, Athleten und Patientinnen, Patienten.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ─────────────────────────────────────────────────────────
+   MLETICS — Design Tokens
+   Bühne: neutrales Nah-Schwarz. Marke: das echte Logo-Blau
+   (aus Logo/…jpg gesampelt, Kern #2765A5). Akzent: dieselbe
+   Farbfamilie, heller/gesättigter für CTAs und aktive Zustände
+   — damit die Website die tatsächliche Marke trägt, nicht eine
+   erfundene Farbe.
+   ───────────────────────────────────────────────────────── */
+:root{
+  --bg:#0A0B0D;             /* Nah-Schwarz, neutral — nicht grün-, nicht blaustichig */
+  --bg-raise:#14171B;       /* Karten/Hover — kühles Anthrazit */
+  --text:#F2F0EA;           /* leicht cremiges Weiß, kein hartes #FFF */
+  --muted:#ADB3BB;          /* kühles Grau, aus dem Logo-Grau (#4D4D4E) für Dunkelgrund aufgehellt — etwas heller als zuvor (#9BA1AA), damit Fließtext auf Fotos genug Kontrast behält */
+  --brand:#2765A5;          /* echtes Logo-Blau — Marke, Trennlinien, Bildlasur */
+  --brand-light:#4A8CC9;    /* aufgehelltes Blau für Glüh-/Lichteffekte */
+  --accent:#2765A5;
+  --accent-soft:#346EAA;
+  --on-accent:#F2F0EA;      /* Text auf Akzent-Blau — 5.3:1 */
+  /* Das Logo-PNG ist bewusst teiltransparent gerendert (kein einziges
+     Blau-Pixel darin ist voll deckend, größtenteils ~65-70% Deckkraft)
+     — auf dem dunklen Seitenhintergrund verrechnet sich diese
+     Transparenz zu einem sichtbar DUNKLEREN Blau, als der pure
+     Pixelwert zeigt. --accent oben (#2765A5, wie er im rohen Bild
+     steckt) wirkte deshalb neben dem Logo im Header spürbar zu hell —
+     "blass" im Vergleich zum tatsächlich wahrgenommenen Logo-Blau.
+     Eigene Buttonfarbe hier rechnerisch aus Blau-über-Schwarz ermittelt
+     (Logo-Pixel mit ihrer echten Deckkraft auf --bg verrechnet,
+     gemittelt über alle Blau-Pixel des Logos: #042F7A) — das ist die
+     Farbe, die man auf der Seite tatsächlich sieht, nicht die im PNG
+     gespeicherte. Eigene Tokens statt --accent zu überschreiben: als
+     Linien-/Text-Akzent (Ziffern, Aufzählungspunkte, Fokus-Ring) bleibt
+     --accent bewusst heller — bei #042F7A wäre der Fokus-Ring auf
+     dunklem Grund kaum noch sichtbar (nur 1.6:1 statt mindestens 3:1). */
+  --btn-blue:#042F7A;
+  --btn-blue-soft:#2A4E8E;  /* Hover, 15% Richtung Weiß — 7.2:1 zu hellem Text */
+  --line:rgba(150,180,206,.15);
+  --line-strong:rgba(160,190,214,.28);
+
+  --f-display:'Archivo',system-ui,sans-serif;
+  --f-body:'Inter',system-ui,sans-serif;
+
+  --sp-1:.5rem;  --sp-2:1rem;   --sp-3:1.5rem;
+  --sp-4:2.5rem; --sp-5:4rem;   --sp-6:6rem;
+
+  --ease:cubic-bezier(.22,1,.36,1);
+  --dur:.7s;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+/* Kein scroll-behavior:smooth hier — unsere eigenen rAF-gedrosselten
+   Scroll-Effekte (Lesefortschritt in der Kopfleiste) lesen die
+   Scrollposition direkt; der native Smooth-Scroll würde parallel dagegen
+   „ansmoothen" und leicht ruckelig wirken. Wo wir selbst weich scrollen
+   wollen, übergeben wir behavior:'smooth' gezielt per JS an
+   scrollIntoView() — siehe unten. */
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:var(--f-body);font-weight:300;font-size:1rem;line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;display:block}
+a{color:inherit}
+
+/* Fokus — sichtbar, nie entfernt */
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+
+.wrap{width:min(100% - 3rem,84rem);margin-inline:auto}
+@media(min-width:1024px){.wrap{width:min(100% - 6rem,84rem)}}
+
+/* Lesbarkeit über Fotos: Schatten statt Fläche. Eine feste Box hinter
+   dem Text hätte verlässlichen Kontrast gebracht, aber das Bild dahinter
+   zugedeckt — genau das wollten wir nicht. text-shadow vererbt sich an
+   alle Kindelemente, kostet an Stellen mit ohnehin blickdichtem
+   Untergrund (Leistungskarten, Formularfelder, Autogrammkarte) nichts
+   und gibt dem Text auf dem Foto einen klaren, dunklen Rand: eng und
+   scharf für die Kantenschärfe, dazu weich und breit gegen unruhige
+   Bildstellen (z.B. das helle Trikot im Connect-Foto). */
+.chapter .wrap{
+  text-shadow:
+    0 1px 3px rgba(0,0,0,.9),
+    0 3px 14px rgba(0,0,0,.6),
+    0 0 32px rgba(0,0,0,.4);
+}
+
+/* ── Typografie ─────────────────────────────────────────── */
+.display{
+  font-family:var(--f-display);font-weight:700;
+  font-variation-settings:'wdth' 76;   /* Archivo Breiten-Achse — schmaler Schnitt */
+  font-size:clamp(2.75rem,8vw,7rem);
+  line-height:.92;letter-spacing:-.015em;margin:0;
+  text-wrap:balance;
+}
+.display--sm{font-size:clamp(2rem,4.5vw,3.5rem)}
+.lead{font-size:clamp(1.05rem,1.35vw,1.25rem);line-height:1.75;max-width:42ch;color:#D6D5D2}
+.lead--brand{color:var(--accent-soft);font-weight:500}
+/* War bisher starr 1rem, während .lead auf breiten Screens bis 1.25rem
+   mitwuchs — auf großen Bildschirmen wirkte Fließtext dadurch neben
+   der Bildgröße klein und beiläufig. Skaliert jetzt genauso mit. */
+.body{font-size:clamp(1rem,1.15vw,1.15rem);line-height:1.7;max-width:44ch;color:var(--muted)}
+.body + .body{margin-top:var(--sp-2)}
+
+/* Kleine Zwischenüberschrift, z. B. „Understand Body." */
+.block-h3{
+  font-family:var(--f-display);font-weight:600;font-variation-settings:'wdth' 90;
+  font-size:clamp(1.15rem,1.5vw,1.35rem);letter-spacing:-.005em;margin:0 0 .5rem;color:var(--text);
+}
+.block + .block{margin-top:2rem}
+
+/* Kapitel-Label „02 UNDERSTAND" */
+.eyebrow{
+  display:flex;align-items:center;gap:var(--sp-2);
+  font-family:var(--f-display);font-weight:600;
+  font-size:.8rem;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--muted);margin:0 0 var(--sp-3);
+}
+.eyebrow b{color:var(--accent);font-weight:700}
+.eyebrow::after{content:"";height:1px;flex:1;max-width:5rem;background:var(--line-strong)}
+
+/* ── Navigation: EINE schwebende Leiste — Marke, Links und CTA
+   in einem Container. Bewusst NICHT fixed: auf Wunsch nicht mehr
+   dauerhaft sichtbar beim Scrollen, sondern nur oben auf der Seite —
+   position:absolute setzt sie einmalig an den Seitenanfang und lässt
+   sie dann normal mit dem Dokument nach oben aus dem Bild scrollen,
+   statt am Bildschirm zu kleben wie bei position:fixed. */
+.nav{
+  position:absolute;inset:0 0 auto;z-index:60;
+  padding:1.35rem 0;pointer-events:none;
+}
+.bar{
+  position:relative;
+  pointer-events:auto;
+  display:flex;align-items:center;gap:.4rem;
+  padding:.45rem .45rem .45rem 1.1rem;
+  background:rgba(10,11,13,.78);
+  /* Nur Blur, kein zusätzliches saturate() — die Leiste ist fixiert und
+     läuft bei jedem Scroll-Frame neu; jeder Filter-Pass weniger hilft. */
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  border:1px solid var(--line);border-radius:999px;
+  box-shadow:0 20px 56px -28px rgba(0,0,0,.9);
+}
+
+/* Wortmarke — das echte, freigestellte Logo (assets/logo/mletics-mark-dark.png).
+   Freigestellt und für Dunkelgrund umgefärbt: Läufer + Schriftzug auf Creme,
+   das Logo-Blau bleibt original. Der Balken aus der Vorlage wurde entfernt. */
+.mark{display:inline-flex;align-items:center;text-decoration:none;line-height:1;min-height:44px}
+.mark__logo{height:56px;width:auto;display:block}
+@media(min-width:700px){.mark__logo{height:68px}}
+
+/* Lesefortschritt als Haarlinie im unteren Rand der Leiste.
+   --p wird per JS gesetzt (0–1). */
+.bar__progress{
+  position:absolute;left:1.4rem;right:1.4rem;bottom:.35rem;height:2px;
+  border-radius:2px;background:var(--line-strong);overflow:hidden;
+}
+.bar__progress i{
+  display:block;height:100%;border-radius:2px;background:var(--accent);
+  transform:scaleX(var(--p,0));transform-origin:left;
+}
+
+.bar__nav{display:none;align-items:center;gap:.1rem;margin-left:auto}
+@media(min-width:980px){.bar__nav{display:flex}}
+.bar__nav a{
+  position:relative;padding:.65rem .8rem;text-decoration:none;
+  font-size:.68rem;font-weight:500;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--muted);white-space:nowrap;
+  transition:color .35s var(--ease);
+}
+.bar__nav a:hover{color:var(--text)}
+.bar__nav a[aria-current="true"]{color:var(--text)}
+/* Hauchfeiner Unterstrich statt Farbfläche — ruhiger, präziser */
+.bar__nav a::after{
+  content:"";position:absolute;left:.8rem;right:.8rem;bottom:.42rem;height:1px;
+  background:var(--accent);transform:scaleX(0);transform-origin:left;
+  transition:transform .4s var(--ease);
+}
+.bar__nav a[aria-current="true"]::after{transform:scaleX(1)}
+
+/* .bar-Präfix nötig: sonst überschreibt das später notierte
+   .btn{display:inline-flex} diese Regel bei gleicher Spezifität. */
+/* Auf jeder Breite sichtbar — ersetzt den Menü-Button. Ab 980px kommen
+   die Textlinks (.bar__nav) links dazu; darunter ist der CTA der
+   einzige, direkte Weg von der Kopfzeile zum Kontakt-Kapitel. */
+.bar .bar__cta{margin-left:.3rem;display:inline-flex}
+
+.btn{
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.7rem 1.4rem;min-height:44px;border-radius:999px;
+  font-family:var(--f-body);font-size:.875rem;font-weight:500;
+  text-decoration:none;cursor:pointer;border:1px solid var(--line-strong);
+  background:transparent;color:var(--text);
+  transition:background-color .3s var(--ease),border-color .3s var(--ease),color .3s var(--ease);
+}
+.btn:hover{background:var(--text);color:var(--bg);border-color:var(--text)}
+/* Eigene, dunklere Tokens (--btn-blue) statt --accent — siehe Begründung
+   bei den Farbvariablen oben. Dezentes Glühen darunter, weil die
+   dunklere Farbe für sich genommen auf dem fast schwarzen Seitengrund
+   weniger heraussticht als die vorige hellere Variante — soll trotzdem
+   klar als primärer Button erkennbar bleiben. */
+.btn--solid{
+  background:var(--btn-blue);border-color:var(--btn-blue);color:var(--text);font-weight:500;
+  box-shadow:0 8px 24px -8px rgba(4,47,122,.6);
+}
+.btn--solid:hover{background:var(--btn-blue-soft);border-color:var(--btn-blue-soft);color:var(--text)}
+
+
+/* ── Kapitel-Hintergrund: läuft normal mit dem Dokument mit ──────
+   Jedes Kapitel trägt sein Bild direkt in sich (position:absolute
+   innerhalb des position:relative-Kapitels) — welches Bild zu sehen
+   ist, ergibt sich rein aus dem Dokumentaufbau, nicht aus einem
+   Skript, das während des Scrollens mitrechnen müsste.
+   Bewusst NICHT mehr die vorige Fassung (eine fixierte Bühne mit
+   Overlay-Ebenen, per Scroll-Handler ein-/ausgeblendet): Auf dem
+   iPhone verzögert Safari Scroll-gebundene Skripte systematisch,
+   solange der Finger aktiv über den Screen bewegt wird — die Bühne
+   blieb dadurch mitten im Scrollen auf dem zuletzt berechneten Bild
+   hängen (meist dem ersten). Diese Fassung braucht während des
+   Scrollens kein Skript mehr — das jeweils richtige Bild ist immer
+   an der richtigen Stelle im Dokument, garantiert korrekt auch wenn
+   JavaScript spät dran ist oder ganz ausbleibt. */
+main{position:relative;z-index:10}
+.chapter__bg{position:absolute;inset:0;z-index:0;overflow:hidden;background-size:cover;background-position:center}
+
+/* Foto oder Video im Kapitel. Fehlt die Datei, entfernt JS das Element
+   und der CSS-Verlauf darunter bleibt als Rückfallebene stehen. */
+.chapter__bg-img{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  object-position:var(--focus,center);
+  transform:scale(var(--zoom,1));
+  transform-origin:var(--zoom-origin,center);
+  filter:grayscale(.45) saturate(.85) contrast(1.06) brightness(.74);
+}
+/* Lasur: warmweißes Spitzlicht + dunkles Marken-Blau von oben, dazu der
+   Lesbarkeits-Schleier von links (Text sitzt links, Bild atmet rechts) —
+   alles in einer Ebene statt vorher drei getrennten. */
+.chapter__bg-grade{
+  position:absolute;inset:0;
+  background:
+    /* Rand-Verblassung oben/unten: jedes Kapitelbild blendet zur echten
+       Seitenfarbe (--bg) aus, bevor es an die Kapitelgrenze stößt. Vorher
+       stießen zwei Fotos an der Grenze hart aufeinander („hart von Bild
+       zu Bild") — jetzt laufen beide Seiten der Grenze zur selben
+       dunklen Fläche aus, der Schnitt wirkt wie eine weiche Überblendung
+       statt eines harten Schnitts. */
+    linear-gradient(to bottom,var(--bg) 0%,transparent 14%),
+    linear-gradient(to top,var(--bg) 0%,transparent 20%),
+    radial-gradient(66% 78% at 72% 38%,rgba(244,236,214,.16) 0%,transparent 62%),
+    linear-gradient(180deg,rgba(10,24,38,.28) 0%,rgba(8,9,11,.52) 100%),
+    /* Rechts läuft die Verdunkelung bewusst NICHT mehr bis auf 0 % aus.
+       Sie war ursprünglich nur für die linke Textspalte gedacht — in
+       „Connect" sitzt aber auch rechts Text („Für wen?"), direkt auf dem
+       unverdeckten Bild. Ein Sockel von 45 % reichte bei einem lauten,
+       hellen Foto (Stadion, weißes Trikot) nicht — deutlich angehoben
+       auf 78 %, „Über Maik" und „Kontakt" nutzen rechts ohnehin eigene,
+       blickdichte Karten/Formulare — für die ändert sich optisch nichts
+       Wahrnehmbares. */
+    linear-gradient(100deg,rgba(8,9,10,.95) 0%,rgba(8,9,10,.88) 26%,
+      rgba(9,15,22,.82) 54%,rgba(10,20,30,.8) 82%,rgba(12,26,40,.78) 100%);
+}
+@media(max-width:768px){
+  /* Bild nie höher als ein Bildschirm — wie ein Kopf-Banner statt einer
+     Vollbild-Tapete. Vorher deckte .chapter__bg die GESAMTE (oft sehr
+     lange) Kapitelhöhe ab: object-fit:cover musste ein 1280×853-Foto
+     auf eine bis zu 1800px hohe, nur 375px schmale Box strecken —
+     dadurch wurde nur noch ein winziger, stark hochskalierter (und
+     entsprechend unscharfer) Bildausschnitt sichtbar, „man sieht nur
+     einen kleinen Teil vom Bild". Mit der Deckelung auf höchstens eine
+     Bildschirmhöhe bleibt der Ausschnitt moderat; der restliche,
+     oft längere Kapiteltext läuft danach auf normalem dunklem
+     Seitengrund weiter — die Lasur blendet dorthin aus. Kurze Kapitel
+     (z.B. der Auftakt, der schon nah an einer Bildschirmhöhe liegt)
+     bleiben durch min(100%, 100svh) praktisch unverändert. */
+  .chapter__bg{height:min(100%, 100svh)}
+  .chapter__bg-grade{
+    background:
+      /* Oberer Rand blendet zur Seitenfarbe aus, genau wie am unteren
+         Rand (der bereits über das bestehende 180deg-Verlauf bei 100%
+         praktisch --bg erreicht) — sonst bleibt der harte Bildschnitt
+         oben an jeder Kapitelgrenze bestehen, unten aber nicht. */
+      linear-gradient(to bottom,var(--bg) 0%,transparent 18%),
+      radial-gradient(66% 60% at 72% 30%,rgba(244,236,214,.14) 0%,transparent 62%),
+      linear-gradient(180deg,
+        rgba(10,15,20,.42) 0%,
+        rgba(8,9,11,.6) 60%,
+        rgba(8,9,11,1) 100%);
+  }
+}
+
+/* Nur für Screenreader */
+.sr-only{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
+}
+
+/* BILD-SLOTS — mehrlagige Verläufe simulieren dramatisch ausgeleuchtete
+   Fotografie (Spitzlicht, Abfall, Vignette), falls kein Foto vorliegt.
+   Sobald die Datei existiert (siehe assets/README.md), übernimmt sie automatisch. */
+/* Maik steht links im Originalfoto — linker Bildausschnitt schiebt ihn
+   so weit wie möglich aus der Textspalte nach rechts. */
+/* Telefon: sehr schmales Fenster zeigt nur ~23 % der Bildbreite —
+   linksbündig läge Maik (17–46 %) fast außerhalb. Daher enger Ausschnitt
+   auf ihn. Ab Tablet greift wieder linksbündig. */
+.bg-01{--focus:22% center}
+@media(min-width:700px){.bg-01{--focus:left center}}
+/* Breite Fenster: Motiv nach rechts schieben (gemessen liegt Maik bei
+   17–46 % der Bildbreite). Die freigelegte linke Kante wird weich
+   ausgeblendet, darunter liegt der Verlauf — dadurch keine sichtbare Kante. */
+@media(min-width:1024px){
+  .bg-01 .chapter__bg-img{
+    transform-origin:0 0;
+    transform:translateX(26%) scale(1.45);
+    -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 20%);
+            mask-image:linear-gradient(90deg,transparent 0,#000 20%);
+  }
+}
+/* Rückfallebenen ohne Foto: das echte Logo-Blau liefert die Atmosphäre,
+   damit die Kapitel nicht zu flachem Schwarz werden. */
+.bg-01{background-image:
+  radial-gradient(38% 52% at 68% 30%,rgba(210,228,245,.20) 0%,transparent 62%),
+  radial-gradient(70% 80% at 76% 46%,#3E7FB2 0%,#1E4569 32%,#101F30 62%,#0A0B0D 88%),
+  radial-gradient(140% 120% at 50% 50%,transparent 40%,rgba(3,4,5,.78) 100%)}
+.bg-02{background-image:
+  radial-gradient(34% 46% at 30% 26%,rgba(206,224,244,.17) 0%,transparent 64%),
+  radial-gradient(78% 88% at 26% 38%,#376F9C 0%,#1B3B5C 34%,#0F1D2C 66%,#0A0B0D 90%),
+  radial-gradient(140% 120% at 50% 50%,transparent 38%,rgba(3,4,5,.80) 100%)}
+.bg-03{background-image:
+  radial-gradient(46% 34% at 52% 88%,rgba(200,218,240,.15) 0%,transparent 66%),
+  radial-gradient(90% 76% at 50% 96%,#33668F 0%,#193150 36%,#0D1B29 68%,#0A0B0D 92%),
+  radial-gradient(140% 120% at 50% 45%,transparent 36%,rgba(3,4,5,.82) 100%)}
+/* Das Stadionfoto ist deutlich unruhiger als die anderen Kapitelbilder
+   (Menschenmenge, helles Trikot, viel feine Struktur) — dieselbe
+   Grundfilterung wie überall reichte hier nicht aus. Zusätzlich
+   entsättigt und abgedunkelt, nur für dieses eine Bild. */
+.bg-03 .chapter__bg-img{filter:grayscale(.7) saturate(.7) contrast(.98) brightness(.56)}
+.bg-04{background-image:
+  radial-gradient(30% 44% at 74% 24%,rgba(216,232,248,.24) 0%,transparent 58%),
+  radial-gradient(72% 84% at 79% 34%,#4189BC 0%,#204768 30%,#111F2E 62%,#0A0B0D 88%),
+  radial-gradient(140% 120% at 50% 50%,transparent 38%,rgba(3,4,5,.78) 100%)}
+.bg-05{background-image:
+  linear-gradient(96deg,rgba(202,220,242,.14) 0%,transparent 46%),
+  radial-gradient(80% 92% at 20% 56%,#356E9A 0%,#1C3C5C 34%,#0F1D2C 66%,#0A0B0D 90%),
+  radial-gradient(140% 120% at 50% 50%,transparent 40%,rgba(3,4,5,.78) 100%)}
+.bg-06{background-image:
+  linear-gradient(96deg,rgba(202,220,242,.14) 0%,transparent 46%),
+  radial-gradient(80% 92% at 80% 56%,#3E77A8 0%,#1E4569 34%,#0F1D2C 66%,#0A0B0D 90%),
+  radial-gradient(140% 120% at 50% 50%,transparent 40%,rgba(3,4,5,.78) 100%)}
+
+/* ── Kapitel ──────────────────────────────────────────────
+   Ganz normaler Dokumentfluss: kein sticky, kein fixed, keine
+   Höhenbedingung. Ein Kapitel darf beliebig hoch werden, ohne dass
+   Inhalt unerreichbar wird — genau das war der Fehler der früheren
+   Stapel-Lösung auf dem Handy. position:relative ist nötig, damit
+   .chapter__bg (position:absolute) sich am Kapitel ausrichtet, statt
+   am nächsten positionierten Vorfahren weiter oben in der Seite.
+   WICHTIG: overflow:hidden sitzt an .chapter__bg, nicht am Kapitel
+   selbst — sonst würde längerer Text bei hohen Kapiteln abgeschnitten. */
+.chapter{
+  position:relative;
+  min-height:100svh;display:flex;align-items:center;
+  padding-block:8rem var(--sp-6);
+}
+.chapter .wrap{position:relative;z-index:10}
+/* Die Galerie ist ein Werkzeug-Kapitel, kein Foto-Hintergrund mit
+   zentriertem Text — sie braucht die großzügige 8rem-Polsterung der
+   anderen Kapitel nicht (die ist für Zentrierung in einem hohen
+   Bild gedacht) und passt dadurch eher auf einen Bildschirm.
+   Unten 5.25rem statt eines knappen Werts: der fixierte Vor/Zurück-
+   Button (.step, bottom:1.5rem + ca. 59px hoch) schwebt auf JEDER
+   Bildschirmgröße rechts unten — bei knapperem Abstand landete die
+   Miniaturleiste dahinter und war dort nicht mehr antippbar.
+   galHoeheAnpassen() liest die Polsterung live aus, das Bild wird
+   also automatisch kleiner statt dass hier eine zweite Zahl gepflegt
+   werden müsste. */
+#galerie{padding-block:6rem 5.5rem}
+.chapter__grid{display:grid;gap:var(--sp-5);align-items:center}
+@media(min-width:1024px){
+  .chapter__grid{grid-template-columns:minmax(0,1fr) minmax(0,.85fr)}
+}
+
+/* Scroll-Reveal — sichtbar per Voreinstellung, das ist Pflicht:
+   Läuft JavaScript aus irgendeinem Grund nicht (E-Mail-Vorschau ohne
+   Skripte, blockiertes JS, ein Fehler in der Ladekette), muss der
+   Inhalt trotzdem lesbar sein. Erst JS setzt aktiv data-in="false",
+   um die Einblend-Animation überhaupt zu starten — ohne JS bleibt es
+   bei diesem sichtbaren Grundzustand. */
+.rise{opacity:1;transform:none}
+.rise[data-in="false"]{
+  opacity:0;transform:translateY(28px);
+  transition:opacity .9s var(--ease),transform .9s var(--ease);
+}
+.rise[data-in="true"]{
+  opacity:1;transform:none;
+  transition:opacity .9s var(--ease),transform .9s var(--ease);
+}
+
+/* Vor/Zurück — sichtbare Alternative zum Scrollen, unten rechts */
+/* Auf jeder Breite sichtbar: Ohne Menü/Drawer ist das Vor/Zurück-Paar
+   jetzt der einzige direkte Weg zu „Connect" und „Über Maik" auf dem
+   Handy — der Fußbereich verlinkt nur Impressum/Datenschutz. */
+.step{
+  position:fixed;right:1.5rem;bottom:1.5rem;z-index:55;
+  display:flex;align-items:center;gap:.5rem;
+  padding:.4rem;border-radius:999px;
+  background:rgba(10,11,13,.78);backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  border:1px solid var(--line);
+  opacity:1;transition:opacity .3s var(--ease);
+}
+/* Sobald der Fußbereich in Sicht kommt, gibt es kein „nächstes Kapitel"
+   mehr, zu dem der Button führen könnte — er blendet aus, statt weiter
+   unten rechts zu schweben und dort die Fußzeilen-Links (Impressum/
+   Datenschutz) zu verdecken. JS setzt data-hidden per IntersectionObserver. */
+.step[data-hidden="true"]{opacity:0;pointer-events:none}
+.step button{
+  all:unset;cursor:pointer;display:grid;place-items:center;
+  width:44px;height:44px;border-radius:50%;color:var(--text);
+  transition:background-color .3s var(--ease),color .3s var(--ease);
+}
+.step button:hover:not(:disabled){background:var(--accent);color:var(--on-accent)}
+.step button:disabled{opacity:.3;cursor:default}
+/* War auf kleinen Screens unnötig groß und fiel dadurch stärker auf,
+   als eine reine Zusatz-Navigation sollte. 36px statt 44px unterschreitet
+   die 44px-Empfehlung zwar knapp, bleibt aber noch komfortabel tippbar —
+   der Rest der Seite hat auf schmalen Screens ohnehin schon genug
+   große Touch-Ziele (Buttons, Nav-Leiste). */
+@media(max-width:640px){
+  .step{padding:.3rem;gap:.3rem;right:1rem;bottom:1rem}
+  .step button{width:36px;height:36px}
+  .step button svg{width:16px;height:16px}
+  .step__count{font-size:.64rem;padding-inline:.1rem}
+}
+.step__count{
+  font-family:var(--f-body);font-size:.72rem;font-weight:500;letter-spacing:.16em;
+  color:var(--muted);font-variant-numeric:tabular-nums;padding-inline:.2rem;
+}
+.step__count b{color:var(--text);font-weight:500}
+
+/* Fortschritts-Anzeige rechts */
+.rail{
+  position:fixed;right:1.6rem;top:50%;transform:translateY(-50%);z-index:50;
+  display:none;flex-direction:column;gap:.85rem;
+}
+@media(min-width:1200px){.rail{display:flex}}
+.rail button{
+  all:unset;cursor:pointer;display:grid;place-items:center;
+  width:28px;height:28px;border-radius:50%;
+}
+.rail span{
+  display:block;width:6px;height:6px;border-radius:50%;
+  background:var(--line-strong);transition:all .4s var(--ease);
+}
+.rail button[aria-current="true"] span{background:var(--accent);width:8px;height:8px;box-shadow:0 0 0 4px rgba(54,146,242,.22)}
+
+/* ── Leistungen (TREAT) ─────────────────────────────────────
+   Zwei Anläufe verworfen: das ursprüngliche Tabellenraster wirkte wie
+   eine PowerPoint-Folie, die darauf folgenden Karten mit Icon-Badge,
+   Radius und Hover-Lift dagegen wie ein generisches SaaS-Template
+   ("sieht zu billig nach KI aus"). Jetzt redaktionell statt
+   komponentenhaft: dünne Trennlinien zwischen den Spalten (per
+   gap+background — dieselbe robuste Technik wie beim allerersten
+   Raster, adaptiert automatisch bei 1/2/3 Spalten), keine Radius/
+   Schatten/Badges mehr. Die große, nur umrandete Ziffer ist das
+   einzige Grafikelement und füllt sich beim Hover mit der Akzentfarbe;
+   die Überschrift bekommt beim Hover eine schmale Unterstreichung, die
+   von links einzieht — kein Icon-Badge (Symbol dafür, dass es "wie KI"
+   wirkte), keine bewegte Fläche. */
+/* Der Grid-Trick (Container-Hintergrund scheint nur im 1px-Gap durch)
+   braucht deckende Zellen, um den Rest der Fläche zu verbergen — genau
+   die wurden entfernt, damit das Kapitelfoto sichtbar bleibt. Ohne
+   deckende Zellen lag die Container-Fläche (var(--line)) plötzlich
+   über dem GESAMTEN Raster statt nur in den 1px-Lücken: alle drei
+   Karten wirkten wie ein einziger, unklar begrenzter Block. Jetzt
+   echte 1px-Trennlinien per border, unabhängig von der Zellenfüllung —
+   je Bildschirmbreite von Hand gesetzt (oben bei der ersten Zeile,
+   links bei allen außer der ersten Spalte), da automatische
+   „:not(:first-child)"-Regeln bei wechselnder Spaltenzahl sonst falsch
+   lägen. */
+.services{display:grid;border-block:1px solid var(--line);margin-top:var(--sp-4)}
+.service{border-top:1px solid var(--line)}
+.service:first-child{border-top:0}
+@media(min-width:640px){
+  .services{grid-template-columns:1fr 1fr}
+  .service:nth-child(2){border-top:0;border-left:1px solid var(--line)}
+}
+@media(min-width:1024px){
+  .services{grid-template-columns:repeat(3,1fr)}
+  .service:nth-child(3){border-top:0;border-left:1px solid var(--line)}
+}
+.service{position:relative;padding:2.25rem 2rem 2.5rem}
+/* Hover war bisher kaum wahrzunehmen (nur Ziffer + eine 2.25rem breite
+   Unterstreichung unter der Überschrift), dann nur eine Linie oben —
+   jetzt rahmt ein kompletter, deutlich sichtbarer Akzent-Rand die
+   ganze Karte ein. box-shadow statt border: eine echte Randfarbe
+   würde die Nachbarkarte anschieben (Layout-Sprung durch geänderte
+   Randbreite); box-shadow legt sich nur optisch darüber, ohne Platz
+   zu beanspruchen — deckt dabei auch die grauen Trennlinien dieser
+   Karte ab, wirkt also wie ein vollständiger Rahmen statt nur eine
+   Kante. */
+.service{transition:box-shadow .4s var(--ease)}
+.service:hover,.service.is-inview{box-shadow:inset 0 0 0 1px var(--accent);z-index:1}
+.service__no{
+  display:block;font-family:var(--f-display);font-weight:700;font-variation-settings:'wdth' 78;
+  font-size:3.25rem;line-height:1;letter-spacing:-.02em;margin-bottom:1.4rem;
+  color:transparent;-webkit-text-stroke:1.5px var(--line-strong);
+  transition:color .5s var(--ease),-webkit-text-stroke-color .5s var(--ease);
+}
+.service:hover .service__no,.service.is-inview .service__no{color:var(--accent);-webkit-text-stroke-color:var(--accent)}
+.service h3{
+  font-family:var(--f-display);font-weight:700;font-variation-settings:'wdth' 88;
+  font-size:1.28rem;margin:0 0 .9rem;letter-spacing:-.005em;
+  padding-bottom:.9rem;position:relative;border-bottom:1px solid var(--line);
+}
+/* Lief bisher nur 2.25rem breit ein, während die graue Linie darunter
+   (border-bottom von .service h3) über die volle Breite läuft — genau
+   dasselbe Problem wie beim Karten-Rahmen zuvor, nur eine Etage
+   tiefer: ein "Stück" Balken über einer ganzen Linie wirkt unfertig.
+   Läuft jetzt komplett über die volle Breite ein. */
+.service h3::after{
+  content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;
+  background:var(--accent);transform:scaleX(0);transform-origin:left;
+  transition:transform .55s var(--ease);
+}
+.service:hover h3::after,.service.is-inview h3::after{transform:scaleX(1)}
+.service p{margin:0;font-size:.9rem;color:var(--muted);line-height:1.6}
+.service ul{list-style:none;margin:1.1rem 0 0;padding:0;display:grid;gap:.55rem}
+.service li{font-size:.85rem;color:var(--muted);line-height:1.5;padding-left:1rem;position:relative}
+.service li::before{content:"";position:absolute;left:0;top:.6em;width:6px;height:1px;background:var(--accent)}
+
+/* „Für wen?" (CONNECT) — gleiche redaktionelle Sprache wie TREAT:
+   Trennlinien statt Karten, freistehendes Icon in Akzentfarbe statt
+   Icon-in-Badge (die eingefärbte Kachel war der auffälligste
+   "generische KI-Baustein"). */
+/* Gleicher Trennlinien-Ansatz wie bei .service — echte border statt
+   des Grid-Tricks, der deckende Zellen vorausgesetzt hätte. */
+.audience{display:grid;border-block:1px solid var(--line);margin-top:.2rem}
+.audience__card{
+  position:relative;padding:1.75rem 1.5rem 2rem;border-top:1px solid var(--line);
+  transition:box-shadow .4s var(--ease);
+}
+.audience__card:first-child{border-top:0}
+/* Gleicher volle Rahmen wie bei .service — siehe Begründung dort
+   (box-shadow statt border, damit die Nachbarkarte nicht verschoben
+   wird). */
+.audience__card:hover,.audience__card.is-inview{box-shadow:inset 0 0 0 1px var(--accent);z-index:1}
+.audience__icon{
+  display:block;color:var(--accent);margin-bottom:1rem;
+  transition:transform .4s var(--ease);
+}
+.audience__card:hover .audience__icon,.audience__card.is-inview .audience__icon{transform:translateX(3px)}
+
+/* ── Kennzahlen ─────────────────────────────────────────── */
+.stats{display:grid;gap:var(--sp-3);margin-top:var(--sp-4)}
+@media(min-width:640px){.stats{grid-template-columns:repeat(3,1fr)}}
+.stat{border-top:1px solid var(--line-strong);padding-top:var(--sp-2)}
+.stat b{display:block;font-family:var(--f-display);font-weight:700;font-variation-settings:'wdth' 80;font-size:clamp(2.6rem,5vw,4rem);line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.stat span{display:block;margin-top:.5rem;font-size:.82rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+
+/* ── Kontakt ────────────────────────────────────────────── */
+.form{display:grid;gap:var(--sp-2);margin-top:var(--sp-3)}
+.row{display:grid;gap:var(--sp-2)}
+@media(min-width:640px){.row{grid-template-columns:1fr 1fr}}
+.field label{display:block;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem}
+.field input,.field select,.field textarea{
+  width:100%;min-height:48px;padding:.8rem 1rem;
+  background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:4px;
+  color:var(--text);font-family:var(--f-body);font-size:1rem;
+  transition:border-color .3s var(--ease),background-color .3s var(--ease);
+}
+.field textarea{min-height:120px;resize:vertical}
+/* Native Optionsliste erbt sonst helles Systemweiß auf dunklem Grund */
+.field select option{background:var(--bg-raise);color:var(--text)}
+.field input:hover,.field textarea:hover,.field select:hover{border-color:var(--line-strong)}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--accent);background:rgba(255,255,255,.06);outline:none}
+.hintline{font-size:.78rem;color:var(--muted);margin:.4rem 0 0}
+.consent{display:flex;gap:.75rem;align-items:flex-start;font-size:.85rem;color:var(--muted);line-height:1.6}
+.consent input{width:20px;height:20px;margin-top:.2rem;flex:none;accent-color:var(--accent)}
+
+.contact-list,.vita{display:grid;gap:var(--sp-3);margin-top:var(--sp-3)}
+.contact-list dt,.vita dt{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.contact-list dd,.vita dd{margin:.4rem 0 0;font-family:var(--f-display);font-weight:600;font-size:1.15rem}
+.vita dd{font-weight:500;font-size:1.02rem;line-height:1.4}
+/* Interaktiv: Zeile hebt sich beim Hover leicht an und rückt ein —
+   kostenlos in CSS, kein JS nötig. */
+.vita > div{
+  border-top:1px solid var(--line);padding:1rem .75rem 1rem 0;margin:0 -.75rem;
+  border-radius:4px;transition:background-color .25s var(--ease),padding-left .25s var(--ease);
+}
+.vita > div:hover{background:var(--bg-raise);padding-left:.75rem;padding-right:0}
+
+/* Kleines Standalone-Label, z. B. „Für wen?" über zwei Textblöcken */
+.tag{
+  display:block;font-family:var(--f-body);font-weight:600;font-size:.72rem;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem;
+}
+
+.contact-list a{position:relative;text-decoration:none;border-bottom:1px solid var(--line-strong);padding-bottom:2px;transition:border-color .3s}
+.contact-list a:hover{border-color:var(--accent)}
+/* Klickfläche unsichtbar auf 44px vergrößern, ohne die Optik zu ändern. */
+.contact-list a::after{content:"";position:absolute;inset:-11px -6px}
+
+/* ── Galerie ────────────────────────────────────────────────
+   Großes Hauptbild + Filmstreifen aus Miniaturen darunter; die aktive
+   Miniatur wächst sichtbar breiter. Läuft komplett über natives
+   CSS scroll-snap statt über nachgebaute Drag-Physik — der Browser
+   übernimmt Wischen, Trackpad, Mausrad und Tastatur von selbst, ganz
+   ohne JavaScript-Abhängigkeit während der Geste (genau die Klasse
+   Bug, die uns beim Kapitelhintergrund schon Ärger gemacht hat).
+   JS setzt hier nur noch, welche Miniatur gerade „aktiv" ist. */
+.gallery{margin-top:1.5rem}
+.gallery__stage{position:relative}
+.gallery__track{
+  display:flex;overflow-x:auto;scroll-snap-type:x mandatory;
+  border-radius:14px;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.gallery__track::-webkit-scrollbar{display:none}
+.gallery__slide{
+  position:relative;flex:0 0 100%;scroll-snap-align:center;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+  /* Höhe fest (nicht vom Bild abgeleitet) — sonst hätte jede Kachel je
+     nach Fotoformat eine andere Höhe, und der horizontale Scroll-Snap
+     bräche. Weder Farbverlauf noch Unschärfe-Kopie füllen den Rand mehr
+     (beides wurde als „Hintergrund" empfunden, der vom Foto ablenkt) —
+     wo das Foto nicht die ganze Breite/Höhe braucht, scheint einfach die
+     Kapitel-Fläche durch, genau wie überall sonst auf der Seite. */
+  height:min(48svh,520px);
+}
+.gallery__slide img{
+  /* position:relative + z-index nötig, sonst stapelt der (immer
+     position:absolute) Platzhaltertext .gallery__ph sich über das Bild —
+     positionierte Elemente stapeln sich sonst automatisch über
+     unpositionierte, unabhängig von der Reihenfolge im Markup. */
+  position:relative;z-index:1;
+  display:block;max-width:100%;max-height:100%;width:auto;height:auto;
+  object-fit:contain; /* ganzes Foto sichtbar, nichts beschnitten */
+}
+/* Platzhalter-Hinweistext — bleibt sichtbar, bis eine echte Datei greift
+   (gleiches Prinzip wie .portrait__ph: eine Galerie-Kachel braucht
+   einen sichtbaren Hinweis, anders als ein reiner Kapitelhintergrund). */
+.gallery__ph{
+  position:absolute;inset:0;display:grid;place-items:center;text-align:center;
+  color:rgba(242,240,234,.6);font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;
+}
+.gallery__nav{
+  all:unset;position:absolute;top:50%;translate:0 -50%;z-index:5;cursor:pointer;
+  width:44px;height:44px;border-radius:999px;display:grid;place-items:center;
+  background:rgba(10,11,13,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border:1px solid var(--line-strong);color:var(--text);
+  transition:background-color .3s var(--ease),border-color .3s var(--ease),opacity .3s;
+}
+.gallery__nav:hover{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.gallery__nav:disabled{opacity:.35;cursor:default;pointer-events:none}
+.gallery__nav--prev{left:.75rem}
+.gallery__nav--next{right:.75rem}
+@media(min-width:640px){.gallery__nav--prev{left:1.25rem}.gallery__nav--next{right:1.25rem}}
+
+.gallery__thumbs{
+  display:flex;gap:4px;margin-top:.85rem;overflow-x:auto;scrollbar-width:none;
+  padding-bottom:.15rem;
+}
+.gallery__thumbs::-webkit-scrollbar{display:none}
+.gallery__thumb{
+  /* Kein all:unset hier (anders als bei .gallery__nav): das würde auch
+     background-image zurücksetzen — und genau darüber liefern die
+     wiederverwendeten .bg-0X-Klassen die Platzhalter-Farbverläufe.
+     Beide Selektoren haben dieselbe Spezifität; da .gallery__thumb
+     später in der Datei steht, hätte all:unset die Farbe stillschweigend
+     wieder gelöscht. Stattdessen gezielt nur die Button-Grundwerte
+     zurücksetzen. */
+  border:0;padding:0;margin:0;font:inherit;color:inherit;
+  -webkit-appearance:none;appearance:none;background-color:transparent;
+  position:relative;flex:0 0 36px;height:58px;border-radius:7px;
+  overflow:hidden;cursor:pointer;background-size:cover;background-position:center;
+  opacity:.5;transition:flex-basis .35s var(--ease),opacity .3s var(--ease);
+}
+.gallery__thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.gallery__thumb:hover{opacity:.8}
+.gallery__thumb[aria-current="true"]{flex-basis:108px;opacity:1}
+@media(min-width:640px){
+  .gallery__thumb{flex-basis:40px;height:64px}
+  .gallery__thumb[aria-current="true"]{flex-basis:128px}
+}
+/* Handy im Querformat (~375–430px Fensterhöhe): Label und Miniaturen
+   beanspruchen sonst so viel von der knappen Höhe, dass für das
+   eigentliche Bild kaum noch etwas übrig bleibt. Nur oben lässt sich
+   Polsterung sparen (unten muss der Abstand zum fixierten Vor/Zurück-
+   Button erhalten bleiben, siehe #galerie oben). */
+@media(max-height:440px){
+  #galerie{padding-top:5rem}
+  #galerie .eyebrow{margin-bottom:.6rem}
+  .gallery{margin-top:.65rem}
+  .gallery__thumbs{margin-top:.5rem}
+  .gallery__thumb{flex-basis:30px;height:40px}
+  .gallery__thumb[aria-current="true"]{flex-basis:84px}
+}
+
+/* ── Footer ─────────────────────────────────────────────── */
+footer{position:relative;z-index:10;background:var(--bg);border-top:1px solid var(--line);padding-block:var(--sp-4)}
+.foot{display:flex;flex-wrap:wrap;gap:var(--sp-3);justify-content:space-between;align-items:center;font-size:.82rem;color:var(--muted)}
+.foot nav{display:flex;gap:.5rem;flex-wrap:wrap;margin-inline:-.75rem}
+.foot a{
+  display:inline-flex;align-items:center;min-height:44px;padding-inline:.75rem;
+  text-decoration:none;transition:color .3s var(--ease);
+}
+.foot a:hover{color:var(--text)}
+
+/* ── Reduced Motion ─────────────────────────────────────── */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  /* Auch den Zwischenzustand (kurz vor dem Einblenden) überschreiben,
+     sonst blitzt der Inhalt bei reduzierter Bewegung kurz unsichtbar auf. */
+  .rise[data-in="false"]{opacity:1;transform:none}
+  .stage__layer{transition:none}
+}
+</style>
+</head>
+<body>
+
+<a href="#inhalt" class="btn" style="position:absolute;left:-9999px;top:1rem;z-index:99"
+   onfocus="this.style.left='1rem'" onblur="this.style.left='-9999px'">Zum Inhalt springen</a>
+
+<!-- Meldet Screenreadern den Kapitelwechsel. Bei Vollbildkapiteln
+     bemerkt die Vorlesesoftware den Wechsel sonst nicht. -->
+<p class="sr-only" id="announcer" aria-live="polite"></p>
+
+<!-- ── Navigation ─────────────────────────────────────── -->
+<header class="nav">
+  <div class="wrap">
+    <div class="bar">
+      <a href="#auftakt" class="mark" aria-label="MLetics — Startseite">
+        <img class="mark__logo" src="assets/logo/mletics-mark-dark.png" alt="MLetics — Osteopathie &amp; Physiotherapie">
+      </a>
+
+      <nav class="bar__nav" aria-label="Hauptnavigation">
+        <a href="#treat">Treat</a>
+        <a href="#connect">Connect</a>
+        <a href="#about">Über Maik</a>
+        <a href="#galerie">Galerie</a>
+      </nav>
+
+      <a href="#kontakt" class="btn btn--solid bar__cta">Kontakt</a>
+
+      <span class="bar__progress" aria-hidden="true"><i></i></span>
+    </div>
+  </div>
+</header>
+
+<!-- Kapitel-Navigation rechts -->
+<nav class="rail" id="rail" aria-label="Kapitel">
+  <button data-go="auftakt" aria-label="Kapitel 1: Auftakt" aria-current="true"><span></span></button>
+  <button data-go="treat" aria-label="Kapitel 2: Treat"><span></span></button>
+  <button data-go="connect" aria-label="Kapitel 3: Connect"><span></span></button>
+  <button data-go="about" aria-label="Kapitel 4: Über Maik"><span></span></button>
+  <button data-go="galerie" aria-label="Kapitel 5: Galerie"><span></span></button>
+  <button data-go="kontakt" aria-label="Kapitel 6: Kontakt"><span></span></button>
+</nav>
+
+<main id="inhalt">
+
+<!-- ── 01 AUFTAKT ─────────────────────────────────────── -->
+<section class="chapter" id="auftakt" data-chapter="0">
+  <!-- Kapitel-Hintergrund: scrollt normal mit. Für Video das <img>
+       ersetzen durch:
+       <video class="chapter__bg-img" src="assets/01-hero.mp4" poster="assets/01-hero.jpg"
+              autoplay muted loop playsinline preload="none"></video> -->
+  <div class="chapter__bg bg-01" aria-hidden="true">
+    <img class="chapter__bg-img" src="assets/01-hero.jpg" alt="" data-media>
+    <div class="chapter__bg-grade"></div>
+  </div>
+  <div class="wrap">
+    <p class="eyebrow rise"><b>01</b> <span>MLetics by Maik Liesbrock — Bochum</span></p>
+    <h1 class="display rise">UNDERSTAND. TREAT.<br>CONNECT.</h1>
+    <p class="lead lead--brand rise" style="margin-top:1.25rem">Verstehen. Behandeln. Vernetzen.</p>
+    <p class="lead rise" style="margin-top:1.25rem">
+      Den Körper verstehen. Funktionelle Zusammenhänge erkennen. Individuell
+      behandeln. Und dort, wo weitere Expertise sinnvoll ist, die richtigen
+      Kompetenzen miteinander verbinden.
+    </p>
+    <div class="rise" style="margin-top:3rem;display:flex;gap:1rem;flex-wrap:wrap;align-items:center">
+      <a href="#kontakt" class="btn btn--solid">Termin anfragen</a>
+      <a href="#treat" class="btn">Leistungen ansehen</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── 02 TREAT (Leistungen) ──────────────────────────── -->
+<section class="chapter" id="treat" data-chapter="1">
+  <div class="chapter__bg bg-02" aria-hidden="true">
+    <img class="chapter__bg-img" src="assets/02-treat.jpg" alt="" data-media>
+    <div class="chapter__bg-grade"></div>
+  </div>
+  <div class="wrap">
+    <p class="eyebrow rise"><b>02</b> <span>Treat</span></p>
+    <h2 class="display display--sm rise">Individuelle Therapie<br>statt Behandlung nach Schema.</h2>
+    <p class="lead rise" style="margin-top:1.75rem">
+      Auf Basis der Befundung entsteht ein individuelles Behandlungskonzept.
+      Physiotherapie und osteopathische Ansätze werden dabei gezielt miteinander
+      verbunden und an Deine persönliche Situation angepasst.
+    </p>
+
+    <div class="services">
+      <article class="service rise">
+        <span class="service__no">01</span>
+        <h3>Physiotherapie</h3>
+        <p>Beschwerden behandeln, Beweglichkeit verbessern und Funktionen wiederherstellen.</p>
+        <ul>
+          <li>Akute und chronische Beschwerden</li>
+          <li>Behandlung nach Verletzungen und Operationen</li>
+          <li>Funktionelle Bewegungsanalyse</li>
+          <li>Individuelle Therapieplanung</li>
+        </ul>
+      </article>
+      <article class="service rise">
+        <span class="service__no">02</span>
+        <h3>Sport-Osteopathie</h3>
+        <p>Körperliche Zusammenhänge betrachten und funktionelle Einschränkungen ganzheitlich einordnen.</p>
+        <ul>
+          <li>Prävention von Sportverletzungen</li>
+          <li>Optimierung von Bewegungsabläufen</li>
+          <li>Förderung von Regeneration und Belastbarkeit</li>
+          <li>Betreuung von Freizeit- und Leistungssportlern</li>
+        </ul>
+      </article>
+      <article class="service rise">
+        <span class="service__no">03</span>
+        <h3>Sektorale Heilpraktik Physiotherapie</h3>
+        <p>Eigenständige physiotherapeutische Befundung und Behandlung im Rahmen der bestehenden Erlaubnis.</p>
+        <ul>
+          <li>Direkter Zugang ohne ärztliche Verordnung</li>
+          <li>Umfassende Befunderhebung</li>
+          <li>Individuelle Behandlungskonzepte</li>
+          <li>Hausbesuche nach Vereinbarung</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ── 04 CONNECT ─────────────────────────────────────── -->
+<section class="chapter" id="connect" data-chapter="2">
+  <div class="chapter__bg bg-03" aria-hidden="true">
+    <img class="chapter__bg-img" src="assets/03-connect.jpg" alt="" data-media>
+    <div class="chapter__bg-grade"></div>
+  </div>
+  <div class="wrap chapter__grid">
+    <div>
+      <p class="eyebrow rise"><b>03</b> <span>Connect</span></p>
+      <h2 class="display display--sm rise">Mehr als eine<br>Perspektive.</h2>
+      <p class="lead rise" style="margin-top:1.75rem">
+        Ich sehe meine Arbeit als Teil eines größeren Umfelds. Wo sinnvoll,
+        arbeite ich mit Athletiktrainern, Ärzten und weiteren Spezialisten
+        zusammen — nicht um Kompetenzen zu ersetzen, sondern um sie zu verbinden.
+      </p>
+    </div>
+    <div>
+      <span class="tag rise">Für wen?</span>
+      <div class="audience">
+        <div class="audience__card rise">
+          <span class="audience__icon" aria-hidden="true">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 6l-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/></svg>
+          </span>
+          <p class="block-h3">Für Athlet:innen</p>
+          <p class="body">
+            Leistungsfähigkeit braucht einen gesunden, belastbaren Körper.
+            Prävention, individuelle Behandlung und der Blick auf Belastung und
+            Regeneration halten Dich dauerhaft leistungsfähig.
+          </p>
+        </div>
+        <div class="audience__card rise">
+          <span class="audience__icon" aria-hidden="true">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+          </span>
+          <p class="block-h3">Für Patient:innen</p>
+          <p class="body">
+            Beschwerden betreffen nicht nur den Körper, sondern das Wohlbefinden.
+            Gemeinsam betrachten wir körperliche und emotionale Faktoren — für
+            mehr Beweglichkeit, Belastbarkeit und Balance.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 04 ÜBER MAIK ───────────────────────────────────── -->
+<section class="chapter" id="about" data-chapter="3">
+  <div class="chapter__bg bg-04" aria-hidden="true">
+    <img class="chapter__bg-img" src="assets/04-about.jpg" alt="" data-media>
+    <div class="chapter__bg-grade"></div>
+  </div>
+  <div class="wrap chapter__grid">
+    <div>
+      <p class="eyebrow rise"><b>04</b> <span>Über Maik</span></p>
+      <h2 class="display rise">Ganzheitlich. Nachhaltig.<br>Professionell.</h2>
+      <p class="lead rise" style="margin-top:2rem">
+        Prävention beginnt vor der Verletzung. 16 Jahre Erfahrung im
+        Profifußball haben meinen Blick auf den menschlichen Körper, Belastung
+        und Regeneration geprägt.
+      </p>
+      <p class="body rise" style="margin-top:1.5rem;max-width:56ch">
+        Mein Anspruch ist es, körperliche Zusammenhänge präzise zu erfassen,
+        individuelle Belastungsfaktoren zu erkennen und gemeinsam nachhaltige
+        Lösungen zu entwickeln. Nicht erst reagieren, wenn es weh tut. Sondern
+        verstehen, was Dein Körper braucht.
+      </p>
+    </div>
+    <div class="rise">
+      <dl class="vita">
+        <div class="rise">
+          <dt>Qualifikation</dt>
+          <dd>Physiotherapeut, Sektoraler Heilpraktiker für Physiotherapie</dd>
+        </div>
+        <div class="rise">
+          <dt>Schwerpunkt</dt>
+          <dd>Sport-Osteopathie</dd>
+        </div>
+        <div class="rise">
+          <dt>Erfahrung</dt>
+          <dd>16 Jahre im Profifußball</dd>
+        </div>
+        <div class="rise">
+          <dt>Station</dt>
+          <dd>Physiotherapeut, VfL Bochum 1848 (Saison 2020/21)</dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<!-- ── 05 GALERIE ─────────────────────────────────────── -->
+<section class="chapter" id="galerie" data-chapter="4">
+  <div class="wrap">
+    <!-- Nur das kleine Kapitel-Label, wie bei den anderen Kapiteln —
+         der große Titel und Fließtext bleiben bewusst weg, „nur die
+         Bilder". h2 trägt die sichtbare Überschrift selbst (nicht mehr
+         sr-only), damit sie zugleich als echte Dokument-Überschrift zählt. -->
+    <p class="eyebrow rise"><b>05</b> <span>Galerie</span></p>
+    <h2 class="sr-only">Galerie</h2>
+
+    <div class="gallery rise">
+      <div class="gallery__stage">
+        <button class="gallery__nav gallery__nav--prev" id="galPrev" aria-label="Vorheriges Bild">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <!-- Reihenfolge nach Farbstimmung sortiert, nicht nach Dateiname —
+             Schwarzweiß zum Auftakt, dann Blau, Grün, Gelb/Orange, Rot,
+             ein neutrales Bild zum Herunterkühlen, zum Schluss das
+             hellste, wärmste Foto. Miniaturleiste weiter unten läuft in
+             derselben Reihenfolge (data-index 0-9 muss exakt hierzu
+             passen, sonst zeigt ein Klick aufs falsche Bild). -->
+        <div class="gallery__track" id="galTrack">
+          <figure class="gallery__slide">
+            <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
+            <img src="assets/galerie/01.jpg" alt="Physiotherapeutisches Team im Gespräch nach dem Spiel" data-media loading="eager">
+          </figure>
+          <figure class="gallery__slide">
+            <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
+            <img src="assets/galerie/03.jpg" alt="Physiotherapeuten laufen mit der Notfalltasche aufs Spielfeld" data-media loading="lazy">
+          </figure>
+          <figure class="gallery__slide">
+            <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
+            <img src="assets/galerie/05.jpg" alt="Behandlung eines Spielers direkt auf dem Rasen" data-media loading="lazy">
+          </figure>
+          <figure class="gallery__slide">
+            <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
+            <img src="assets/galerie/06.jpg" alt="Jubelumarmung mit einem Spieler an der Seitenlinie" data-media loading="lazy">
+          </figure>
+          <figure class="gallery__slide">
+            <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
+            <img src="assets/galerie/09.jpg" alt="Faustgruß zwischen zwei Betreuern im Stadion" data-media loading="lazy">
+          </figure>
+          <figure class="gallery__slide">
+            <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
+            <img src="assets/galerie/08.jpg" alt="Versorgung eines verletzten Spielers am Spielfeldrand" data-media loading="lazy">
+          </figure>
+          <figure class="gallery__slide">
+            <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
+            <img src="assets/galerie/02.jpg" alt="Medizinisches Team versorgt einen Spieler auf dem Platz" data-media loading="lazy">
+          </figure>
+          <figure class="gallery__slide">
+            <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
+            <img src="assets/galerie/07.jpg" alt="Nachdenklicher Moment auf der Ersatzbank im Stadion" data-media loading="lazy">
+          </figure>
+          <figure class="gallery__slide">
+            <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
+            <img src="assets/galerie/04.jpg" alt="Betreuer geben Entwarnung nach einer Spielerverletzung" data-media loading="lazy">
+          </figure>
+          <figure class="gallery__slide">
+            <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
+            <img src="assets/galerie/10.jpg" alt="Jubel mit der Aufstiegs-Meisterschale" data-media loading="lazy">
+          </figure>
+        </div>
+        <button class="gallery__nav gallery__nav--next" id="galNext" aria-label="Nächstes Bild">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+      <div class="gallery__thumbs" id="galThumbs" role="tablist" aria-label="Galerie-Miniaturen">
+        <button class="gallery__thumb" data-index="0" role="tab" aria-current="true" aria-label="Bild 1"><img src="assets/galerie/01.jpg" alt="" data-media loading="lazy"></button>
+        <button class="gallery__thumb" data-index="1" role="tab" aria-current="false" aria-label="Bild 2"><img src="assets/galerie/03.jpg" alt="" data-media loading="lazy"></button>
+        <button class="gallery__thumb" data-index="2" role="tab" aria-current="false" aria-label="Bild 3"><img src="assets/galerie/05.jpg" alt="" data-media loading="lazy"></button>
+        <button class="gallery__thumb" data-index="3" role="tab" aria-current="false" aria-label="Bild 4"><img src="assets/galerie/06.jpg" alt="" data-media loading="lazy"></button>
+        <button class="gallery__thumb" data-index="4" role="tab" aria-current="false" aria-label="Bild 5"><img src="assets/galerie/09.jpg" alt="" data-media loading="lazy"></button>
+        <button class="gallery__thumb" data-index="5" role="tab" aria-current="false" aria-label="Bild 6"><img src="assets/galerie/08.jpg" alt="" data-media loading="lazy"></button>
+        <button class="gallery__thumb" data-index="6" role="tab" aria-current="false" aria-label="Bild 7"><img src="assets/galerie/02.jpg" alt="" data-media loading="lazy"></button>
+        <button class="gallery__thumb" data-index="7" role="tab" aria-current="false" aria-label="Bild 8"><img src="assets/galerie/07.jpg" alt="" data-media loading="lazy"></button>
+        <button class="gallery__thumb" data-index="8" role="tab" aria-current="false" aria-label="Bild 9"><img src="assets/galerie/04.jpg" alt="" data-media loading="lazy"></button>
+        <button class="gallery__thumb" data-index="9" role="tab" aria-current="false" aria-label="Bild 10"><img src="assets/galerie/10.jpg" alt="" data-media loading="lazy"></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 06 KONTAKT ─────────────────────────────────────── -->
+<section class="chapter" id="kontakt" data-chapter="5">
+  <div class="chapter__bg bg-06" aria-hidden="true">
+    <img class="chapter__bg-img" src="assets/06-kontakt.jpg" alt="" data-media>
+    <div class="chapter__bg-grade"></div>
+  </div>
+  <div class="wrap chapter__grid" style="align-items:start">
+    <div>
+      <p class="eyebrow rise"><b>06</b> <span>Kontakt</span></p>
+      <h2 class="display display--sm rise">Sprechen wir<br>über Deinen Weg.</h2>
+
+      <dl class="contact-list rise">
+        <div>
+          <dt>Telefon</dt>
+          <dd><a href="tel:+4923412345678">0234 · 123 456 78</a></dd>
+        </div>
+        <div>
+          <dt>E-Mail</dt>
+          <dd><a href="mailto:praxis@mletics.de">praxis@mletics.de</a></dd>
+        </div>
+        <div>
+          <dt>Adresse</dt>
+          <dd style="font-weight:400;font-size:1rem;line-height:1.6">
+            Musterstraße 12<br>44787 Bochum
+          </dd>
+        </div>
+        <div>
+          <dt>Sprechzeiten</dt>
+          <dd style="font-weight:400;font-size:1rem;line-height:1.6">
+            Mo – Do &nbsp;8:00 – 19:00<br>
+            Fr &nbsp;8:00 – 15:00<br>
+            Termine nach Vereinbarung
+          </dd>
+        </div>
+      </dl>
+    </div>
+
+    <div class="rise">
+      <form class="form" id="form" novalidate>
+        <div class="row">
+          <div class="field">
+            <label for="f-name">Name</label>
+            <input id="f-name" name="name" type="text" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label for="f-tel">Telefon</label>
+            <input id="f-tel" name="tel" type="tel" autocomplete="tel">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="f-mail">E-Mail</label>
+          <input id="f-mail" name="email" type="email" autocomplete="email" required>
+        </div>
+
+        <div class="field">
+          <label for="f-art">Anliegen</label>
+          <select id="f-art" name="anliegen">
+            <option>Ersttermin</option>
+            <option>Physiotherapie</option>
+            <option>Sport-Osteopathie</option>
+            <option>Sektorale Heilpraktik Physiotherapie</option>
+            <option>Sonstiges</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="f-msg">Nachricht</label>
+          <textarea id="f-msg" name="nachricht" placeholder="Was führt Dich zu uns?"></textarea>
+          <p class="hintline">Bitte keine Diagnosen oder Gesundheitsdaten im Formular senden — das klären wir persönlich.</p>
+        </div>
+
+        <label class="consent">
+          <input type="checkbox" id="f-ok" required>
+          <span>Ich bin einverstanden, dass meine Angaben zur Bearbeitung meiner Anfrage
+          gespeichert werden. Hinweise dazu in der <a href="#" style="color:var(--accent)">Datenschutzerklärung</a>.</span>
+        </label>
+
+        <button type="submit" class="btn btn--solid" style="justify-content:center">Anfrage senden</button>
+        <p class="hintline" id="formNote" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <p style="margin:0">© 2026 MLetics by Maik Liesbrock · Bochum</p>
+    <nav aria-label="Rechtliches">
+      <a href="#">Impressum</a>
+      <a href="#">Datenschutz</a>
+    </nav>
+  </div>
+</footer>
+
+<nav class="step" id="step" aria-label="Kapitel wechseln">
+  <button id="stepPrev" aria-label="Vorheriges Kapitel">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M18 15l-6-6-6 6"/>
+    </svg>
+  </button>
+  <span class="step__count"><b id="stepNow">01</b> / 06</span>
+  <button id="stepNext" aria-label="Nächstes Kapitel">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M6 9l6 6 6-6"/>
+    </svg>
+  </button>
+</nav>
+
+<!-- Kein GSAP mehr nötig — der Kapitel-Übergang läuft über CSS
+     position:sticky, keine externe Skript-Abhängigkeit mehr dafür. -->
+<script>
+function initMLetics(){
+  'use strict';
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var sections = Array.prototype.slice.call(document.querySelectorAll('.chapter'));
+
+  /* Kapitelpositionen für Navigation (Punktleiste, Vor/Zurück, #anker).
+     Früher musste hier zum Messen kurz auf 0 gescrollt und zurück
+     gesprungen werden, weil offsetTop bei position:sticky-Elementen
+     scroll-abhängige Werte lieferte. Seit die Kapitel im normalen Fluss
+     liegen, ist offsetTop wieder verlässlich — der Sprung entfällt
+     (er war bei jedem Resize sichtbar). */
+  var sectionTops = [];
+  function neuVermessen(){
+    sectionTops = sections.map(function(s){ return s.offsetTop; });
+  }
+  neuVermessen();
+
+  /* Startposition selbst bestimmen, statt sich auf den Browser zu
+     verlassen: scrollRestoration:'manual' unterdrückt bei einigen Browsern
+     das automatische Anker-Scrollen ohne Ersatz — ein Aufruf mit #anker
+     landete dadurch unzuverlässig bei 0 statt am Zielkapitel. Deshalb hier
+     explizit selbst positionieren, erst wenn Schrift/Layout stehen. */
+  if('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  var ziel = location.hash && document.querySelector(location.hash);
+  var zielIndex = ziel ? sections.indexOf(ziel) : -1;
+  if(zielIndex > -1){
+    /* Layout steht erst final, wenn Schrift/Ressourcen geladen sind —
+       deshalb mehrfach neu vermessen und nachpositionieren. */
+    var zuZiel = function(){ neuVermessen(); window.scrollTo(0, sectionTops[zielIndex]); };
+    zuZiel();
+    if(document.fonts && document.fonts.ready){ document.fonts.ready.then(zuZiel); }
+    window.addEventListener('load', zuZiel);
+  } else {
+    window.scrollTo(0,0);
+  }
+
+  var railBtns = Array.prototype.slice.call(document.querySelectorAll('.rail button'));
+  var pillLnks = Array.prototype.slice.call(document.querySelectorAll('.bar__nav a'));
+
+  railBtns.forEach(function(b){
+    b.addEventListener('click', function(){
+      var i = sections.indexOf(document.getElementById(b.dataset.go));
+      window.scrollTo({top: sectionTops[i], behavior: reduce ? 'auto' : 'smooth'});
+    });
+  });
+
+  /* Fehlende Bilddateien entfernen, damit statt eines kaputten Bildes
+     der CSS-Verlauf als Rückfallebene sichtbar bleibt. */
+  document.querySelectorAll('[data-media]').forEach(function(m){
+    m.addEventListener('error', function(){ m.remove(); });
+    if(m.tagName === 'IMG' && m.complete && m.naturalWidth === 0) m.remove();
+  });
+
+  var namen = ['Auftakt','Treat','Connect','Über Maik','Galerie','Kontakt'];
+  var announcer = document.getElementById('announcer');
+  var stepPrev  = document.getElementById('stepPrev');
+  var stepNext  = document.getElementById('stepNext');
+  var stepNow   = document.getElementById('stepNow');
+  var current   = 0;
+
+  /* Aktives Kapitel: Navigation, Kapitel-Punkte, Zähler und
+     Screenreader-Ansage aktualisieren. Der Hintergrund selbst braucht das
+     nicht mehr — er scrollt normal mit, kein Crossfade mehr nötig. */
+  function activate(i){
+    if(i < 0 || i >= sections.length) return;
+    current = i;
+    railBtns.forEach(function(b, k){ b.setAttribute('aria-current', k === i); });
+    var id = sections[i].id;
+    pillLnks.forEach(function(a){
+      a.setAttribute('aria-current', a.getAttribute('href') === '#' + id);
+    });
+    stepNow.textContent = ('0' + (i + 1)).slice(-2);
+    stepPrev.disabled = (i === 0);
+    stepNext.disabled = (i === sections.length - 1);
+    announcer.textContent = 'Kapitel ' + (i + 1) + ' von ' + sections.length + ': ' + namen[i];
+  }
+
+  /* Lesefortschritt in der Kopfleiste — per rAF gedrosselt,
+     damit das Scrollen nicht ins Stocken gerät. */
+  var bar = document.querySelector('.bar'), ticking = false;
+  function zeichneFortschritt(){
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.setProperty('--p', max > 0 ? Math.min(1, window.scrollY / max) : 0);
+    ticking = false;
+  }
+  window.addEventListener('scroll', function(){
+    if(!ticking){ ticking = true; requestAnimationFrame(zeichneFortschritt); }
+  }, {passive: true});
+  window.addEventListener('resize', zeichneFortschritt);
+  window.addEventListener('resize', neuVermessen);
+  zeichneFortschritt();
+
+  /* Kein Scroll-gebundenes Skript mehr für die Kapitelbilder: Jedes
+     Bild liegt jetzt fest in seinem eigenen Kapitel (siehe .chapter__bg
+     weiter oben im CSS) und erscheint dadurch automatisch zur
+     richtigen Zeit — ganz ohne JavaScript, während des Scrollens
+     eingeschlossen. Frühere Fassungen banden das an einen
+     Scroll-Handler (erst Sticky-Stapeln, dann eine fixierte
+     Bild-Bühne mit Crossfade); beides hing am selben wunden Punkt:
+     iOS Safari verzögert Scroll-gebundene Skripte systematisch, solange
+     aktiv gewischt wird, wodurch die Bühne mitten im Scrollen auf dem
+     zuletzt berechneten Bild hängen blieb — meist dem ersten. */
+
+  function goTo(i){
+    if(i < 0 || i >= sections.length) return;
+    window.scrollTo({top: sectionTops[i], behavior: reduce ? 'auto' : 'smooth'});
+  }
+  stepPrev.addEventListener('click', function(){ goTo(current - 1); });
+  stepNext.addEventListener('click', function(){ goTo(current + 1); });
+
+  /* Aktives Kapitel: NICHT über IntersectionObserver bestimmt, bewusst.
+     Bei Sticky-Stapelung überlappen sich zwei Kapitel geometrisch immer
+     kurz (das hintere klebt noch bei ~97% Sichtbarkeit, während das
+     vordere schon oben ansteht) — ein Schwellenwert-Observer kann dann
+     nicht zuverlässig sagen, welches „vorne" liegt. Stattdessen: das
+     vorderste (letzte in Dokumentreihenfolge) Kapitel, dessen Oberkante
+     bereits bei 0 klebt, ist optisch immer das oberste im Stapel. */
+  var chapterTicking = false;
+  function vorderstesKapitel(){
+    var aktiv = 0;
+    for(var i = 0; i < sections.length; i++){
+      if(sections[i].getBoundingClientRect().top <= 1) aktiv = i;
+    }
+    return aktiv;
+  }
+  function watchAktivesKapitel(){
+    activate(vorderstesKapitel());
+    chapterTicking = false;
+  }
+  window.addEventListener('scroll', function(){
+    if(!chapterTicking){ chapterTicking = true; requestAnimationFrame(watchAktivesKapitel); }
+  }, {passive: true});
+  watchAktivesKapitel();
+
+  /* Reveal-Animation separat über IntersectionObserver — hier ist
+     Mehrdeutigkeit unkritisch: ein Kapitel einmal zu früh „bereit"
+     zu markieren, bevor es vorne im Stapel ankommt, fällt nicht auf.
+     Wichtig: .rise ist per CSS-Grundzustand sichtbar (siehe oben) — erst
+     hier, wenn wir wissen, dass JS wirklich läuft, schalten wir aktiv auf
+     "unsichtbar, bis das Kapitel in Sicht kommt" um. Läuft dieser Code aus
+     irgendeinem Grund gar nicht (Skripte blockiert, Fehler, IntersectionObserver
+     fehlt), bleibt der Inhalt einfach beim sichtbaren CSS-Grundzustand stehen. */
+  if('IntersectionObserver' in window){
+    document.querySelectorAll('.rise').forEach(function(el){ el.dataset.in = 'false'; });
+
+    var revealWatch = new IntersectionObserver(function(entries, obs){
+      entries.forEach(function(en){
+        if(!en.isIntersecting) return;
+        var items = en.target.querySelectorAll('.rise');
+        items.forEach(function(el, k){
+          setTimeout(function(){ el.dataset.in = 'true'; }, k * 90);
+        });
+        obs.unobserve(en.target);
+      });
+    }, {rootMargin: '0px 0px -20% 0px'});
+
+    sections.forEach(function(sec){ revealWatch.observe(sec); });
+  }
+
+  /* Treat-/„Für wen?"-Karten: der Hervorhebungs-Zustand (Rahmen, Ziffer,
+     Unterstreichung) hängt bisher an :hover — auf Touch-Geräten gibt es
+     kein echtes Hover, dort passierte beim Antippen/Scrollen also gar
+     nichts. Erkennung bewusst über drei Signale statt nur
+     matchMedia('(hover: none)') allein: auf einem echten iPhone blieb
+     das Feature aus, vermutlich weil ein einzelnes Signal je nach
+     Ansichts-Kontext (Safari direkt vs. Quick-Look-Vorschau aus
+     Mail/Nachrichten) nicht zuverlässig war. Reicht eines der drei
+     Signale, gilt das Gerät als „kein echtes Hover".
+
+     Erst mit IntersectionObserver + prozentualem rootMargin gebaut —
+     in einer eingebetteten Ansicht (z.B. WhatsApp-Artefakt-Vorschau)
+     blieben dann mehrere Karten gleichzeitig aktiv, vermutlich weil
+     der Beobachtungsbereich dort nicht dem tatsächlich sichtbaren
+     Ausschnitt entspricht. Jetzt robuster: direkt beim Scrollen
+     gemessen, welche Karte ihrer Mitte nach am nächsten an der
+     Bildschirmmitte liegt — das hängt nur von getBoundingClientRect()
+     und innerHeight ab, nicht von der Interpretation eines
+     Beobachtungs-„root" durch die jeweilige Ansicht, und markiert
+     garantiert immer nur genau eine Karte aktiv. rAF-gedrosselt wie
+     der Lesefortschritt oben, aus demselben Grund (iOS verzögert
+     scroll-gebundene Skripte sonst während des Wischens). */
+  var keinEchtesHover =
+    matchMedia('(hover: none)').matches ||
+    matchMedia('(pointer: coarse)').matches ||
+    ('ontouchstart' in window);
+  if(keinEchtesHover){
+    var karten = document.querySelectorAll('.service, .audience__card');
+    var kartenTicking = false;
+    function aktiveKarteAktualisieren(){
+      var mitte = innerHeight / 2;
+      var beste = null, besterAbstand = Infinity;
+      karten.forEach(function(k){
+        var r = k.getBoundingClientRect();
+        if(r.bottom <= 0 || r.top >= innerHeight) return;
+        var abstand = Math.abs((r.top + r.height / 2) - mitte);
+        if(abstand < besterAbstand){ besterAbstand = abstand; beste = k; }
+      });
+      karten.forEach(function(k){ k.classList.toggle('is-inview', k === beste); });
+      kartenTicking = false;
+    }
+    window.addEventListener('scroll', function(){
+      if(!kartenTicking){ kartenTicking = true; requestAnimationFrame(aktiveKarteAktualisieren); }
+    }, {passive: true});
+    aktiveKarteAktualisieren();
+  }
+
+  /* Der Vor/Zurück-Button schwebt fest unten rechts und würde sonst
+     dauerhaft über der Fußzeile liegen, sobald man ganz nach unten
+     scrollt — dort verdeckte er den Datenschutz-Link. Da es im
+     Fußbereich kein weiteres Kapitel mehr gibt, zu dem er führen
+     könnte, blendet er hier einfach aus. */
+  var footerEl = document.querySelector('footer');
+  var stepEl = document.getElementById('step');
+  if('IntersectionObserver' in window && footerEl && stepEl){
+    var footerWatch = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        stepEl.dataset.hidden = en.isIntersecting ? 'true' : 'false';
+      });
+    }, {rootMargin: '0px 0px -10% 0px'});
+    footerWatch.observe(footerEl);
+  }
+
+  /* Kein GSAP mehr nötig — die Kapitelbilder liegen fest im Dokument
+     (siehe .chapter__bg), kein Scroll-Handler übernimmt hier mehr
+     irgendeine Animation. GSAP wird dadurch nirgends mehr gebraucht
+     (siehe <head>), also keine externe Abhängigkeit und ein
+     HTTP-Request weniger. */
+
+  /* Galerie: das Wischen/Scrollen selbst macht der Browser nativ über
+     scroll-snap (siehe CSS) — kein Drag-Handler nötig. JS übernimmt nur
+     drei Dinge: Pfeiltasten-Buttons scrollen um ein Bild weiter, ein
+     Klick auf eine Miniatur springt zum passenden Bild, und beim
+     Scrollen wird per rAF nachgezogen, welche Miniatur gerade „aktiv"
+     (breiter, voll deckend) markiert ist. */
+  var galTrack = document.getElementById('galTrack');
+  if(galTrack){
+    var galSlides = Array.prototype.slice.call(galTrack.children);
+    var galThumbBtns = Array.prototype.slice.call(document.querySelectorAll('.gallery__thumb'));
+    var galPrev = document.getElementById('galPrev');
+    var galNext = document.getElementById('galNext');
+    var galTicking = false;
+    var galIndex = 0;
+
+    function galAktualisieren(){
+      var mitte = galTrack.scrollLeft + galTrack.clientWidth / 2;
+      var naechster = 0;
+      galSlides.forEach(function(slide, i){
+        if(slide.offsetLeft <= mitte) naechster = i;
+      });
+      galIndex = naechster;
+      galThumbBtns.forEach(function(b, i){ b.setAttribute('aria-current', i === galIndex); });
+      galPrev.disabled = (galIndex === 0);
+      galNext.disabled = (galIndex === galSlides.length - 1);
+      galTicking = false;
+    }
+    galTrack.addEventListener('scroll', function(){
+      if(!galTicking){ galTicking = true; requestAnimationFrame(galAktualisieren); }
+    }, {passive: true});
+
+    function galSpringeZu(i){
+      i = Math.max(0, Math.min(galSlides.length - 1, i));
+      galSlides[i].scrollIntoView({behavior: reduce ? 'auto' : 'smooth', inline: 'center', block: 'nearest'});
+    }
+    galPrev.addEventListener('click', function(){ galSpringeZu(galIndex - 1); });
+    galNext.addEventListener('click', function(){ galSpringeZu(galIndex + 1); });
+    galThumbBtns.forEach(function(b){
+      b.addEventListener('click', function(){ galSpringeZu(+b.dataset.index); });
+    });
+    galAktualisieren();
+
+    /* Bildhöhe: der CSS-Wert (min(48svh,520px)) ist nur ein Fallback für
+       den ersten Sekundenbruchteil und für Besucher ohne JavaScript —
+       eine feste Zahl muss zwangsläufig auf JEDEM Bildschirm passen,
+       also blieb auf großen Monitoren viel Platz ungenutzt. Hier wird
+       stattdessen gemessen, wie viel Höhe nach Kopfzeile, Beschriftung,
+       Miniaturen und Innenabstand tatsächlich noch übrig ist, und genau
+       das ausgenutzt — ohne dabei über den Bildschirmrand zu wachsen. */
+    var galChapter = document.getElementById('galerie');
+    var galWrap = galChapter.querySelector('.wrap');
+    function galHoeheAnpassen(){
+      galSlides.forEach(function(s){ s.style.height = ''; });
+      var basisHoehe = galSlides[0].offsetHeight;
+      var cs = getComputedStyle(galChapter);
+      var polsterung = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
+      var restInhalt = galWrap.offsetHeight - basisHoehe;
+      var verfuegbar = innerHeight - polsterung - restInhalt - 8;
+      /* Ab 240px Bildhöhe greift wie gehabt der übliche Mindestwert
+         (genug Platz vorhanden) — reicht der Platz nicht (sehr flaches
+         Fenster, z.B. Handy im Querformat), schrumpft das Bild lieber
+         weiter (bis zu einem kleinen Sicherheitswert von 90px), statt
+         über den verfügbaren Platz hinauszuwachsen: die Polsterung
+         unten ist fest für den Abstand zum fixierten Vor/Zurück-Button
+         reserviert (siehe #galerie) und darf dafür nicht verdrängt
+         werden. */
+      var hoehe = verfuegbar >= 240
+        ? Math.min(verfuegbar, innerHeight * 0.82)
+        : Math.max(verfuegbar, 90);
+      galSlides.forEach(function(s){ s.style.height = Math.round(hoehe) + 'px'; });
+    }
+    galHoeheAnpassen();
+    window.addEventListener('resize', galHoeheAnpassen);
+  }
+
+  /* Formular — Prototyp, versendet noch nicht */
+  document.getElementById('form').addEventListener('submit', function(e){
+    e.preventDefault();
+    document.getElementById('formNote').textContent =
+      'Prototyp: Der Versand wird angebunden, sobald Formspree oder Netlify Forms eingerichtet ist.';
+  });
+}
+
+/* Auf DOMContentLoaded warten, falls das Skript vor Ende des Markups
+   ausgeführt würde — hier nicht mehr der Fall, schadet aber nicht. */
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', initMLetics);
+} else {
+  initMLetics();
+}
+</script>
+</body>
+</html>
