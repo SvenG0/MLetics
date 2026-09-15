@@ -471,14 +471,14 @@ main{position:relative;z-index:10}
    Karte ab, wirkt also wie ein vollständiger Rahmen statt nur eine
    Kante. */
 .service{transition:box-shadow .4s var(--ease)}
-.service:hover{box-shadow:inset 0 0 0 1px var(--accent);z-index:1}
+.service:hover,.service.is-inview{box-shadow:inset 0 0 0 1px var(--accent);z-index:1}
 .service__no{
   display:block;font-family:var(--f-display);font-weight:700;font-variation-settings:'wdth' 78;
   font-size:3.25rem;line-height:1;letter-spacing:-.02em;margin-bottom:1.4rem;
   color:transparent;-webkit-text-stroke:1.5px var(--line-strong);
   transition:color .5s var(--ease),-webkit-text-stroke-color .5s var(--ease);
 }
-.service:hover .service__no{color:var(--accent);-webkit-text-stroke-color:var(--accent)}
+.service:hover .service__no,.service.is-inview .service__no{color:var(--accent);-webkit-text-stroke-color:var(--accent)}
 .service h3{
   font-family:var(--f-display);font-weight:700;font-variation-settings:'wdth' 88;
   font-size:1.28rem;margin:0 0 .9rem;letter-spacing:-.005em;
@@ -494,7 +494,7 @@ main{position:relative;z-index:10}
   background:var(--accent);transform:scaleX(0);transform-origin:left;
   transition:transform .55s var(--ease);
 }
-.service:hover h3::after{transform:scaleX(1)}
+.service:hover h3::after,.service.is-inview h3::after{transform:scaleX(1)}
 .service p{margin:0;font-size:.9rem;color:var(--muted);line-height:1.6}
 .service ul{list-style:none;margin:1.1rem 0 0;padding:0;display:grid;gap:.55rem}
 .service li{font-size:.85rem;color:var(--muted);line-height:1.5;padding-left:1rem;position:relative}
@@ -515,12 +515,12 @@ main{position:relative;z-index:10}
 /* Gleicher volle Rahmen wie bei .service — siehe Begründung dort
    (box-shadow statt border, damit die Nachbarkarte nicht verschoben
    wird). */
-.audience__card:hover{box-shadow:inset 0 0 0 1px var(--accent);z-index:1}
+.audience__card:hover,.audience__card.is-inview{box-shadow:inset 0 0 0 1px var(--accent);z-index:1}
 .audience__icon{
   display:block;color:var(--accent);margin-bottom:1rem;
   transition:transform .4s var(--ease);
 }
-.audience__card:hover .audience__icon{transform:translateX(3px)}
+.audience__card:hover .audience__icon,.audience__card.is-inview .audience__icon{transform:translateX(3px)}
 
 /* ── Kennzahlen ─────────────────────────────────────────── */
 .stats{display:grid;gap:var(--sp-3);margin-top:var(--sp-4)}
@@ -1258,6 +1258,27 @@ function initMLetics(){
     }, {rootMargin: '0px 0px -20% 0px'});
 
     sections.forEach(function(sec){ revealWatch.observe(sec); });
+  }
+
+  /* Treat-/„Für wen?"-Karten: der Hervorhebungs-Zustand (Rahmen, Ziffer,
+     Unterstreichung) hängt bisher an :hover — auf Touch-Geräten gibt es
+     kein echtes Hover, dort passierte beim Antippen/Scrollen also gar
+     nichts. matchMedia('(hover: none)') erkennt genau diesen Fall (kein
+     Zeigegerät, das dauerhaft über einem Element stehen kann) und lässt
+     dann stattdessen die Karte automatisch aktiv werden, sobald sie beim
+     Scrollen die Bildschirmmitte durchläuft — dieselben CSS-Regeln wie
+     :hover greifen dann über die zusätzliche Klasse .is-inview (siehe
+     .service/.audience__card weiter oben). Auf Geräten mit echtem Hover
+     bleibt alles wie gehabt, dieser Code läuft dort gar nicht erst. */
+  if('IntersectionObserver' in window && matchMedia('(hover: none)').matches){
+    var cardWatch = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        en.target.classList.toggle('is-inview', en.isIntersecting);
+      });
+    }, {rootMargin: '-40% 0px -40% 0px'});
+    document.querySelectorAll('.service, .audience__card').forEach(function(el){
+      cardWatch.observe(el);
+    });
   }
 
   /* Der Vor/Zurück-Button schwebt fest unten rechts und würde sonst
