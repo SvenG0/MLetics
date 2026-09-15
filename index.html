@@ -332,6 +332,11 @@ main{position:relative;z-index:10}
   padding-block:8rem var(--sp-6);
 }
 .chapter .wrap{position:relative;z-index:10}
+/* Die Galerie ist ein Werkzeug-Kapitel, kein Foto-Hintergrund mit
+   zentriertem Text — sie braucht die großzügige 8rem-Polsterung der
+   anderen Kapitel nicht (die ist für Zentrierung in einem hohen
+   Bild gedacht) und passt dadurch eher auf einen Bildschirm. */
+#galerie{padding-block:6rem 2.5rem}
 .chapter__grid{display:grid;gap:var(--sp-5);align-items:center}
 @media(min-width:1024px){
   .chapter__grid{grid-template-columns:minmax(0,1fr) minmax(0,.85fr)}
@@ -484,7 +489,7 @@ main{position:relative;z-index:10}
    ohne JavaScript-Abhängigkeit während der Geste (genau die Klasse
    Bug, die uns beim Kapitelhintergrund schon Ärger gemacht hat).
    JS setzt hier nur noch, welche Miniatur gerade „aktiv" ist. */
-.gallery{margin-top:var(--sp-4)}
+.gallery{margin-top:1.5rem}
 .gallery__stage{position:relative}
 .gallery__track{
   display:flex;overflow-x:auto;scroll-snap-type:x mandatory;
@@ -495,6 +500,13 @@ main{position:relative;z-index:10}
 .gallery__slide{
   position:relative;flex:0 0 100%;scroll-snap-align:center;
   aspect-ratio:16/9;overflow:hidden;background-size:cover;background-position:center;
+  /* Auf breiten, aber nicht sehr hohen Screens (typischer Laptop) macht
+     16:9-bei-voller-Breite das Bild allein schon höher als der ganze
+     restliche Bildschirm — Überschrift und Miniaturen rutschen dann aus
+     dem sichtbaren Bereich, man muss um die Galerie herum scrollen.
+     max-height hält das Bild an der Bildschirmhöhe fest; object-fit:cover
+     schneidet dann eben etwas mehr rechts/links statt oben/unten ab. */
+  max-height:min(40svh,440px);
 }
 .gallery__slide img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 /* Platzhalter-Hinweistext — bleibt sichtbar, bis eine echte Datei greift
@@ -780,7 +792,7 @@ footer{position:relative;z-index:10;background:var(--bg);border-top:1px solid va
   <div class="wrap">
     <p class="eyebrow rise"><b>05</b> <span>Galerie</span></p>
     <h2 class="display display--sm rise">Einblicke in<br>die Praxis.</h2>
-    <p class="lead rise" style="margin-top:1.5rem">
+    <p class="lead rise" style="margin-top:1rem">
       Ein paar Momentaufnahmen aus Behandlung, Aufbau und Alltag —
       wird laufend ergänzt.
     </p>
