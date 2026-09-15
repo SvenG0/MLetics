@@ -312,6 +312,10 @@ main{position:relative;z-index:10}
   linear-gradient(96deg,rgba(202,220,242,.14) 0%,transparent 46%),
   radial-gradient(80% 92% at 20% 56%,#356E9A 0%,#1C3C5C 34%,#0F1D2C 66%,#0A0B0D 90%),
   radial-gradient(140% 120% at 50% 50%,transparent 40%,rgba(3,4,5,.78) 100%)}
+.bg-06{background-image:
+  linear-gradient(96deg,rgba(202,220,242,.14) 0%,transparent 46%),
+  radial-gradient(80% 92% at 80% 56%,#3E77A8 0%,#1E4569 34%,#0F1D2C 66%,#0A0B0D 90%),
+  radial-gradient(140% 120% at 50% 50%,transparent 40%,rgba(3,4,5,.78) 100%)}
 
 /* ── Kapitel ──────────────────────────────────────────────
    Ganz normaler Dokumentfluss: kein sticky, kein fixed, keine
@@ -472,6 +476,74 @@ main{position:relative;z-index:10}
 /* Klickfläche unsichtbar auf 44px vergrößern, ohne die Optik zu ändern. */
 .contact-list a::after{content:"";position:absolute;inset:-11px -6px}
 
+/* ── Galerie ────────────────────────────────────────────────
+   Großes Hauptbild + Filmstreifen aus Miniaturen darunter; die aktive
+   Miniatur wächst sichtbar breiter. Läuft komplett über natives
+   CSS scroll-snap statt über nachgebaute Drag-Physik — der Browser
+   übernimmt Wischen, Trackpad, Mausrad und Tastatur von selbst, ganz
+   ohne JavaScript-Abhängigkeit während der Geste (genau die Klasse
+   Bug, die uns beim Kapitelhintergrund schon Ärger gemacht hat).
+   JS setzt hier nur noch, welche Miniatur gerade „aktiv" ist. */
+.gallery{margin-top:var(--sp-4)}
+.gallery__stage{position:relative}
+.gallery__track{
+  display:flex;overflow-x:auto;scroll-snap-type:x mandatory;
+  border-radius:14px;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.gallery__track::-webkit-scrollbar{display:none}
+.gallery__slide{
+  position:relative;flex:0 0 100%;scroll-snap-align:center;
+  aspect-ratio:16/9;overflow:hidden;background-size:cover;background-position:center;
+}
+.gallery__slide img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+/* Platzhalter-Hinweistext — bleibt sichtbar, bis eine echte Datei greift
+   (gleiches Prinzip wie .portrait__ph: eine Galerie-Kachel braucht
+   einen sichtbaren Hinweis, anders als ein reiner Kapitelhintergrund). */
+.gallery__ph{
+  position:absolute;inset:0;display:grid;place-items:center;text-align:center;
+  color:rgba(242,240,234,.6);font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;
+}
+.gallery__nav{
+  all:unset;position:absolute;top:50%;translate:0 -50%;z-index:5;cursor:pointer;
+  width:44px;height:44px;border-radius:999px;display:grid;place-items:center;
+  background:rgba(10,11,13,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border:1px solid var(--line-strong);color:var(--text);
+  transition:background-color .3s var(--ease),border-color .3s var(--ease),opacity .3s;
+}
+.gallery__nav:hover{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.gallery__nav:disabled{opacity:.35;cursor:default;pointer-events:none}
+.gallery__nav--prev{left:.75rem}
+.gallery__nav--next{right:.75rem}
+@media(min-width:640px){.gallery__nav--prev{left:1.25rem}.gallery__nav--next{right:1.25rem}}
+
+.gallery__thumbs{
+  display:flex;gap:4px;margin-top:.85rem;overflow-x:auto;scrollbar-width:none;
+  padding-bottom:.15rem;
+}
+.gallery__thumbs::-webkit-scrollbar{display:none}
+.gallery__thumb{
+  /* Kein all:unset hier (anders als bei .gallery__nav): das würde auch
+     background-image zurücksetzen — und genau darüber liefern die
+     wiederverwendeten .bg-0X-Klassen die Platzhalter-Farbverläufe.
+     Beide Selektoren haben dieselbe Spezifität; da .gallery__thumb
+     später in der Datei steht, hätte all:unset die Farbe stillschweigend
+     wieder gelöscht. Stattdessen gezielt nur die Button-Grundwerte
+     zurücksetzen. */
+  border:0;padding:0;margin:0;font:inherit;color:inherit;
+  -webkit-appearance:none;appearance:none;background-color:transparent;
+  position:relative;flex:0 0 36px;height:58px;border-radius:7px;
+  overflow:hidden;cursor:pointer;background-size:cover;background-position:center;
+  opacity:.5;transition:flex-basis .35s var(--ease),opacity .3s var(--ease);
+}
+.gallery__thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.gallery__thumb:hover{opacity:.8}
+.gallery__thumb[aria-current="true"]{flex-basis:108px;opacity:1}
+@media(min-width:640px){
+  .gallery__thumb{flex-basis:40px;height:64px}
+  .gallery__thumb[aria-current="true"]{flex-basis:128px}
+}
+
 /* ── Footer ─────────────────────────────────────────────── */
 footer{position:relative;z-index:10;background:var(--bg);border-top:1px solid var(--line);padding-block:var(--sp-4)}
 .foot{display:flex;flex-wrap:wrap;gap:var(--sp-3);justify-content:space-between;align-items:center;font-size:.82rem;color:var(--muted)}
@@ -513,6 +585,7 @@ footer{position:relative;z-index:10;background:var(--bg);border-top:1px solid va
         <a href="#treat">Treat</a>
         <a href="#connect">Connect</a>
         <a href="#about">Über Maik</a>
+        <a href="#galerie">Galerie</a>
       </nav>
 
       <a href="#kontakt" class="btn btn--solid bar__cta">Kontakt</a>
@@ -528,7 +601,8 @@ footer{position:relative;z-index:10;background:var(--bg);border-top:1px solid va
   <button data-go="treat" aria-label="Kapitel 2: Treat"><span></span></button>
   <button data-go="connect" aria-label="Kapitel 3: Connect"><span></span></button>
   <button data-go="about" aria-label="Kapitel 4: Über Maik"><span></span></button>
-  <button data-go="kontakt" aria-label="Kapitel 5: Kontakt"><span></span></button>
+  <button data-go="galerie" aria-label="Kapitel 5: Galerie"><span></span></button>
+  <button data-go="kontakt" aria-label="Kapitel 6: Kontakt"><span></span></button>
 </nav>
 
 <main id="inhalt">
@@ -701,15 +775,72 @@ footer{position:relative;z-index:10;background:var(--bg);border-top:1px solid va
   </div>
 </section>
 
-<!-- ── 05 KONTAKT ─────────────────────────────────────── -->
-<section class="chapter" id="kontakt" data-chapter="4">
-  <div class="chapter__bg bg-05" aria-hidden="true">
-    <img class="chapter__bg-img" src="assets/05-kontakt.jpg" alt="" data-media>
+<!-- ── 05 GALERIE ─────────────────────────────────────── -->
+<section class="chapter" id="galerie" data-chapter="4">
+  <div class="wrap">
+    <p class="eyebrow rise"><b>05</b> <span>Galerie</span></p>
+    <h2 class="display display--sm rise">Einblicke in<br>die Praxis.</h2>
+    <p class="lead rise" style="margin-top:1.5rem">
+      Ein paar Momentaufnahmen aus Behandlung, Aufbau und Alltag —
+      wird laufend ergänzt.
+    </p>
+
+    <div class="gallery rise">
+      <div class="gallery__stage">
+        <button class="gallery__nav gallery__nav--prev" id="galPrev" aria-label="Vorheriges Bild">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <div class="gallery__track" id="galTrack">
+          <figure class="gallery__slide bg-01">
+            <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
+            <img src="assets/galerie/01.jpg" alt="" data-media>
+          </figure>
+          <figure class="gallery__slide bg-02">
+            <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
+            <img src="assets/galerie/02.jpg" alt="" data-media>
+          </figure>
+          <figure class="gallery__slide bg-03">
+            <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
+            <img src="assets/galerie/03.jpg" alt="" data-media>
+          </figure>
+          <figure class="gallery__slide bg-04">
+            <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
+            <img src="assets/galerie/04.jpg" alt="" data-media>
+          </figure>
+          <figure class="gallery__slide bg-05">
+            <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
+            <img src="assets/galerie/05.jpg" alt="" data-media>
+          </figure>
+          <figure class="gallery__slide bg-01">
+            <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
+            <img src="assets/galerie/06.jpg" alt="" data-media>
+          </figure>
+        </div>
+        <button class="gallery__nav gallery__nav--next" id="galNext" aria-label="Nächstes Bild">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+      <div class="gallery__thumbs" id="galThumbs" role="tablist" aria-label="Galerie-Miniaturen">
+        <button class="gallery__thumb bg-01" data-index="0" role="tab" aria-current="true" aria-label="Bild 1"></button>
+        <button class="gallery__thumb bg-02" data-index="1" role="tab" aria-current="false" aria-label="Bild 2"></button>
+        <button class="gallery__thumb bg-03" data-index="2" role="tab" aria-current="false" aria-label="Bild 3"></button>
+        <button class="gallery__thumb bg-04" data-index="3" role="tab" aria-current="false" aria-label="Bild 4"></button>
+        <button class="gallery__thumb bg-05" data-index="4" role="tab" aria-current="false" aria-label="Bild 5"></button>
+        <button class="gallery__thumb bg-01" data-index="5" role="tab" aria-current="false" aria-label="Bild 6"></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 06 KONTAKT ─────────────────────────────────────── -->
+<section class="chapter" id="kontakt" data-chapter="5">
+  <div class="chapter__bg bg-06" aria-hidden="true">
+    <img class="chapter__bg-img" src="assets/06-kontakt.jpg" alt="" data-media>
     <div class="chapter__bg-grade"></div>
   </div>
   <div class="wrap chapter__grid" style="align-items:start">
     <div>
-      <p class="eyebrow rise"><b>05</b> <span>Kontakt</span></p>
+      <p class="eyebrow rise"><b>06</b> <span>Kontakt</span></p>
       <h2 class="display display--sm rise">Sprechen wir<br>über Deinen Weg.</h2>
 
       <dl class="contact-list rise">
@@ -805,7 +936,7 @@ footer{position:relative;z-index:10;background:var(--bg);border-top:1px solid va
       <path d="M18 15l-6-6-6 6"/>
     </svg>
   </button>
-  <span class="step__count"><b id="stepNow">01</b> / 05</span>
+  <span class="step__count"><b id="stepNow">01</b> / 06</span>
   <button id="stepNext" aria-label="Nächstes Kapitel">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
          stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -871,7 +1002,7 @@ function initMLetics(){
     if(m.tagName === 'IMG' && m.complete && m.naturalWidth === 0) m.remove();
   });
 
-  var namen = ['Auftakt','Treat','Connect','Über Maik','Kontakt'];
+  var namen = ['Auftakt','Treat','Connect','Über Maik','Galerie','Kontakt'];
   var announcer = document.getElementById('announcer');
   var stepPrev  = document.getElementById('stepPrev');
   var stepNext  = document.getElementById('stepNext');
@@ -982,6 +1113,49 @@ function initMLetics(){
      irgendeine Animation. GSAP wird dadurch nirgends mehr gebraucht
      (siehe <head>), also keine externe Abhängigkeit und ein
      HTTP-Request weniger. */
+
+  /* Galerie: das Wischen/Scrollen selbst macht der Browser nativ über
+     scroll-snap (siehe CSS) — kein Drag-Handler nötig. JS übernimmt nur
+     drei Dinge: Pfeiltasten-Buttons scrollen um ein Bild weiter, ein
+     Klick auf eine Miniatur springt zum passenden Bild, und beim
+     Scrollen wird per rAF nachgezogen, welche Miniatur gerade „aktiv"
+     (breiter, voll deckend) markiert ist. */
+  var galTrack = document.getElementById('galTrack');
+  if(galTrack){
+    var galSlides = Array.prototype.slice.call(galTrack.children);
+    var galThumbBtns = Array.prototype.slice.call(document.querySelectorAll('.gallery__thumb'));
+    var galPrev = document.getElementById('galPrev');
+    var galNext = document.getElementById('galNext');
+    var galTicking = false;
+    var galIndex = 0;
+
+    function galAktualisieren(){
+      var mitte = galTrack.scrollLeft + galTrack.clientWidth / 2;
+      var naechster = 0;
+      galSlides.forEach(function(slide, i){
+        if(slide.offsetLeft <= mitte) naechster = i;
+      });
+      galIndex = naechster;
+      galThumbBtns.forEach(function(b, i){ b.setAttribute('aria-current', i === galIndex); });
+      galPrev.disabled = (galIndex === 0);
+      galNext.disabled = (galIndex === galSlides.length - 1);
+      galTicking = false;
+    }
+    galTrack.addEventListener('scroll', function(){
+      if(!galTicking){ galTicking = true; requestAnimationFrame(galAktualisieren); }
+    }, {passive: true});
+
+    function galSpringeZu(i){
+      i = Math.max(0, Math.min(galSlides.length - 1, i));
+      galSlides[i].scrollIntoView({behavior: reduce ? 'auto' : 'smooth', inline: 'center', block: 'nearest'});
+    }
+    galPrev.addEventListener('click', function(){ galSpringeZu(galIndex - 1); });
+    galNext.addEventListener('click', function(){ galSpringeZu(galIndex + 1); });
+    galThumbBtns.forEach(function(b){
+      b.addEventListener('click', function(){ galSpringeZu(+b.dataset.index); });
+    });
+    galAktualisieren();
+  }
 
   /* Formular — Prototyp, versendet noch nicht */
   document.getElementById('form').addEventListener('submit', function(e){

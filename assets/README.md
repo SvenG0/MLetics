@@ -11,7 +11,9 @@ Falls ein neues Original geliefert wird, einfach dieselbe Datei ersetzen.
 
 ## Kapitelhintergründe
 
-Das Kapitel „Understand" wurde entfernt — die Seite hat jetzt 5 Kapitel.
+Das Kapitel „Understand" wurde entfernt, dafür kam „Galerie" dazu — die
+A-Version hat jetzt 6 Kapitel (die B-Version weiterhin ihre eigene Auswahl,
+siehe unten).
 
 | Datei | Kapitel | Motiv |
 |---|---|---|
@@ -19,9 +21,35 @@ Das Kapitel „Understand" wurde entfernt — die Seite hat jetzt 5 Kapitel.
 | `02-treat.jpg` | 02 Treat | **Vorhanden** — Behandlung am Bein (Quelle: `Bilder/Treat.jpg`) |
 | `03-connect.jpg` | 03 Connect | **Vorhanden** — Jubel im Stadion mit zwei Spielern (Quelle: `Bilder/connect.jpg`) |
 | `04-about.jpg` | 04 Über Maik | Fehlt noch — nur A-Variante, dort greift solange der Farbverlauf |
-| `05-kontakt.jpg` | 05 Kontakt | Fehlt noch — nur A-Variante, dort greift solange der Farbverlauf |
+| — | 05 Galerie | Zeigt keinen eigenen Kapitelhintergrund, siehe eigener Abschnitt unten |
+| `06-kontakt.jpg` | 06 Kontakt | Fehlt noch — nur A-Variante, dort greift solange der Farbverlauf. **Achtung:** hieß vor der Galerie-Ergänzung `05-kontakt.jpg` — falls schon eine Datei dafür vorbereitet war, bitte auf `06-kontakt.jpg` umbenennen. |
 
-Die B-Variante nutzt `04-…` und `05-…` nicht; dort fehlt also nichts.
+Die B-Variante nutzt `04-…` und `06-…` nicht; dort fehlt also nichts.
+
+## Galerie (neu, A-Version)
+
+Kapitel 05 zeigt einen Filmstreifen-Karussell mit aktuell 6 Platzhalter-Kacheln.
+Bilder ablegen unter:
+
+```
+assets/galerie/01.jpg
+assets/galerie/02.jpg
+assets/galerie/03.jpg
+assets/galerie/04.jpg
+assets/galerie/05.jpg
+assets/galerie/06.jpg
+```
+
+Sobald eine Datei existiert, ersetzt sie automatisch die Platzhalter-Kachel
+an derselben Stelle (Hinweistext „Foto folgt" verschwindet dann von selbst).
+Mehr als 6 Bilder gewünscht? In `index.html` im Abschnitt „05 GALERIE" ein
+weiteres `<figure class="gallery__slide">` (Bild-Track) **und** einen
+passenden `<button class="gallery__thumb">` (Miniaturleiste) ergänzen —
+beide Listen müssen dieselbe Reihenfolge haben.
+
+Format/Auflösung wie bei den Kapitelbildern (siehe unten), Seitenverhältnis
+im Karussell ist 16:9 — am besten schon in etwa so zuschneiden, sonst
+schneidet `object-fit:cover` automatisch (mittig) zu.
 
 ## Karte „Über Maik"
 
