@@ -438,18 +438,28 @@ main{position:relative;z-index:10}
    die Überschrift bekommt beim Hover eine schmale Unterstreichung, die
    von links einzieht — kein Icon-Badge (Symbol dafür, dass es "wie KI"
    wirkte), keine bewegte Fläche. */
-.services{display:grid;gap:1px;background:var(--line);border-block:1px solid var(--line);margin-top:var(--sp-4)}
-@media(min-width:640px){.services{grid-template-columns:1fr 1fr}}
-@media(min-width:1024px){.services{grid-template-columns:repeat(3,1fr)}}
-/* Bewusst KEIN eigener Zellenhintergrund: Treat liegt auf einem
-   Kapitelfoto, eine deckende Fläche (var(--bg)) hätte das Foto dort
-   als harten schwarzen Block verdeckt — genau das wurde als Problem
-   gemeldet. Die 1px-Trennlinien kommen weiterhin vom Grid-Trick
-   (Container-Hintergrund scheint nur im 1px-Gap durch); die
-   funktioniert unabhängig davon, ob die Zelle selbst einen
-   Hintergrund hat. Hover zeigt sich jetzt nur noch über Ziffer und
-   Unterstreichung, nicht mehr über eine Fläche, die ebenfalls das
-   Foto verdeckt hätte. */
+/* Der Grid-Trick (Container-Hintergrund scheint nur im 1px-Gap durch)
+   braucht deckende Zellen, um den Rest der Fläche zu verbergen — genau
+   die wurden entfernt, damit das Kapitelfoto sichtbar bleibt. Ohne
+   deckende Zellen lag die Container-Fläche (var(--line)) plötzlich
+   über dem GESAMTEN Raster statt nur in den 1px-Lücken: alle drei
+   Karten wirkten wie ein einziger, unklar begrenzter Block. Jetzt
+   echte 1px-Trennlinien per border, unabhängig von der Zellenfüllung —
+   je Bildschirmbreite von Hand gesetzt (oben bei der ersten Zeile,
+   links bei allen außer der ersten Spalte), da automatische
+   „:not(:first-child)"-Regeln bei wechselnder Spaltenzahl sonst falsch
+   lägen. */
+.services{display:grid;border-block:1px solid var(--line);margin-top:var(--sp-4)}
+.service{border-top:1px solid var(--line)}
+.service:first-child{border-top:0}
+@media(min-width:640px){
+  .services{grid-template-columns:1fr 1fr}
+  .service:nth-child(2){border-top:0;border-left:1px solid var(--line)}
+}
+@media(min-width:1024px){
+  .services{grid-template-columns:repeat(3,1fr)}
+  .service:nth-child(3){border-top:0;border-left:1px solid var(--line)}
+}
 .service{position:relative;padding:2.25rem 2rem 2.5rem}
 .service__no{
   display:block;font-family:var(--f-display);font-weight:700;font-variation-settings:'wdth' 78;
@@ -478,12 +488,11 @@ main{position:relative;z-index:10}
    Trennlinien statt Karten, freistehendes Icon in Akzentfarbe statt
    Icon-in-Badge (die eingefärbte Kachel war der auffälligste
    "generische KI-Baustein"). */
-.audience{display:grid;gap:1px;background:var(--line);border-block:1px solid var(--line);margin-top:.2rem}
-/* Kein Zellenhintergrund, aus demselben Grund wie bei .service oben —
-   Connect zeigt sein Kapitelfoto gerade in dieser rechten Spalte
-   deutlich sichtbar, eine deckende Fläche hätte es als schwarzen
-   Kasten verdeckt. */
-.audience__card{position:relative;padding:1.75rem 1.5rem 2rem}
+/* Gleicher Trennlinien-Ansatz wie bei .service — echte border statt
+   des Grid-Tricks, der deckende Zellen vorausgesetzt hätte. */
+.audience{display:grid;border-block:1px solid var(--line);margin-top:.2rem}
+.audience__card{position:relative;padding:1.75rem 1.5rem 2rem;border-top:1px solid var(--line)}
+.audience__card:first-child{border-top:0}
 .audience__icon{
   display:block;color:var(--accent);margin-bottom:1rem;
   transition:transform .4s var(--ease);
