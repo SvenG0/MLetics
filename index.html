@@ -499,33 +499,23 @@ main{position:relative;z-index:10}
 .gallery__track::-webkit-scrollbar{display:none}
 .gallery__slide{
   position:relative;flex:0 0 100%;scroll-snap-align:center;
-  aspect-ratio:16/9;overflow:hidden;background-size:cover;background-position:center;
-  /* Auf breiten, aber nicht sehr hohen Screens (typischer Laptop) macht
-     16:9-bei-voller-Breite das Bild allein schon höher als der ganze
-     restliche Bildschirm — Überschrift und Miniaturen rutschen dann aus
-     dem sichtbaren Bereich, man muss um die Galerie herum scrollen.
-     max-height hält die Box an der Bildschirmhöhe fest. object-fit:cover
-     hätte dabei stur weiter zugeschnitten, bis vom Foto kaum noch etwas
-     zu erkennen war — das war der eigentliche Fehler, nicht behoben durch
-     eine kleinere Zahl, sondern durch object-fit:contain unten: das ganze
-     Foto bleibt immer sichtbar, egal wie die Box gerade zugeschnitten ist. */
-  max-height:min(48svh,520px);
-}
-/* Rand bei object-fit:contain: der bg-0X-Farbverlauf allein wirkte wie
-   eine zufällige Fläche, die nichts mit dem Foto zu tun hat. Jetzt füllt
-   stattdessen eine unscharfe, abgedunkelte Version DESSELBEN Fotos den
-   Rand — dasselbe Prinzip wie Vollbild-Player bei YouTube oder Instagram.
-   Braucht zwingend ein zweites Element mit demselben Bild als
-   background-image (Inline-style im Markup) — CSS kann das src eines
-   <img> nicht selbst als Hintergrund eines anderen Elements lesen. */
-.gallery__backdrop{
-  position:absolute;inset:-4%;background-size:cover;background-position:center;
-  filter:blur(28px) brightness(.5) saturate(1.15);
-  transform:scale(1.12); /* verdeckt die unscharfe Kante am Rand */
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+  /* Höhe fest (nicht vom Bild abgeleitet) — sonst hätte jede Kachel je
+     nach Fotoformat eine andere Höhe, und der horizontale Scroll-Snap
+     bräche. Weder Farbverlauf noch Unschärfe-Kopie füllen den Rand mehr
+     (beides wurde als „Hintergrund" empfunden, der vom Foto ablenkt) —
+     wo das Foto nicht die ganze Breite/Höhe braucht, scheint einfach die
+     Kapitel-Fläche durch, genau wie überall sonst auf der Seite. */
+  height:min(48svh,520px);
 }
 .gallery__slide img{
+  /* position:relative + z-index nötig, sonst stapelt der (immer
+     position:absolute) Platzhaltertext .gallery__ph sich über das Bild —
+     positionierte Elemente stapeln sich sonst automatisch über
+     unpositionierte, unabhängig von der Reihenfolge im Markup. */
   position:relative;z-index:1;
-  display:block;width:100%;height:100%;object-fit:contain;
+  display:block;max-width:100%;max-height:100%;width:auto;height:auto;
+  object-fit:contain; /* ganzes Foto sichtbar, nichts beschnitten */
 }
 /* Platzhalter-Hinweistext — bleibt sichtbar, bis eine echte Datei greift
    (gleiches Prinzip wie .portrait__ph: eine Galerie-Kachel braucht
@@ -820,55 +810,51 @@ footer{position:relative;z-index:10;background:var(--bg);border-top:1px solid va
         <button class="gallery__nav gallery__nav--prev" id="galPrev" aria-label="Vorheriges Bild">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
         </button>
+        <!-- Reihenfolge nach Farbstimmung sortiert, nicht nach Dateiname —
+             Schwarzweiß zum Auftakt, dann Blau, Grün, Gelb/Orange, Rot,
+             ein neutrales Bild zum Herunterkühlen, zum Schluss das
+             hellste, wärmste Foto. Miniaturleiste weiter unten läuft in
+             derselben Reihenfolge (data-index 0-9 muss exakt hierzu
+             passen, sonst zeigt ein Klick aufs falsche Bild). -->
         <div class="gallery__track" id="galTrack">
-          <figure class="gallery__slide bg-01">
+          <figure class="gallery__slide">
             <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
-            <div class="gallery__backdrop" style="background-image:url('assets/galerie/01.jpg')" aria-hidden="true"></div>
             <img src="assets/galerie/01.jpg" alt="Physiotherapeutisches Team im Gespräch nach dem Spiel" data-media loading="eager">
           </figure>
-          <figure class="gallery__slide bg-02">
+          <figure class="gallery__slide">
             <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
-            <div class="gallery__backdrop" style="background-image:url('assets/galerie/02.jpg')" aria-hidden="true"></div>
-            <img src="assets/galerie/02.jpg" alt="Medizinisches Team versorgt einen Spieler auf dem Platz" data-media loading="lazy">
-          </figure>
-          <figure class="gallery__slide bg-03">
-            <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
-            <div class="gallery__backdrop" style="background-image:url('assets/galerie/03.jpg')" aria-hidden="true"></div>
             <img src="assets/galerie/03.jpg" alt="Physiotherapeuten laufen mit der Notfalltasche aufs Spielfeld" data-media loading="lazy">
           </figure>
-          <figure class="gallery__slide bg-04">
+          <figure class="gallery__slide">
             <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
-            <div class="gallery__backdrop" style="background-image:url('assets/galerie/04.jpg')" aria-hidden="true"></div>
-            <img src="assets/galerie/04.jpg" alt="Betreuer geben Entwarnung nach einer Spielerverletzung" data-media loading="lazy">
-          </figure>
-          <figure class="gallery__slide bg-05">
-            <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
-            <div class="gallery__backdrop" style="background-image:url('assets/galerie/05.jpg')" aria-hidden="true"></div>
             <img src="assets/galerie/05.jpg" alt="Behandlung eines Spielers direkt auf dem Rasen" data-media loading="lazy">
           </figure>
-          <figure class="gallery__slide bg-01">
+          <figure class="gallery__slide">
             <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
-            <div class="gallery__backdrop" style="background-image:url('assets/galerie/06.jpg')" aria-hidden="true"></div>
             <img src="assets/galerie/06.jpg" alt="Jubelumarmung mit einem Spieler an der Seitenlinie" data-media loading="lazy">
           </figure>
-          <figure class="gallery__slide bg-02">
+          <figure class="gallery__slide">
             <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
-            <div class="gallery__backdrop" style="background-image:url('assets/galerie/07.jpg')" aria-hidden="true"></div>
-            <img src="assets/galerie/07.jpg" alt="Nachdenklicher Moment auf der Ersatzbank im Stadion" data-media loading="lazy">
-          </figure>
-          <figure class="gallery__slide bg-03">
-            <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
-            <div class="gallery__backdrop" style="background-image:url('assets/galerie/08.jpg')" aria-hidden="true"></div>
-            <img src="assets/galerie/08.jpg" alt="Versorgung eines verletzten Spielers am Spielfeldrand" data-media loading="lazy">
-          </figure>
-          <figure class="gallery__slide bg-04">
-            <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
-            <div class="gallery__backdrop" style="background-image:url('assets/galerie/09.jpg')" aria-hidden="true"></div>
             <img src="assets/galerie/09.jpg" alt="Faustgruß zwischen zwei Betreuern im Stadion" data-media loading="lazy">
           </figure>
-          <figure class="gallery__slide bg-05">
+          <figure class="gallery__slide">
             <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
-            <div class="gallery__backdrop" style="background-image:url('assets/galerie/10.jpg')" aria-hidden="true"></div>
+            <img src="assets/galerie/08.jpg" alt="Versorgung eines verletzten Spielers am Spielfeldrand" data-media loading="lazy">
+          </figure>
+          <figure class="gallery__slide">
+            <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
+            <img src="assets/galerie/02.jpg" alt="Medizinisches Team versorgt einen Spieler auf dem Platz" data-media loading="lazy">
+          </figure>
+          <figure class="gallery__slide">
+            <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
+            <img src="assets/galerie/07.jpg" alt="Nachdenklicher Moment auf der Ersatzbank im Stadion" data-media loading="lazy">
+          </figure>
+          <figure class="gallery__slide">
+            <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
+            <img src="assets/galerie/04.jpg" alt="Betreuer geben Entwarnung nach einer Spielerverletzung" data-media loading="lazy">
+          </figure>
+          <figure class="gallery__slide">
+            <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
             <img src="assets/galerie/10.jpg" alt="Jubel mit der Aufstiegs-Meisterschale" data-media loading="lazy">
           </figure>
         </div>
@@ -877,16 +863,16 @@ footer{position:relative;z-index:10;background:var(--bg);border-top:1px solid va
         </button>
       </div>
       <div class="gallery__thumbs" id="galThumbs" role="tablist" aria-label="Galerie-Miniaturen">
-        <button class="gallery__thumb bg-01" data-index="0" role="tab" aria-current="true" aria-label="Bild 1"><img src="assets/galerie/01.jpg" alt="" data-media loading="lazy"></button>
-        <button class="gallery__thumb bg-02" data-index="1" role="tab" aria-current="false" aria-label="Bild 2"><img src="assets/galerie/02.jpg" alt="" data-media loading="lazy"></button>
-        <button class="gallery__thumb bg-03" data-index="2" role="tab" aria-current="false" aria-label="Bild 3"><img src="assets/galerie/03.jpg" alt="" data-media loading="lazy"></button>
-        <button class="gallery__thumb bg-04" data-index="3" role="tab" aria-current="false" aria-label="Bild 4"><img src="assets/galerie/04.jpg" alt="" data-media loading="lazy"></button>
-        <button class="gallery__thumb bg-05" data-index="4" role="tab" aria-current="false" aria-label="Bild 5"><img src="assets/galerie/05.jpg" alt="" data-media loading="lazy"></button>
-        <button class="gallery__thumb bg-01" data-index="5" role="tab" aria-current="false" aria-label="Bild 6"><img src="assets/galerie/06.jpg" alt="" data-media loading="lazy"></button>
-        <button class="gallery__thumb bg-02" data-index="6" role="tab" aria-current="false" aria-label="Bild 7"><img src="assets/galerie/07.jpg" alt="" data-media loading="lazy"></button>
-        <button class="gallery__thumb bg-03" data-index="7" role="tab" aria-current="false" aria-label="Bild 8"><img src="assets/galerie/08.jpg" alt="" data-media loading="lazy"></button>
-        <button class="gallery__thumb bg-04" data-index="8" role="tab" aria-current="false" aria-label="Bild 9"><img src="assets/galerie/09.jpg" alt="" data-media loading="lazy"></button>
-        <button class="gallery__thumb bg-05" data-index="9" role="tab" aria-current="false" aria-label="Bild 10"><img src="assets/galerie/10.jpg" alt="" data-media loading="lazy"></button>
+        <button class="gallery__thumb" data-index="0" role="tab" aria-current="true" aria-label="Bild 1"><img src="assets/galerie/01.jpg" alt="" data-media loading="lazy"></button>
+        <button class="gallery__thumb" data-index="1" role="tab" aria-current="false" aria-label="Bild 2"><img src="assets/galerie/03.jpg" alt="" data-media loading="lazy"></button>
+        <button class="gallery__thumb" data-index="2" role="tab" aria-current="false" aria-label="Bild 3"><img src="assets/galerie/05.jpg" alt="" data-media loading="lazy"></button>
+        <button class="gallery__thumb" data-index="3" role="tab" aria-current="false" aria-label="Bild 4"><img src="assets/galerie/06.jpg" alt="" data-media loading="lazy"></button>
+        <button class="gallery__thumb" data-index="4" role="tab" aria-current="false" aria-label="Bild 5"><img src="assets/galerie/09.jpg" alt="" data-media loading="lazy"></button>
+        <button class="gallery__thumb" data-index="5" role="tab" aria-current="false" aria-label="Bild 6"><img src="assets/galerie/08.jpg" alt="" data-media loading="lazy"></button>
+        <button class="gallery__thumb" data-index="6" role="tab" aria-current="false" aria-label="Bild 7"><img src="assets/galerie/02.jpg" alt="" data-media loading="lazy"></button>
+        <button class="gallery__thumb" data-index="7" role="tab" aria-current="false" aria-label="Bild 8"><img src="assets/galerie/07.jpg" alt="" data-media loading="lazy"></button>
+        <button class="gallery__thumb" data-index="8" role="tab" aria-current="false" aria-label="Bild 9"><img src="assets/galerie/04.jpg" alt="" data-media loading="lazy"></button>
+        <button class="gallery__thumb" data-index="9" role="tab" aria-current="false" aria-label="Bild 10"><img src="assets/galerie/10.jpg" alt="" data-media loading="lazy"></button>
       </div>
     </div>
   </div>
