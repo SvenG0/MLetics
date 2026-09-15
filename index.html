@@ -441,11 +441,16 @@ main{position:relative;z-index:10}
 .services{display:grid;gap:1px;background:var(--line);border-block:1px solid var(--line);margin-top:var(--sp-4)}
 @media(min-width:640px){.services{grid-template-columns:1fr 1fr}}
 @media(min-width:1024px){.services{grid-template-columns:repeat(3,1fr)}}
-.service{
-  position:relative;background:var(--bg);padding:2.25rem 2rem 2.5rem;
-  transition:background-color .5s var(--ease);
-}
-.service:hover{background:var(--bg-raise)}
+/* Bewusst KEIN eigener Zellenhintergrund: Treat liegt auf einem
+   Kapitelfoto, eine deckende Fläche (var(--bg)) hätte das Foto dort
+   als harten schwarzen Block verdeckt — genau das wurde als Problem
+   gemeldet. Die 1px-Trennlinien kommen weiterhin vom Grid-Trick
+   (Container-Hintergrund scheint nur im 1px-Gap durch); die
+   funktioniert unabhängig davon, ob die Zelle selbst einen
+   Hintergrund hat. Hover zeigt sich jetzt nur noch über Ziffer und
+   Unterstreichung, nicht mehr über eine Fläche, die ebenfalls das
+   Foto verdeckt hätte. */
+.service{position:relative;padding:2.25rem 2rem 2.5rem}
 .service__no{
   display:block;font-family:var(--f-display);font-weight:700;font-variation-settings:'wdth' 78;
   font-size:3.25rem;line-height:1;letter-spacing:-.02em;margin-bottom:1.4rem;
@@ -474,11 +479,11 @@ main{position:relative;z-index:10}
    Icon-in-Badge (die eingefärbte Kachel war der auffälligste
    "generische KI-Baustein"). */
 .audience{display:grid;gap:1px;background:var(--line);border-block:1px solid var(--line);margin-top:.2rem}
-.audience__card{
-  position:relative;background:var(--bg);padding:1.75rem 1.5rem 2rem;
-  transition:background-color .5s var(--ease);
-}
-.audience__card:hover{background:var(--bg-raise)}
+/* Kein Zellenhintergrund, aus demselben Grund wie bei .service oben —
+   Connect zeigt sein Kapitelfoto gerade in dieser rechten Spalte
+   deutlich sichtbar, eine deckende Fläche hätte es als schwarzen
+   Kasten verdeckt. */
+.audience__card{position:relative;padding:1.75rem 1.5rem 2rem}
 .audience__icon{
   display:block;color:var(--accent);margin-bottom:1rem;
   transition:transform .4s var(--ease);
