@@ -1,0 +1,715 @@
+/* ─────────────────────────────────────────────────────────
+   MLETICS — Design Tokens
+   Bühne: neutrales Nah-Schwarz. Marke: das echte Logo-Blau
+   (aus Logo/…jpg gesampelt, Kern #2765A5). Akzent: dieselbe
+   Farbfamilie, heller/gesättigter für CTAs und aktive Zustände
+   — damit die Website die tatsächliche Marke trägt, nicht eine
+   erfundene Farbe.
+   ───────────────────────────────────────────────────────── */
+:root{
+  --bg:#0A0B0D;             /* Nah-Schwarz, neutral — nicht grün-, nicht blaustichig */
+  --bg-raise:#14171B;       /* Karten/Hover — kühles Anthrazit */
+  --text:#F2F0EA;           /* leicht cremiges Weiß, kein hartes #FFF */
+  --muted:#ADB3BB;          /* kühles Grau, aus dem Logo-Grau (#4D4D4E) für Dunkelgrund aufgehellt — etwas heller als zuvor (#9BA1AA), damit Fließtext auf Fotos genug Kontrast behält */
+  --brand:#2765A5;          /* echtes Logo-Blau — Marke, Trennlinien, Bildlasur */
+  --brand-light:#4A8CC9;    /* aufgehelltes Blau für Glüh-/Lichteffekte */
+  --accent:#2765A5;
+  --accent-soft:#346EAA;
+  --on-accent:#F2F0EA;      /* Text auf Akzent-Blau — 5.3:1 */
+  /* Das Logo-PNG ist bewusst teiltransparent gerendert (kein einziges
+     Blau-Pixel darin ist voll deckend, größtenteils ~65-70% Deckkraft)
+     — auf dem dunklen Seitenhintergrund verrechnet sich diese
+     Transparenz zu einem sichtbar DUNKLEREN Blau, als der pure
+     Pixelwert zeigt. --accent oben (#2765A5, wie er im rohen Bild
+     steckt) wirkte deshalb neben dem Logo im Header spürbar zu hell —
+     "blass" im Vergleich zum tatsächlich wahrgenommenen Logo-Blau.
+     Eigene Buttonfarbe hier rechnerisch aus Blau-über-Schwarz ermittelt
+     (Logo-Pixel mit ihrer echten Deckkraft auf --bg verrechnet,
+     gemittelt über alle Blau-Pixel des Logos: #042F7A) — das ist die
+     Farbe, die man auf der Seite tatsächlich sieht, nicht die im PNG
+     gespeicherte. Eigene Tokens statt --accent zu überschreiben: als
+     Linien-/Text-Akzent (Ziffern, Aufzählungspunkte, Fokus-Ring) bleibt
+     --accent bewusst heller — bei #042F7A wäre der Fokus-Ring auf
+     dunklem Grund kaum noch sichtbar (nur 1.6:1 statt mindestens 3:1). */
+  --btn-blue:#042F7A;
+  --btn-blue-soft:#2A4E8E;  /* Hover, 15% Richtung Weiß — 7.2:1 zu hellem Text */
+  --line:rgba(150,180,206,.15);
+  --line-strong:rgba(160,190,214,.28);
+
+  --f-display:'Archivo',system-ui,sans-serif;
+  --f-body:'Inter',system-ui,sans-serif;
+
+  --sp-1:.5rem;  --sp-2:1rem;   --sp-3:1.5rem;
+  --sp-4:2.5rem; --sp-5:4rem;   --sp-6:6rem;
+
+  --ease:cubic-bezier(.22,1,.36,1);
+  --dur:.7s;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+/* Kein scroll-behavior:smooth hier — unsere eigenen rAF-gedrosselten
+   Scroll-Effekte (Lesefortschritt in der Kopfleiste) lesen die
+   Scrollposition direkt; der native Smooth-Scroll würde parallel dagegen
+   „ansmoothen" und leicht ruckelig wirken. Wo wir selbst weich scrollen
+   wollen, übergeben wir behavior:'smooth' gezielt per JS an
+   scrollIntoView() — siehe unten. */
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:var(--f-body);font-weight:300;font-size:1rem;line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;display:block}
+a{color:inherit}
+
+/* Fokus — sichtbar, nie entfernt */
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+
+.wrap{width:min(100% - 3rem,84rem);margin-inline:auto}
+@media(min-width:1024px){.wrap{width:min(100% - 6rem,84rem)}}
+
+/* Lesbarkeit über Fotos: Schatten statt Fläche. Eine feste Box hinter
+   dem Text hätte verlässlichen Kontrast gebracht, aber das Bild dahinter
+   zugedeckt — genau das wollten wir nicht. text-shadow vererbt sich an
+   alle Kindelemente, kostet an Stellen mit ohnehin blickdichtem
+   Untergrund (Leistungskarten, Formularfelder, Autogrammkarte) nichts
+   und gibt dem Text auf dem Foto einen klaren, dunklen Rand: eng und
+   scharf für die Kantenschärfe, dazu weich und breit gegen unruhige
+   Bildstellen (z.B. das helle Trikot im Connect-Foto). */
+.chapter .wrap{
+  text-shadow:
+    0 1px 3px rgba(0,0,0,.9),
+    0 3px 14px rgba(0,0,0,.6),
+    0 0 32px rgba(0,0,0,.4);
+}
+
+/* ── Typografie ─────────────────────────────────────────── */
+.display{
+  font-family:var(--f-display);font-weight:700;
+  font-variation-settings:'wdth' 76;   /* Archivo Breiten-Achse — schmaler Schnitt */
+  font-size:clamp(2.75rem,8vw,7rem);
+  line-height:.92;letter-spacing:-.015em;margin:0;
+  text-wrap:balance;
+}
+.display--sm{font-size:clamp(2rem,4.5vw,3.5rem)}
+.lead{font-size:clamp(1.05rem,1.35vw,1.25rem);line-height:1.75;max-width:42ch;color:#D6D5D2}
+.lead--brand{color:var(--accent-soft);font-weight:500}
+/* War bisher starr 1rem, während .lead auf breiten Screens bis 1.25rem
+   mitwuchs — auf großen Bildschirmen wirkte Fließtext dadurch neben
+   der Bildgröße klein und beiläufig. Skaliert jetzt genauso mit. */
+.body{font-size:clamp(1rem,1.15vw,1.15rem);line-height:1.7;max-width:44ch;color:var(--muted)}
+.body + .body{margin-top:var(--sp-2)}
+
+/* Kleine Zwischenüberschrift, z. B. „Understand Body." */
+.block-h3{
+  font-family:var(--f-display);font-weight:600;font-variation-settings:'wdth' 90;
+  font-size:clamp(1.15rem,1.5vw,1.35rem);letter-spacing:-.005em;margin:0 0 .5rem;color:var(--text);
+}
+.block + .block{margin-top:2rem}
+
+/* Kapitel-Label „02 UNDERSTAND" */
+.eyebrow{
+  display:flex;align-items:center;gap:var(--sp-2);
+  font-family:var(--f-display);font-weight:600;
+  font-size:.8rem;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--muted);margin:0 0 var(--sp-3);
+}
+.eyebrow b{color:var(--accent);font-weight:700}
+.eyebrow::after{content:"";height:1px;flex:1;max-width:5rem;background:var(--line-strong)}
+
+/* ── Navigation: EINE schwebende Leiste — Marke, Links und CTA
+   in einem Container. Bewusst NICHT fixed: auf Wunsch nicht mehr
+   dauerhaft sichtbar beim Scrollen, sondern nur oben auf der Seite —
+   position:absolute setzt sie einmalig an den Seitenanfang und lässt
+   sie dann normal mit dem Dokument nach oben aus dem Bild scrollen,
+   statt am Bildschirm zu kleben wie bei position:fixed. */
+.nav{
+  position:absolute;inset:0 0 auto;z-index:60;
+  padding:1.35rem 0;pointer-events:none;
+}
+.bar{
+  position:relative;
+  pointer-events:auto;
+  display:flex;align-items:center;gap:.4rem;
+  padding:.45rem .45rem .45rem 1.1rem;
+  background:rgba(10,11,13,.78);
+  /* Nur Blur, kein zusätzliches saturate() — die Leiste ist fixiert und
+     läuft bei jedem Scroll-Frame neu; jeder Filter-Pass weniger hilft. */
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  border:1px solid var(--line);border-radius:999px;
+  box-shadow:0 20px 56px -28px rgba(0,0,0,.9);
+}
+
+/* Wortmarke — das echte, freigestellte Logo (assets/logo/mletics-mark-dark.png).
+   Freigestellt und für Dunkelgrund umgefärbt: Läufer + Schriftzug auf Creme,
+   das Logo-Blau bleibt original. Der Balken aus der Vorlage wurde entfernt. */
+.mark{display:inline-flex;align-items:center;text-decoration:none;line-height:1;min-height:44px}
+.mark__logo{height:56px;width:auto;display:block}
+@media(min-width:700px){.mark__logo{height:68px}}
+
+/* Lesefortschritt als Haarlinie im unteren Rand der Leiste.
+   --p wird per JS gesetzt (0–1). */
+.bar__progress{
+  position:absolute;left:1.4rem;right:1.4rem;bottom:.35rem;height:2px;
+  border-radius:2px;background:var(--line-strong);overflow:hidden;
+}
+.bar__progress i{
+  display:block;height:100%;border-radius:2px;background:var(--accent);
+  transform:scaleX(var(--p,0));transform-origin:left;
+}
+
+.bar__nav{display:none;align-items:center;gap:.1rem;margin-left:auto}
+@media(min-width:980px){.bar__nav{display:flex}}
+.bar__nav a{
+  position:relative;padding:.65rem .8rem;text-decoration:none;
+  font-size:.68rem;font-weight:500;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--muted);white-space:nowrap;
+  transition:color .35s var(--ease);
+}
+.bar__nav a:hover{color:var(--text)}
+.bar__nav a[aria-current="true"]{color:var(--text)}
+/* Hauchfeiner Unterstrich statt Farbfläche — ruhiger, präziser */
+.bar__nav a::after{
+  content:"";position:absolute;left:.8rem;right:.8rem;bottom:.42rem;height:1px;
+  background:var(--accent);transform:scaleX(0);transform-origin:left;
+  transition:transform .4s var(--ease);
+}
+.bar__nav a[aria-current="true"]::after{transform:scaleX(1)}
+
+/* .bar-Präfix nötig: sonst überschreibt das später notierte
+   .btn{display:inline-flex} diese Regel bei gleicher Spezifität. */
+/* Auf jeder Breite sichtbar — ersetzt den Menü-Button. Ab 980px kommen
+   die Textlinks (.bar__nav) links dazu; darunter ist der CTA der
+   einzige, direkte Weg von der Kopfzeile zum Kontakt-Kapitel. */
+.bar .bar__cta{margin-left:.3rem;display:inline-flex}
+
+.btn{
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.7rem 1.4rem;min-height:44px;border-radius:999px;
+  font-family:var(--f-body);font-size:.875rem;font-weight:500;
+  text-decoration:none;cursor:pointer;border:1px solid var(--line-strong);
+  background:transparent;color:var(--text);
+  transition:background-color .3s var(--ease),border-color .3s var(--ease),color .3s var(--ease);
+}
+.btn:hover{background:var(--text);color:var(--bg);border-color:var(--text)}
+/* Eigene, dunklere Tokens (--btn-blue) statt --accent — siehe Begründung
+   bei den Farbvariablen oben. Dezentes Glühen darunter, weil die
+   dunklere Farbe für sich genommen auf dem fast schwarzen Seitengrund
+   weniger heraussticht als die vorige hellere Variante — soll trotzdem
+   klar als primärer Button erkennbar bleiben. */
+.btn--solid{
+  background:var(--btn-blue);border-color:var(--btn-blue);color:var(--text);font-weight:500;
+  box-shadow:0 8px 24px -8px rgba(4,47,122,.6);
+}
+.btn--solid:hover{background:var(--btn-blue-soft);border-color:var(--btn-blue-soft);color:var(--text)}
+
+
+/* ── Kapitel-Hintergrund: läuft normal mit dem Dokument mit ──────
+   Jedes Kapitel trägt sein Bild direkt in sich (position:absolute
+   innerhalb des position:relative-Kapitels) — welches Bild zu sehen
+   ist, ergibt sich rein aus dem Dokumentaufbau, nicht aus einem
+   Skript, das während des Scrollens mitrechnen müsste.
+   Bewusst NICHT mehr die vorige Fassung (eine fixierte Bühne mit
+   Overlay-Ebenen, per Scroll-Handler ein-/ausgeblendet): Auf dem
+   iPhone verzögert Safari Scroll-gebundene Skripte systematisch,
+   solange der Finger aktiv über den Screen bewegt wird — die Bühne
+   blieb dadurch mitten im Scrollen auf dem zuletzt berechneten Bild
+   hängen (meist dem ersten). Diese Fassung braucht während des
+   Scrollens kein Skript mehr — das jeweils richtige Bild ist immer
+   an der richtigen Stelle im Dokument, garantiert korrekt auch wenn
+   JavaScript spät dran ist oder ganz ausbleibt. */
+main{position:relative;z-index:10}
+.chapter__bg{position:absolute;inset:0;z-index:0;overflow:hidden;background-size:cover;background-position:center}
+
+/* Foto oder Video im Kapitel. Fehlt die Datei, entfernt JS das Element
+   und der CSS-Verlauf darunter bleibt als Rückfallebene stehen. */
+.chapter__bg-img{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  object-position:var(--focus,center);
+  transform:scale(var(--zoom,1));
+  transform-origin:var(--zoom-origin,center);
+  filter:grayscale(.45) saturate(.85) contrast(1.06) brightness(.74);
+}
+/* Lasur: warmweißes Spitzlicht + dunkles Marken-Blau von oben, dazu der
+   Lesbarkeits-Schleier von links (Text sitzt links, Bild atmet rechts) —
+   alles in einer Ebene statt vorher drei getrennten. */
+.chapter__bg-grade{
+  position:absolute;inset:0;
+  background:
+    /* Rand-Verblassung oben/unten: jedes Kapitelbild blendet zur echten
+       Seitenfarbe (--bg) aus, bevor es an die Kapitelgrenze stößt. Vorher
+       stießen zwei Fotos an der Grenze hart aufeinander („hart von Bild
+       zu Bild") — jetzt laufen beide Seiten der Grenze zur selben
+       dunklen Fläche aus, der Schnitt wirkt wie eine weiche Überblendung
+       statt eines harten Schnitts. */
+    linear-gradient(to bottom,var(--bg) 0%,transparent 14%),
+    linear-gradient(to top,var(--bg) 0%,transparent 20%),
+    radial-gradient(66% 78% at 72% 38%,rgba(244,236,214,.16) 0%,transparent 62%),
+    linear-gradient(180deg,rgba(10,24,38,.28) 0%,rgba(8,9,11,.52) 100%),
+    /* Rechts läuft die Verdunkelung bewusst NICHT mehr bis auf 0 % aus.
+       Sie war ursprünglich nur für die linke Textspalte gedacht — in
+       „Connect" sitzt aber auch rechts Text („Für wen?"), direkt auf dem
+       unverdeckten Bild. Ein Sockel von 45 % reichte bei einem lauten,
+       hellen Foto (Stadion, weißes Trikot) nicht — deutlich angehoben
+       auf 78 %, „Über Maik" und „Kontakt" nutzen rechts ohnehin eigene,
+       blickdichte Karten/Formulare — für die ändert sich optisch nichts
+       Wahrnehmbares. */
+    linear-gradient(100deg,rgba(8,9,10,.95) 0%,rgba(8,9,10,.88) 26%,
+      rgba(9,15,22,.82) 54%,rgba(10,20,30,.8) 82%,rgba(12,26,40,.78) 100%);
+}
+@media(max-width:768px){
+  /* Bild nie höher als ein Bildschirm — wie ein Kopf-Banner statt einer
+     Vollbild-Tapete. Vorher deckte .chapter__bg die GESAMTE (oft sehr
+     lange) Kapitelhöhe ab: object-fit:cover musste ein 1280×853-Foto
+     auf eine bis zu 1800px hohe, nur 375px schmale Box strecken —
+     dadurch wurde nur noch ein winziger, stark hochskalierter (und
+     entsprechend unscharfer) Bildausschnitt sichtbar, „man sieht nur
+     einen kleinen Teil vom Bild". Mit der Deckelung auf höchstens eine
+     Bildschirmhöhe bleibt der Ausschnitt moderat; der restliche,
+     oft längere Kapiteltext läuft danach auf normalem dunklem
+     Seitengrund weiter — die Lasur blendet dorthin aus. Kurze Kapitel
+     (z.B. der Auftakt, der schon nah an einer Bildschirmhöhe liegt)
+     bleiben durch min(100%, 100svh) praktisch unverändert. */
+  .chapter__bg{height:min(100%, 100svh)}
+  .chapter__bg-grade{
+    background:
+      /* Oberer Rand blendet zur Seitenfarbe aus, genau wie am unteren
+         Rand (der bereits über das bestehende 180deg-Verlauf bei 100%
+         praktisch --bg erreicht) — sonst bleibt der harte Bildschnitt
+         oben an jeder Kapitelgrenze bestehen, unten aber nicht. */
+      linear-gradient(to bottom,var(--bg) 0%,transparent 18%),
+      radial-gradient(66% 60% at 72% 30%,rgba(244,236,214,.14) 0%,transparent 62%),
+      linear-gradient(180deg,
+        rgba(10,15,20,.42) 0%,
+        rgba(8,9,11,.6) 60%,
+        rgba(8,9,11,1) 100%);
+  }
+}
+
+/* Nur für Screenreader */
+.sr-only{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
+}
+
+/* BILD-SLOTS — mehrlagige Verläufe simulieren dramatisch ausgeleuchtete
+   Fotografie (Spitzlicht, Abfall, Vignette), falls kein Foto vorliegt.
+   Sobald die Datei existiert (siehe assets/README.md), übernimmt sie automatisch. */
+/* Maik steht links im Originalfoto — linker Bildausschnitt schiebt ihn
+   so weit wie möglich aus der Textspalte nach rechts. */
+/* Telefon: sehr schmales Fenster zeigt nur ~23 % der Bildbreite —
+   linksbündig läge Maik (17–46 %) fast außerhalb. Daher enger Ausschnitt
+   auf ihn. Ab Tablet greift wieder linksbündig. */
+.bg-01{--focus:22% center}
+@media(min-width:700px){.bg-01{--focus:left center}}
+/* Breite Fenster: Motiv nach rechts schieben (gemessen liegt Maik bei
+   17–46 % der Bildbreite). Die freigelegte linke Kante wird weich
+   ausgeblendet, darunter liegt der Verlauf — dadurch keine sichtbare Kante. */
+@media(min-width:1024px){
+  .bg-01 .chapter__bg-img{
+    transform-origin:0 0;
+    transform:translateX(26%) scale(1.45);
+    -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 20%);
+            mask-image:linear-gradient(90deg,transparent 0,#000 20%);
+  }
+}
+/* Rückfallebenen ohne Foto: das echte Logo-Blau liefert die Atmosphäre,
+   damit die Kapitel nicht zu flachem Schwarz werden. */
+.bg-01{background-image:
+  radial-gradient(38% 52% at 68% 30%,rgba(210,228,245,.20) 0%,transparent 62%),
+  radial-gradient(70% 80% at 76% 46%,#3E7FB2 0%,#1E4569 32%,#101F30 62%,#0A0B0D 88%),
+  radial-gradient(140% 120% at 50% 50%,transparent 40%,rgba(3,4,5,.78) 100%)}
+.bg-02{background-image:
+  radial-gradient(34% 46% at 30% 26%,rgba(206,224,244,.17) 0%,transparent 64%),
+  radial-gradient(78% 88% at 26% 38%,#376F9C 0%,#1B3B5C 34%,#0F1D2C 66%,#0A0B0D 90%),
+  radial-gradient(140% 120% at 50% 50%,transparent 38%,rgba(3,4,5,.80) 100%)}
+.bg-03{background-image:
+  radial-gradient(46% 34% at 52% 88%,rgba(200,218,240,.15) 0%,transparent 66%),
+  radial-gradient(90% 76% at 50% 96%,#33668F 0%,#193150 36%,#0D1B29 68%,#0A0B0D 92%),
+  radial-gradient(140% 120% at 50% 45%,transparent 36%,rgba(3,4,5,.82) 100%)}
+/* Das Stadionfoto ist deutlich unruhiger als die anderen Kapitelbilder
+   (Menschenmenge, helles Trikot, viel feine Struktur) — dieselbe
+   Grundfilterung wie überall reichte hier nicht aus. Zusätzlich
+   entsättigt und abgedunkelt, nur für dieses eine Bild. */
+.bg-03 .chapter__bg-img{filter:grayscale(.7) saturate(.7) contrast(.98) brightness(.56)}
+.bg-04{background-image:
+  radial-gradient(30% 44% at 74% 24%,rgba(216,232,248,.24) 0%,transparent 58%),
+  radial-gradient(72% 84% at 79% 34%,#4189BC 0%,#204768 30%,#111F2E 62%,#0A0B0D 88%),
+  radial-gradient(140% 120% at 50% 50%,transparent 38%,rgba(3,4,5,.78) 100%)}
+.bg-05{background-image:
+  linear-gradient(96deg,rgba(202,220,242,.14) 0%,transparent 46%),
+  radial-gradient(80% 92% at 20% 56%,#356E9A 0%,#1C3C5C 34%,#0F1D2C 66%,#0A0B0D 90%),
+  radial-gradient(140% 120% at 50% 50%,transparent 40%,rgba(3,4,5,.78) 100%)}
+.bg-06{background-image:
+  linear-gradient(96deg,rgba(202,220,242,.14) 0%,transparent 46%),
+  radial-gradient(80% 92% at 80% 56%,#3E77A8 0%,#1E4569 34%,#0F1D2C 66%,#0A0B0D 90%),
+  radial-gradient(140% 120% at 50% 50%,transparent 40%,rgba(3,4,5,.78) 100%)}
+
+/* ── Kapitel ──────────────────────────────────────────────
+   Ganz normaler Dokumentfluss: kein sticky, kein fixed, keine
+   Höhenbedingung. Ein Kapitel darf beliebig hoch werden, ohne dass
+   Inhalt unerreichbar wird — genau das war der Fehler der früheren
+   Stapel-Lösung auf dem Handy. position:relative ist nötig, damit
+   .chapter__bg (position:absolute) sich am Kapitel ausrichtet, statt
+   am nächsten positionierten Vorfahren weiter oben in der Seite.
+   WICHTIG: overflow:hidden sitzt an .chapter__bg, nicht am Kapitel
+   selbst — sonst würde längerer Text bei hohen Kapiteln abgeschnitten. */
+.chapter{
+  position:relative;
+  min-height:100svh;display:flex;align-items:center;
+  padding-block:8rem var(--sp-6);
+}
+.chapter .wrap{position:relative;z-index:10}
+/* Die Galerie ist ein Werkzeug-Kapitel, kein Foto-Hintergrund mit
+   zentriertem Text — sie braucht die großzügige 8rem-Polsterung der
+   anderen Kapitel nicht (die ist für Zentrierung in einem hohen
+   Bild gedacht) und passt dadurch eher auf einen Bildschirm.
+   Unten 5.25rem statt eines knappen Werts: der fixierte Vor/Zurück-
+   Button (.step, bottom:1.5rem + ca. 59px hoch) schwebt auf JEDER
+   Bildschirmgröße rechts unten — bei knapperem Abstand landete die
+   Miniaturleiste dahinter und war dort nicht mehr antippbar.
+   galHoeheAnpassen() liest die Polsterung live aus, das Bild wird
+   also automatisch kleiner statt dass hier eine zweite Zahl gepflegt
+   werden müsste. */
+#galerie{padding-block:6rem 5.5rem}
+.chapter__grid{display:grid;gap:var(--sp-5);align-items:center}
+@media(min-width:1024px){
+  .chapter__grid{grid-template-columns:minmax(0,1fr) minmax(0,.85fr)}
+}
+
+/* Scroll-Reveal — sichtbar per Voreinstellung, das ist Pflicht:
+   Läuft JavaScript aus irgendeinem Grund nicht (E-Mail-Vorschau ohne
+   Skripte, blockiertes JS, ein Fehler in der Ladekette), muss der
+   Inhalt trotzdem lesbar sein. Erst JS setzt aktiv data-in="false",
+   um die Einblend-Animation überhaupt zu starten — ohne JS bleibt es
+   bei diesem sichtbaren Grundzustand. */
+.rise{opacity:1;transform:none}
+.rise[data-in="false"]{
+  opacity:0;transform:translateY(28px);
+  transition:opacity .9s var(--ease),transform .9s var(--ease);
+}
+.rise[data-in="true"]{
+  opacity:1;transform:none;
+  transition:opacity .9s var(--ease),transform .9s var(--ease);
+}
+
+/* Vor/Zurück — sichtbare Alternative zum Scrollen, unten rechts */
+/* Auf jeder Breite sichtbar: Ohne Menü/Drawer ist das Vor/Zurück-Paar
+   jetzt der einzige direkte Weg zu „Connect" und „Über Maik" auf dem
+   Handy — der Fußbereich verlinkt nur Impressum/Datenschutz. */
+.step{
+  position:fixed;right:1.5rem;bottom:1.5rem;z-index:55;
+  display:flex;align-items:center;gap:.5rem;
+  padding:.4rem;border-radius:999px;
+  background:rgba(10,11,13,.78);backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  border:1px solid var(--line);
+  opacity:1;transition:opacity .3s var(--ease);
+}
+/* Sobald der Fußbereich in Sicht kommt, gibt es kein „nächstes Kapitel"
+   mehr, zu dem der Button führen könnte — er blendet aus, statt weiter
+   unten rechts zu schweben und dort die Fußzeilen-Links (Impressum/
+   Datenschutz) zu verdecken. JS setzt data-hidden per IntersectionObserver. */
+.step[data-hidden="true"]{opacity:0;pointer-events:none}
+.step button{
+  all:unset;cursor:pointer;display:grid;place-items:center;
+  width:44px;height:44px;border-radius:50%;color:var(--text);
+  transition:background-color .3s var(--ease),color .3s var(--ease);
+}
+.step button:hover:not(:disabled){background:var(--accent);color:var(--on-accent)}
+.step button:disabled{opacity:.3;cursor:default}
+/* War auf kleinen Screens unnötig groß und fiel dadurch stärker auf,
+   als eine reine Zusatz-Navigation sollte. 36px statt 44px unterschreitet
+   die 44px-Empfehlung zwar knapp, bleibt aber noch komfortabel tippbar —
+   der Rest der Seite hat auf schmalen Screens ohnehin schon genug
+   große Touch-Ziele (Buttons, Nav-Leiste). */
+@media(max-width:640px){
+  .step{padding:.3rem;gap:.3rem;right:1rem;bottom:1rem}
+  .step button{width:36px;height:36px}
+  .step button svg{width:16px;height:16px}
+  .step__count{font-size:.64rem;padding-inline:.1rem}
+}
+.step__count{
+  font-family:var(--f-body);font-size:.72rem;font-weight:500;letter-spacing:.16em;
+  color:var(--muted);font-variant-numeric:tabular-nums;padding-inline:.2rem;
+}
+.step__count b{color:var(--text);font-weight:500}
+
+/* Fortschritts-Anzeige rechts */
+.rail{
+  position:fixed;right:1.6rem;top:50%;transform:translateY(-50%);z-index:50;
+  display:none;flex-direction:column;gap:.85rem;
+}
+@media(min-width:1200px){.rail{display:flex}}
+.rail button{
+  all:unset;cursor:pointer;display:grid;place-items:center;
+  width:28px;height:28px;border-radius:50%;
+}
+.rail span{
+  display:block;width:6px;height:6px;border-radius:50%;
+  background:var(--line-strong);transition:all .4s var(--ease);
+}
+.rail button[aria-current="true"] span{background:var(--accent);width:8px;height:8px;box-shadow:0 0 0 4px rgba(54,146,242,.22)}
+
+/* ── Leistungen (TREAT) ─────────────────────────────────────
+   Zwei Anläufe verworfen: das ursprüngliche Tabellenraster wirkte wie
+   eine PowerPoint-Folie, die darauf folgenden Karten mit Icon-Badge,
+   Radius und Hover-Lift dagegen wie ein generisches SaaS-Template
+   ("sieht zu billig nach KI aus"). Jetzt redaktionell statt
+   komponentenhaft: dünne Trennlinien zwischen den Spalten (per
+   gap+background — dieselbe robuste Technik wie beim allerersten
+   Raster, adaptiert automatisch bei 1/2/3 Spalten), keine Radius/
+   Schatten/Badges mehr. Die große, nur umrandete Ziffer ist das
+   einzige Grafikelement und füllt sich beim Hover mit der Akzentfarbe;
+   die Überschrift bekommt beim Hover eine schmale Unterstreichung, die
+   von links einzieht — kein Icon-Badge (Symbol dafür, dass es "wie KI"
+   wirkte), keine bewegte Fläche. */
+/* Der Grid-Trick (Container-Hintergrund scheint nur im 1px-Gap durch)
+   braucht deckende Zellen, um den Rest der Fläche zu verbergen — genau
+   die wurden entfernt, damit das Kapitelfoto sichtbar bleibt. Ohne
+   deckende Zellen lag die Container-Fläche (var(--line)) plötzlich
+   über dem GESAMTEN Raster statt nur in den 1px-Lücken: alle drei
+   Karten wirkten wie ein einziger, unklar begrenzter Block. Jetzt
+   echte 1px-Trennlinien per border, unabhängig von der Zellenfüllung —
+   je Bildschirmbreite von Hand gesetzt (oben bei der ersten Zeile,
+   links bei allen außer der ersten Spalte), da automatische
+   „:not(:first-child)"-Regeln bei wechselnder Spaltenzahl sonst falsch
+   lägen. */
+.services{display:grid;border-block:1px solid var(--line);margin-top:var(--sp-4)}
+.service{border-top:1px solid var(--line)}
+.service:first-child{border-top:0}
+@media(min-width:640px){
+  .services{grid-template-columns:1fr 1fr}
+  .service:nth-child(2){border-top:0;border-left:1px solid var(--line)}
+}
+@media(min-width:1024px){
+  .services{grid-template-columns:repeat(3,1fr)}
+  .service:nth-child(3){border-top:0;border-left:1px solid var(--line)}
+}
+.service{position:relative;padding:2.25rem 2rem 2.5rem}
+/* Hover war bisher kaum wahrzunehmen (nur Ziffer + eine 2.25rem breite
+   Unterstreichung unter der Überschrift), dann nur eine Linie oben —
+   jetzt rahmt ein kompletter, deutlich sichtbarer Akzent-Rand die
+   ganze Karte ein. box-shadow statt border: eine echte Randfarbe
+   würde die Nachbarkarte anschieben (Layout-Sprung durch geänderte
+   Randbreite); box-shadow legt sich nur optisch darüber, ohne Platz
+   zu beanspruchen — deckt dabei auch die grauen Trennlinien dieser
+   Karte ab, wirkt also wie ein vollständiger Rahmen statt nur eine
+   Kante. */
+.service{transition:box-shadow .4s var(--ease)}
+.service:hover,.service.is-inview{box-shadow:inset 0 0 0 1px var(--accent);z-index:1}
+.service__no{
+  display:block;font-family:var(--f-display);font-weight:700;font-variation-settings:'wdth' 78;
+  font-size:3.25rem;line-height:1;letter-spacing:-.02em;margin-bottom:1.4rem;
+  color:transparent;-webkit-text-stroke:1.5px var(--line-strong);
+  transition:color .5s var(--ease),-webkit-text-stroke-color .5s var(--ease);
+}
+.service:hover .service__no,.service.is-inview .service__no{color:var(--accent);-webkit-text-stroke-color:var(--accent)}
+.service h3{
+  font-family:var(--f-display);font-weight:700;font-variation-settings:'wdth' 88;
+  font-size:1.28rem;margin:0 0 .9rem;letter-spacing:-.005em;
+  padding-bottom:.9rem;position:relative;border-bottom:1px solid var(--line);
+}
+/* Lief bisher nur 2.25rem breit ein, während die graue Linie darunter
+   (border-bottom von .service h3) über die volle Breite läuft — genau
+   dasselbe Problem wie beim Karten-Rahmen zuvor, nur eine Etage
+   tiefer: ein "Stück" Balken über einer ganzen Linie wirkt unfertig.
+   Läuft jetzt komplett über die volle Breite ein. */
+.service h3::after{
+  content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;
+  background:var(--accent);transform:scaleX(0);transform-origin:left;
+  transition:transform .55s var(--ease);
+}
+.service:hover h3::after,.service.is-inview h3::after{transform:scaleX(1)}
+.service p{margin:0;font-size:.9rem;color:var(--muted);line-height:1.6}
+.service ul{list-style:none;margin:1.1rem 0 0;padding:0;display:grid;gap:.55rem}
+.service li{font-size:.85rem;color:var(--muted);line-height:1.5;padding-left:1rem;position:relative}
+.service li::before{content:"";position:absolute;left:0;top:.6em;width:6px;height:1px;background:var(--accent)}
+
+/* „Für wen?" (CONNECT) — gleiche redaktionelle Sprache wie TREAT:
+   Trennlinien statt Karten, freistehendes Icon in Akzentfarbe statt
+   Icon-in-Badge (die eingefärbte Kachel war der auffälligste
+   "generische KI-Baustein"). */
+/* Gleicher Trennlinien-Ansatz wie bei .service — echte border statt
+   des Grid-Tricks, der deckende Zellen vorausgesetzt hätte. */
+.audience{display:grid;border-block:1px solid var(--line);margin-top:.2rem}
+.audience__card{
+  position:relative;padding:1.75rem 1.5rem 2rem;border-top:1px solid var(--line);
+  transition:box-shadow .4s var(--ease);
+}
+.audience__card:first-child{border-top:0}
+/* Gleicher volle Rahmen wie bei .service — siehe Begründung dort
+   (box-shadow statt border, damit die Nachbarkarte nicht verschoben
+   wird). */
+.audience__card:hover,.audience__card.is-inview{box-shadow:inset 0 0 0 1px var(--accent);z-index:1}
+.audience__icon{
+  display:block;color:var(--accent);margin-bottom:1rem;
+  transition:transform .4s var(--ease);
+}
+.audience__card:hover .audience__icon,.audience__card.is-inview .audience__icon{transform:translateX(3px)}
+
+/* ── Kennzahlen ─────────────────────────────────────────── */
+.stats{display:grid;gap:var(--sp-3);margin-top:var(--sp-4)}
+@media(min-width:640px){.stats{grid-template-columns:repeat(3,1fr)}}
+.stat{border-top:1px solid var(--line-strong);padding-top:var(--sp-2)}
+.stat b{display:block;font-family:var(--f-display);font-weight:700;font-variation-settings:'wdth' 80;font-size:clamp(2.6rem,5vw,4rem);line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.stat span{display:block;margin-top:.5rem;font-size:.82rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+
+/* ── Kontakt ────────────────────────────────────────────── */
+.form{display:grid;gap:var(--sp-2);margin-top:var(--sp-3)}
+.row{display:grid;gap:var(--sp-2)}
+@media(min-width:640px){.row{grid-template-columns:1fr 1fr}}
+.field label{display:block;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem}
+.field input,.field select,.field textarea{
+  width:100%;min-height:48px;padding:.8rem 1rem;
+  background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:4px;
+  color:var(--text);font-family:var(--f-body);font-size:1rem;
+  transition:border-color .3s var(--ease),background-color .3s var(--ease);
+}
+.field textarea{min-height:120px;resize:vertical}
+/* Native Optionsliste erbt sonst helles Systemweiß auf dunklem Grund */
+.field select option{background:var(--bg-raise);color:var(--text)}
+.field input:hover,.field textarea:hover,.field select:hover{border-color:var(--line-strong)}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--accent);background:rgba(255,255,255,.06);outline:none}
+.hintline{font-size:.78rem;color:var(--muted);margin:.4rem 0 0}
+.consent{display:flex;gap:.75rem;align-items:flex-start;font-size:.85rem;color:var(--muted);line-height:1.6}
+.consent input{width:20px;height:20px;margin-top:.2rem;flex:none;accent-color:var(--accent)}
+
+.contact-list,.vita{display:grid;gap:var(--sp-3);margin-top:var(--sp-3)}
+.contact-list dt,.vita dt{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.contact-list dd,.vita dd{margin:.4rem 0 0;font-family:var(--f-display);font-weight:600;font-size:1.15rem}
+.vita dd{font-weight:500;font-size:1.02rem;line-height:1.4}
+/* Interaktiv: Zeile hebt sich beim Hover leicht an und rückt ein —
+   kostenlos in CSS, kein JS nötig. */
+.vita > div{
+  border-top:1px solid var(--line);padding:1rem .75rem 1rem 0;margin:0 -.75rem;
+  border-radius:4px;transition:background-color .25s var(--ease),padding-left .25s var(--ease);
+}
+.vita > div:hover{background:var(--bg-raise);padding-left:.75rem;padding-right:0}
+
+/* Kleines Standalone-Label, z. B. „Für wen?" über zwei Textblöcken */
+.tag{
+  display:block;font-family:var(--f-body);font-weight:600;font-size:.72rem;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem;
+}
+
+.contact-list a{position:relative;text-decoration:none;border-bottom:1px solid var(--line-strong);padding-bottom:2px;transition:border-color .3s}
+.contact-list a:hover{border-color:var(--accent)}
+/* Klickfläche unsichtbar auf 44px vergrößern, ohne die Optik zu ändern. */
+.contact-list a::after{content:"";position:absolute;inset:-11px -6px}
+
+/* ── Galerie ────────────────────────────────────────────────
+   Großes Hauptbild + Filmstreifen aus Miniaturen darunter; die aktive
+   Miniatur wächst sichtbar breiter. Läuft komplett über natives
+   CSS scroll-snap statt über nachgebaute Drag-Physik — der Browser
+   übernimmt Wischen, Trackpad, Mausrad und Tastatur von selbst, ganz
+   ohne JavaScript-Abhängigkeit während der Geste (genau die Klasse
+   Bug, die uns beim Kapitelhintergrund schon Ärger gemacht hat).
+   JS setzt hier nur noch, welche Miniatur gerade „aktiv" ist. */
+.gallery{margin-top:1.5rem}
+.gallery__stage{position:relative}
+.gallery__track{
+  display:flex;overflow-x:auto;scroll-snap-type:x mandatory;
+  border-radius:14px;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.gallery__track::-webkit-scrollbar{display:none}
+.gallery__slide{
+  position:relative;flex:0 0 100%;scroll-snap-align:center;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+  /* Höhe fest (nicht vom Bild abgeleitet) — sonst hätte jede Kachel je
+     nach Fotoformat eine andere Höhe, und der horizontale Scroll-Snap
+     bräche. Weder Farbverlauf noch Unschärfe-Kopie füllen den Rand mehr
+     (beides wurde als „Hintergrund" empfunden, der vom Foto ablenkt) —
+     wo das Foto nicht die ganze Breite/Höhe braucht, scheint einfach die
+     Kapitel-Fläche durch, genau wie überall sonst auf der Seite. */
+  height:min(48svh,520px);
+}
+.gallery__slide img{
+  /* position:relative + z-index nötig, sonst stapelt der (immer
+     position:absolute) Platzhaltertext .gallery__ph sich über das Bild —
+     positionierte Elemente stapeln sich sonst automatisch über
+     unpositionierte, unabhängig von der Reihenfolge im Markup. */
+  position:relative;z-index:1;
+  display:block;max-width:100%;max-height:100%;width:auto;height:auto;
+  object-fit:contain; /* ganzes Foto sichtbar, nichts beschnitten */
+}
+/* Platzhalter-Hinweistext — bleibt sichtbar, bis eine echte Datei greift
+   (gleiches Prinzip wie .portrait__ph: eine Galerie-Kachel braucht
+   einen sichtbaren Hinweis, anders als ein reiner Kapitelhintergrund). */
+.gallery__ph{
+  position:absolute;inset:0;display:grid;place-items:center;text-align:center;
+  color:rgba(242,240,234,.6);font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;
+}
+.gallery__nav{
+  all:unset;position:absolute;top:50%;translate:0 -50%;z-index:5;cursor:pointer;
+  width:44px;height:44px;border-radius:999px;display:grid;place-items:center;
+  background:rgba(10,11,13,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border:1px solid var(--line-strong);color:var(--text);
+  transition:background-color .3s var(--ease),border-color .3s var(--ease),opacity .3s;
+}
+.gallery__nav:hover{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.gallery__nav:disabled{opacity:.35;cursor:default;pointer-events:none}
+.gallery__nav--prev{left:.75rem}
+.gallery__nav--next{right:.75rem}
+@media(min-width:640px){.gallery__nav--prev{left:1.25rem}.gallery__nav--next{right:1.25rem}}
+
+.gallery__thumbs{
+  display:flex;gap:4px;margin-top:.85rem;overflow-x:auto;scrollbar-width:none;
+  padding-bottom:.15rem;
+}
+.gallery__thumbs::-webkit-scrollbar{display:none}
+.gallery__thumb{
+  /* Kein all:unset hier (anders als bei .gallery__nav): das würde auch
+     background-image zurücksetzen — und genau darüber liefern die
+     wiederverwendeten .bg-0X-Klassen die Platzhalter-Farbverläufe.
+     Beide Selektoren haben dieselbe Spezifität; da .gallery__thumb
+     später in der Datei steht, hätte all:unset die Farbe stillschweigend
+     wieder gelöscht. Stattdessen gezielt nur die Button-Grundwerte
+     zurücksetzen. */
+  border:0;padding:0;margin:0;font:inherit;color:inherit;
+  -webkit-appearance:none;appearance:none;background-color:transparent;
+  position:relative;flex:0 0 36px;height:58px;border-radius:7px;
+  overflow:hidden;cursor:pointer;background-size:cover;background-position:center;
+  opacity:.5;transition:flex-basis .35s var(--ease),opacity .3s var(--ease);
+}
+.gallery__thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.gallery__thumb:hover{opacity:.8}
+.gallery__thumb[aria-current="true"]{flex-basis:108px;opacity:1}
+@media(min-width:640px){
+  .gallery__thumb{flex-basis:40px;height:64px}
+  .gallery__thumb[aria-current="true"]{flex-basis:128px}
+}
+/* Handy im Querformat (~375–430px Fensterhöhe): Label und Miniaturen
+   beanspruchen sonst so viel von der knappen Höhe, dass für das
+   eigentliche Bild kaum noch etwas übrig bleibt. Nur oben lässt sich
+   Polsterung sparen (unten muss der Abstand zum fixierten Vor/Zurück-
+   Button erhalten bleiben, siehe #galerie oben). */
+@media(max-height:440px){
+  #galerie{padding-top:5rem}
+  #galerie .eyebrow{margin-bottom:.6rem}
+  .gallery{margin-top:.65rem}
+  .gallery__thumbs{margin-top:.5rem}
+  .gallery__thumb{flex-basis:30px;height:40px}
+  .gallery__thumb[aria-current="true"]{flex-basis:84px}
+}
+
+/* ── Footer ─────────────────────────────────────────────── */
+footer{position:relative;z-index:10;background:var(--bg);border-top:1px solid var(--line);padding-block:var(--sp-4)}
+.foot{display:flex;flex-wrap:wrap;gap:var(--sp-3);justify-content:space-between;align-items:center;font-size:.82rem;color:var(--muted)}
+.foot nav{display:flex;gap:.5rem;flex-wrap:wrap;margin-inline:-.75rem}
+.foot a{
+  display:inline-flex;align-items:center;min-height:44px;padding-inline:.75rem;
+  text-decoration:none;transition:color .3s var(--ease);
+}
+.foot a:hover{color:var(--text)}
+
+/* ── Reduced Motion ─────────────────────────────────────── */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  /* Auch den Zwischenzustand (kurz vor dem Einblenden) überschreiben,
+     sonst blitzt der Inhalt bei reduzierter Bewegung kurz unsichtbar auf. */
+  .rise[data-in="false"]{opacity:1;transform:none}
+  .stage__layer{transition:none}
+}

@@ -1,0 +1,37 @@
+---
+// Grundgerüst aller Seiten. CSS und JS sind in Phase 1 bewusst 1:1 aus der
+// alten index.html übernommen — kein Scoping pro Komponente, weil viele
+// Regeln kapitelübergreifend greifen (z.B. .bg-03 .chapter__bg-img,
+// #galerie{padding-block}, Abstand zum schwebenden .step-Button).
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'MLetics — Physiotherapie & Sport-Osteopathie in Bochum',
+  description = 'MLetics: Physiotherapie und Sport-Osteopathie von Maik Liesbrock in Bochum. 16 Jahre Erfahrung im Profifußball — für Athletinnen, Athleten und Patientinnen, Patienten.',
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{title}</title>
+<meta name="description" content={description}>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+<slot />
+<script>
+  import '../scripts/main.js';
+</script>
+</body>
+</html>

@@ -1,6 +1,16 @@
 .DS_Store
+
+# Lokale Werkzeug-Daten (installierte Skills u.ä.) — nur launch.json ist geteilt
+.claude/*
+!.claude/launch.json
+
 Bilder/
-Logo/
+# Nur der Quellordner im Projektstamm mit den Original-Logodateien.
+# Ohne den führenden Schrägstrich griff das Muster auf dem Mac (Dateisystem
+# unterscheidet keine Groß-/Kleinschreibung) auch auf assets/logo/ — das im
+# Markup verwendete Logo lag dadurch gar nicht im Repo und fehlte bei jeder
+# normalen Auslieferung.
+/Logo/
 Screenshots Examples/
 Scrolling/
 Texte/
