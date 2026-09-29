@@ -10,6 +10,10 @@ import Gallery from '../components/Gallery.astro';
 import Vita from '../components/Vita.astro';
 import ContactList from '../components/ContactList.astro';
 import ContactForm from '../components/ContactForm.astro';
+import hero from '../assets/01-hero.jpg';
+import treat from '../assets/02-treat.jpg';
+import connect from '../assets/03-connect.jpg';
+import about from '../assets/04-about.jpg';
 
 const leistungen = (await getCollection('leistungen')).sort((a, b) => a.data.reihenfolge - b.data.reihenfolge);
 const zielgruppen = (await getCollection('zielgruppen')).sort((a, b) => a.data.reihenfolge - b.data.reihenfolge);
@@ -21,7 +25,7 @@ const zielgruppen = (await getCollection('zielgruppen')).sort((a, b) => a.data.r
   <main id="inhalt">
 
     <!-- ── 01 AUFTAKT ─────────────────────────────────────── -->
-    <Chapter id="auftakt" nr={0} bg="bg-01" bild="/assets/01-hero.jpg">
+    <Chapter id="auftakt" nr={0} bg="bg-01" bild={hero}>
       <p class="eyebrow rise"><b>01</b> <span>MLetics by Maik Liesbrock — Bochum</span></p>
       <h1 class="display rise">UNDERSTAND. TREAT.<br>CONNECT.</h1>
       <p class="lead lead--brand rise" style="margin-top:1.25rem">Verstehen. Behandeln. Vernetzen.</p>
@@ -37,7 +41,7 @@ const zielgruppen = (await getCollection('zielgruppen')).sort((a, b) => a.data.r
     </Chapter>
 
     <!-- ── 02 TREAT (Leistungen) ──────────────────────────── -->
-    <Chapter id="treat" nr={1} bg="bg-02" bild="/assets/02-treat.jpg">
+    <Chapter id="treat" nr={1} bg="bg-02" bild={treat}>
       <p class="eyebrow rise"><b>02</b> <span>Treat</span></p>
       <h2 class="display display--sm rise">Individuelle Therapie<br>statt Behandlung nach Schema.</h2>
       <p class="lead rise" style="margin-top:1.75rem">
@@ -54,7 +58,7 @@ const zielgruppen = (await getCollection('zielgruppen')).sort((a, b) => a.data.r
     </Chapter>
 
     <!-- ── 03 CONNECT ─────────────────────────────────────── -->
-    <Chapter id="connect" nr={2} bg="bg-03" bild="/assets/03-connect.jpg" grid>
+    <Chapter id="connect" nr={2} bg="bg-03" bild={connect} grid>
       <div>
         <p class="eyebrow rise"><b>03</b> <span>Connect</span></p>
         <h2 class="display display--sm rise">Mehr als eine<br>Perspektive.</h2>
@@ -75,7 +79,7 @@ const zielgruppen = (await getCollection('zielgruppen')).sort((a, b) => a.data.r
     </Chapter>
 
     <!-- ── 04 ÜBER MAIK ───────────────────────────────────── -->
-    <Chapter id="about" nr={3} bg="bg-04" bild="/assets/04-about.jpg" grid>
+    <Chapter id="about" nr={3} bg="bg-04" bild={about} grid>
       <div>
         <p class="eyebrow rise"><b>04</b> <span>Über Maik</span></p>
         <h2 class="display rise">Ganzheitlich. Nachhaltig.<br>Professionell.</h2>
@@ -103,7 +107,10 @@ const zielgruppen = (await getCollection('zielgruppen')).sort((a, b) => a.data.r
     </Chapter>
 
     <!-- ── 06 KONTAKT ─────────────────────────────────────── -->
-    <Chapter id="kontakt" nr={5} bg="bg-06" bild="/assets/06-kontakt.jpg" grid wrapStyle="align-items:start">
+    {/* Ohne Kapitelfoto: assets/06-kontakt.jpg existiert nicht. Der Verlauf
+        .bg-06 trägt das Kapitel bereits — vorher erzeugte das fehlende Bild
+        bei jedem Aufruf einen 404, den JS anschließend wieder aufräumte. */}
+    <Chapter id="kontakt" nr={5} bg="bg-06" grid wrapStyle="align-items:start">
       <div>
         <p class="eyebrow rise"><b>06</b> <span>Kontakt</span></p>
         <h2 class="display display--sm rise">Sprechen wir<br>über Deinen Weg.</h2>

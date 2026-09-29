@@ -1,12 +1,5 @@
 # build output
 dist/
-
-# ÜBERGANGSWEISE (Phase 1 der Migration): unveränderte Kopie von ../assets,
-# damit die Bildpfade im übernommenen Markup unverändert funktionieren. Die
-# Bilder liegen bereits im Repo unter /assets — hier nicht ein zweites Mal
-# einchecken. Fällt weg, sobald die Bilder in Phase 2 nach src/assets/ in die
-# Astro-Bildpipeline umgezogen sind; diese Zeilen dann entfernen.
-public/assets/
 # generated types
 .astro/
 

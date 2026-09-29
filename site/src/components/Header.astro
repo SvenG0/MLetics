@@ -1,6 +1,7 @@
 ---
-// Bildpfade bewusst absolut (/assets/…): relativ würden sie auf Unterseiten
-// wie /physiotherapie/ ins Leere zeigen.
+import { Image } from 'astro:assets';
+import logo from '../assets/mletics-mark-dark.png';
+
 interface Props {
   /** Präfix der Ankerlinks: auf der Startseite leer, auf Unterseiten "/". */
   prefix?: string;
@@ -12,7 +13,17 @@ const { prefix = '' } = Astro.props;
   <div class="wrap">
     <div class="bar">
       <a href={`${prefix}#auftakt`} class="mark" aria-label="MLetics — Startseite">
-        <img class="mark__logo" src="/assets/logo/mletics-mark-dark.png" alt="MLetics — Osteopathie &amp; Physiotherapie">
+        {/* Bewusst ohne widths/sizes, also nur umcodiert statt verkleinert:
+            jede Skalierung rundet die Zielmaße auf ganze Pixel und verschiebt
+            damit das Seitenverhältnis minimal — das Logo wurde dadurch bei
+            56px Höhe 1px schmaler als zuvor. Die Datei ist klein genug, dass
+            allein PNG → WebP den Großteil der Ersparnis bringt. */}
+        <Image
+          class="mark__logo"
+          src={logo}
+          alt="MLetics — Osteopathie & Physiotherapie"
+          format="webp"
+        />
       </a>
 
       <nav class="bar__nav" aria-label="Hauptnavigation">
