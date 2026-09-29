@@ -1,0 +1,81 @@
+---
+// Layout für reine Textseiten (Impressum, Datenschutz). Bewusst ohne
+// Kapitel-Maschinerie: kein Vollbild, kein Stepper, keine Rail — hier zählt
+// Lesbarkeit. Die Stile sind hier lokal gescopet und nicht in global.css,
+// weil sie mit dem Kapitel-System nichts zu tun haben und es auch nicht
+// stören sollen.
+import Base from './Base.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  ueberschrift: string;
+  stand?: string;
+}
+const { title, description, ueberschrift, stand } = Astro.props;
+---
+
+<Base title={title} description={description} headerPrefix="/" schema={false}>
+  <main id="inhalt" class="textseite">
+    <div class="wrap">
+      <h1>{ueberschrift}</h1>
+      {stand && <p class="stand">Stand: {stand}</p>}
+      <slot />
+    </div>
+  </main>
+</Base>
+
+<style is:global>
+  /* Der Header schwebt oben über dem Inhalt — ohne Vorlauf läge die
+     Überschrift darunter. */
+  .textseite { padding-block: 9rem 5rem; }
+  .textseite .wrap { max-width: 48rem; }
+
+  .textseite h1 {
+    font-family: var(--f-display);
+    font-weight: 700;
+    font-variation-settings: 'wdth' 82;
+    font-size: clamp(2rem, 5vw, 3rem);
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+    margin: 0 0 0.75rem;
+  }
+  .textseite .stand { color: var(--muted); font-size: 0.85rem; margin: 0 0 3rem; }
+
+  .textseite h2 {
+    font-family: var(--f-display);
+    font-weight: 700;
+    font-variation-settings: 'wdth' 88;
+    font-size: 1.35rem;
+    letter-spacing: -0.005em;
+    margin: 3rem 0 0.9rem;
+    padding-bottom: 0.7rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .textseite h3 {
+    font-family: var(--f-display);
+    font-weight: 600;
+    font-size: 1.05rem;
+    margin: 2rem 0 0.5rem;
+  }
+  .textseite p,
+  .textseite li { color: var(--muted); line-height: 1.75; }
+  .textseite p { margin: 0 0 1rem; max-width: 62ch; }
+  .textseite ul { margin: 0 0 1rem; padding-left: 1.1rem; max-width: 62ch; }
+  .textseite li { margin-bottom: 0.4rem; }
+  .textseite a { color: var(--accent-soft); text-decoration: underline; text-underline-offset: 3px; }
+  .textseite a:hover { color: var(--text); }
+  .textseite dt { color: var(--text); font-weight: 500; margin-top: 1rem; }
+  .textseite dd { color: var(--muted); margin: 0.2rem 0 0; line-height: 1.75; }
+
+  /* Sichtbar offene Pflichtangabe — soll auffallen, solange sie fehlt. */
+  .offen {
+    display: inline-block;
+    background: rgba(242, 240, 234, 0.08);
+    border: 1px dashed var(--line-strong);
+    border-radius: 4px;
+    padding: 0.1rem 0.5rem;
+    color: var(--text);
+    font-size: 0.85rem;
+  }
+</style>

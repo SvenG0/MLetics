@@ -1,0 +1,134 @@
+---
+import Textseite from '../layouts/Textseite.astro';
+import praxis from '../data/praxis.json';
+import impressum from '../data/impressum.json';
+
+// Pflichtangaben nach § 5 DDG (seit 2024 Nachfolger des § 5 TMG).
+// Noch offene Punkte stehen in src/data/impressum.json auf null und werden
+// unten sichtbar als „noch zu ergänzen" ausgewiesen — sie sollen auffallen,
+// solange sie fehlen, statt still zu verschwinden.
+const offen = (wert: string | null | undefined) => wert === null || wert === undefined || wert === '';
+---
+
+<Textseite
+  title="Impressum — MLetics, Maik Liesbrock, Bochum"
+  description="Impressum und Anbieterkennzeichnung von MLetics — Maik Liesbrock, Physiotherapie und Osteopathie in Bochum."
+  ueberschrift="Impressum"
+>
+  <h2>Angaben gemäß § 5 DDG</h2>
+  <p>
+    {praxis.langname}<br />
+    {praxis.inhaber}<br />
+    {praxis.adresse.strasse}<br />
+    {praxis.adresse.plz} {praxis.adresse.ort}<br />
+    Deutschland
+  </p>
+
+  <h3>Kontakt</h3>
+  <p>
+    Telefon: <a href={`tel:${praxis.telefon.link}`}>{praxis.telefon.anzeige}</a><br />
+    E-Mail: <a href={`mailto:${praxis.email}`}>{praxis.email}</a>
+  </p>
+
+  <h3>Rechtsform</h3>
+  <p>
+    {offen(impressum.rechtsform)
+      ? <span class="offen">noch zu ergänzen — z. B. „Einzelunternehmen"</span>
+      : impressum.rechtsform}
+  </p>
+
+  <h3>Umsatzsteuer</h3>
+  <p>
+    {offen(impressum.umsatzsteuerId) ? (
+      <span class="offen">
+        noch zu ergänzen — entweder Umsatzsteuer-Identifikationsnummer nach § 27 a UStG
+        oder der Hinweis, dass Heilbehandlungen nach § 4 Nr. 14 UStG umsatzsteuerfrei sind
+      </span>
+    ) : (
+      <>Umsatzsteuer-Identifikationsnummer nach § 27 a UStG: {impressum.umsatzsteuerId}</>
+    )}
+  </p>
+
+  <h2>Berufsrechtliche Angaben</h2>
+
+  <h3>Gesetzliche Berufsbezeichnungen</h3>
+  <ul>
+    {impressum.berufsbezeichnungen.map((b) => (
+      <li>
+        {b.titel} —{' '}
+        {offen(b.staat)
+          ? <span class="offen">Verleihungsstaat noch zu ergänzen (in den Niederlanden erworben?)</span>
+          : <>verliehen in {b.staat}</>}
+      </li>
+    ))}
+  </ul>
+
+  <h3>Zuständige Aufsichtsbehörde</h3>
+  <p>
+    {impressum.aufsichtsbehoerde.name}<br />
+    {offen(impressum.aufsichtsbehoerde.anschrift)
+      ? <span class="offen">Anschrift der Behörde noch zu ergänzen</span>
+      : impressum.aufsichtsbehoerde.anschrift}
+  </p>
+
+  <h3>Berufsrechtliche Regelungen</h3>
+  <ul>
+    {impressum.berufsrecht.map((g) => (
+      <li><a href={g.url} target="_blank" rel="noopener noreferrer">{g.name}</a></li>
+    ))}
+  </ul>
+
+  <h3>Berufshaftpflichtversicherung</h3>
+  <p>
+    {offen(impressum.haftpflicht.versicherer) ? (
+      <span class="offen">noch zu ergänzen — Versicherer, Anschrift und räumlicher Geltungsbereich</span>
+    ) : (
+      <>
+        {impressum.haftpflicht.versicherer}<br />
+        {impressum.haftpflicht.anschrift}<br />
+        Geltungsraum: {impressum.haftpflicht.geltungsraum}
+      </>
+    )}
+  </p>
+
+  <h2>Streitbeilegung</h2>
+  <p>
+    Wir sind nicht bereit und nicht verpflichtet, an Streitbeilegungsverfahren vor
+    einer Verbraucherschlichtungsstelle teilzunehmen.
+  </p>
+  <p>
+    <em>
+      Hinweis: Die früher übliche Verlinkung auf die EU-Plattform zur
+      Online-Streitbeilegung entfällt — sie wurde im Juli 2025 eingestellt. Viele
+      Impressum-Vorlagen führen den Link weiterhin, er geht inzwischen ins Leere.
+    </em>
+  </p>
+
+  <h2>Haftung für Inhalte und Links</h2>
+  <p>
+    Die Inhalte dieser Seiten wurden mit Sorgfalt erstellt. Für die Richtigkeit,
+    Vollständigkeit und Aktualität der Inhalte kann jedoch keine Gewähr übernommen
+    werden. Als Diensteanbieter sind wir nach § 7 Abs. 1 DDG für eigene Inhalte auf
+    diesen Seiten verantwortlich, nach §§ 8 bis 10 DDG jedoch nicht verpflichtet,
+    übermittelte oder gespeicherte fremde Informationen zu überwachen.
+  </p>
+  <p>
+    Unser Angebot enthält Links zu externen Websites Dritter, auf deren Inhalte wir
+    keinen Einfluss haben. Für diese fremden Inhalte ist stets der jeweilige Anbieter
+    verantwortlich. Bei Bekanntwerden von Rechtsverletzungen entfernen wir
+    entsprechende Links umgehend.
+  </p>
+
+  <h2>Urheberrecht</h2>
+  <p>
+    Die auf dieser Website veröffentlichten Inhalte und Werke unterliegen dem
+    deutschen Urheberrecht. Vervielfältigung, Bearbeitung, Verbreitung und jede Art
+    der Verwertung außerhalb der Grenzen des Urheberrechts bedürfen der schriftlichen
+    Zustimmung des jeweiligen Autors bzw. Erstellers.
+  </p>
+  <p>
+    Auf einzelnen Fotografien dieser Website sind Vereins- und Sponsorenkennzeichen
+    Dritter erkennbar. Die Rechte an diesen Kennzeichen liegen bei den jeweiligen
+    Inhabern.
+  </p>
+</Textseite>

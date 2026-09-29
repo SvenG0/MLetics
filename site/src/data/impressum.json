@@ -1,0 +1,48 @@
+{
+  "_hinweis": "Angaben fürs Impressum. Felder mit null sind noch offen und werden auf der Seite sichtbar als 'noch zu ergänzen' ausgewiesen, damit sie nicht unbemerkt fehlen. §5 DDG (seit 2024 Nachfolger von §5 TMG).",
+  "rechtsform": null,
+  "umsatzsteuerId": null,
+  "umsatzsteuerBefreit": null,
+  "berufsbezeichnungen": [
+    {
+      "titel": "Staatlich anerkannter Physiotherapeut",
+      "staat": "Deutschland"
+    },
+    {
+      "titel": "Sektoraler Heilpraktiker für Physiotherapie",
+      "staat": "Deutschland"
+    },
+    {
+      "titel": "Osteopath (B.Sc.)",
+      "staat": null
+    }
+  ],
+  "aufsichtsbehoerde": {
+    "name": "Gesundheitsamt der Stadt Bochum",
+    "anschrift": null,
+    "web": "https://www.bochum.de"
+  },
+  "berufsrecht": [
+    {
+      "name": "Masseur- und Physiotherapeutengesetz (MPhG)",
+      "url": "https://www.gesetze-im-internet.de/mphg/"
+    },
+    {
+      "name": "Heilpraktikergesetz (HeilprG)",
+      "url": "https://www.gesetze-im-internet.de/heilprg/"
+    },
+    {
+      "name": "Erste Durchführungsverordnung zum Heilpraktikergesetz",
+      "url": "https://www.gesetze-im-internet.de/heilprgdv_1/"
+    }
+  ],
+  "haftpflicht": {
+    "versicherer": null,
+    "anschrift": null,
+    "geltungsraum": null
+  },
+  "hosting": {
+    "anbieter": null,
+    "hinweis": "Wird gesetzt, sobald die Hosting-Entscheidung gefallen ist (siehe Datenschutzerklärung)."
+  }
+}

@@ -2,7 +2,40 @@ function initMLetics(){
   'use strict';
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* ── Teil 1: gilt auf JEDER Seite ──────────────────────────────────
+     Auch Impressum und Datenschutz tragen die Kopfleiste. Alles, was
+     nur am Kapitel-Aufbau der Startseite hängt, steht weiter unten. */
+
+  /* Lesefortschritt in der Kopfleiste — per rAF gedrosselt,
+     damit das Scrollen nicht ins Stocken gerät. */
+  var bar = document.querySelector('.bar'), ticking = false;
+  function zeichneFortschritt(){
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.setProperty('--p', max > 0 ? Math.min(1, window.scrollY / max) : 0);
+    ticking = false;
+  }
+  if(bar){
+    window.addEventListener('scroll', function(){
+      if(!ticking){ ticking = true; requestAnimationFrame(zeichneFortschritt); }
+    }, {passive: true});
+    window.addEventListener('resize', zeichneFortschritt);
+    zeichneFortschritt();
+  }
+
+  /* Fehlende Bilddateien entfernen, damit statt eines kaputten Bildes
+     der CSS-Verlauf als Rückfallebene sichtbar bleibt. */
+  document.querySelectorAll('[data-media]').forEach(function(m){
+    m.addEventListener('error', function(){ m.remove(); });
+    if(m.tagName === 'IMG' && m.complete && m.naturalWidth === 0) m.remove();
+  });
+
+  /* ── Teil 2: nur Seiten mit Kapiteln ───────────────────────────────
+     Ab hier hängt alles an den Kapiteln: Punktleiste, Zähler, Galerie,
+     Formular. Auf einer reinen Textseite gibt es davon nichts — ohne
+     diesen Ausstieg würde das Skript dort an der ersten Stelle
+     abbrechen, die ein fehlendes Element anspricht. */
   var sections = Array.prototype.slice.call(document.querySelectorAll('.chapter'));
+  if(!sections.length) return;
 
   /* Kapitelpositionen für Navigation (Punktleiste, Vor/Zurück, #anker).
      Früher musste hier zum Messen kurz auf 0 gescrollt und zurück
@@ -45,14 +78,7 @@ function initMLetics(){
     });
   });
 
-  /* Fehlende Bilddateien entfernen, damit statt eines kaputten Bildes
-     der CSS-Verlauf als Rückfallebene sichtbar bleibt. */
-  document.querySelectorAll('[data-media]').forEach(function(m){
-    m.addEventListener('error', function(){ m.remove(); });
-    if(m.tagName === 'IMG' && m.complete && m.naturalWidth === 0) m.remove();
-  });
-
-  var namen = ['Auftakt','Treat','Connect','Über Maik','Galerie','Kontakt'];
+  var namen =['Auftakt','Treat','Connect','Über Maik','Galerie','Kontakt'];
   var announcer = document.getElementById('announcer');
   var stepPrev  = document.getElementById('stepPrev');
   var stepNext  = document.getElementById('stepNext');
@@ -76,20 +102,7 @@ function initMLetics(){
     announcer.textContent = 'Kapitel ' + (i + 1) + ' von ' + sections.length + ': ' + namen[i];
   }
 
-  /* Lesefortschritt in der Kopfleiste — per rAF gedrosselt,
-     damit das Scrollen nicht ins Stocken gerät. */
-  var bar = document.querySelector('.bar'), ticking = false;
-  function zeichneFortschritt(){
-    var max = document.documentElement.scrollHeight - window.innerHeight;
-    bar.style.setProperty('--p', max > 0 ? Math.min(1, window.scrollY / max) : 0);
-    ticking = false;
-  }
-  window.addEventListener('scroll', function(){
-    if(!ticking){ ticking = true; requestAnimationFrame(zeichneFortschritt); }
-  }, {passive: true});
-  window.addEventListener('resize', zeichneFortschritt);
   window.addEventListener('resize', neuVermessen);
-  zeichneFortschritt();
 
   /* Kein Scroll-gebundenes Skript mehr für die Kapitelbilder: Jedes
      Bild liegt jetzt fest in seinem eigenen Kapitel (siehe .chapter__bg
@@ -328,11 +341,14 @@ function initMLetics(){
   }
 
   /* Formular — Prototyp, versendet noch nicht */
-  document.getElementById('form').addEventListener('submit', function(e){
-    e.preventDefault();
-    document.getElementById('formNote').textContent =
-      'Prototyp: Der Versand wird angebunden, sobald Formspree oder Netlify Forms eingerichtet ist.';
-  });
+  var formEl = document.getElementById('form');
+  if(formEl){
+    formEl.addEventListener('submit', function(e){
+      e.preventDefault();
+      document.getElementById('formNote').textContent =
+        'Prototyp: Der Versand wird angebunden, sobald Formspree oder Netlify Forms eingerichtet ist.';
+    });
+  }
 }
 
 /* Auf DOMContentLoaded warten, falls das Skript vor Ende des Markups
