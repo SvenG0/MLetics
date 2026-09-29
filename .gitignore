@@ -1,13 +1,30 @@
+# ── Astro / Node ────────────────────────────────────────────────────
+# Baut Deploy Now bei jedem Push neu — gehört deshalb nicht ins Repo.
+dist/
+.astro/
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.env
+.env.production
+
+# ── Werkzeuge ───────────────────────────────────────────────────────
 .DS_Store
+.idea/
+.vscode/
 
 # Lokale Werkzeug-Daten (installierte Skills u.ä.) — nur launch.json ist geteilt
 .claude/*
 !.claude/launch.json
 
+# ── Arbeitsmaterial, das nicht auf den Server gehört ────────────────
+# Rohmaterial und Notizen: liegen lokal, sind für die Seite nicht nötig.
 Bilder/
 # Nur der Quellordner im Projektstamm mit den Original-Logodateien.
 # Ohne den führenden Schrägstrich griff das Muster auf dem Mac (Dateisystem
-# unterscheidet keine Groß-/Kleinschreibung) auch auf assets/logo/ — das im
+# unterscheidet keine Groß-/Kleinschreibung) auch auf src/assets/logo/ — das im
 # Markup verwendete Logo lag dadurch gar nicht im Repo und fehlte bei jeder
 # normalen Auslieferung.
 /Logo/
@@ -15,6 +32,10 @@ Screenshots Examples/
 Scrolling/
 Texte/
 Design/
+
+# Die alten Einzeldatei-Exporte zum Teilen (11,5 MB bzw. 1,4 MB mit
+# base64-Bildern). Ersetzt durch echtes Hosting — nur noch lokal aufgehoben,
+# bis die neue Seite live ist.
 mletics-zum-teilen.html
 mletics-b-zum-teilen.html
 scroll-test.html

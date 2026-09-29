@@ -56,10 +56,20 @@ const hostingOffen = !impressum.hosting.anbieter;
       </span>
     </p>
   ) : (
-    <p>
-      Diese Website wird bei {impressum.hosting.anbieter} gehostet. Mit dem Anbieter
-      besteht ein Vertrag über die Auftragsverarbeitung nach Art. 28 DSGVO.
-    </p>
+    <Fragment>
+      <p>
+        Diese Website wird gehostet bei:
+      </p>
+      <p>
+        {impressum.hosting.anbieter}<br />
+        {impressum.hosting.anschrift}
+      </p>
+      <p>
+        Die Server stehen in {impressum.hosting.serverstandort}; personenbezogene Daten
+        verlassen dadurch nicht die Europäische Union. Mit dem Anbieter besteht ein
+        Vertrag über die Auftragsverarbeitung nach Art. 28 DSGVO.
+      </p>
+    </Fragment>
   )}
   <p>
     Beim Aufruf der Website werden durch den Hosting-Anbieter automatisch Daten in

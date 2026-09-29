@@ -2,10 +2,10 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "mletics",
+      "name": "alt",
       "runtimeExecutable": "node",
       "runtimeArgs": [
-        "server.mjs"
+        "archiv/server.mjs"
       ],
       "port": 4321
     },
@@ -13,10 +13,8 @@
       "name": "astro",
       "runtimeExecutable": "node",
       "runtimeArgs": [
-        "site/node_modules/astro/bin/astro.mjs",
+        "node_modules/astro/bin/astro.mjs",
         "dev",
-        "--root",
-        "site",
         "--port",
         "4322"
       ],
@@ -26,10 +24,8 @@
       "name": "astro-build",
       "runtimeExecutable": "node",
       "runtimeArgs": [
-        "site/node_modules/astro/bin/astro.mjs",
+        "node_modules/astro/bin/astro.mjs",
         "preview",
-        "--root",
-        "site",
         "--port",
         "4323"
       ],

@@ -42,7 +42,9 @@
     "geltungsraum": null
   },
   "hosting": {
-    "anbieter": null,
-    "hinweis": "Wird gesetzt, sobald die Hosting-Entscheidung gefallen ist (siehe Datenschutzerklärung)."
+    "anbieter": "IONOS SE",
+    "anschrift": "Elgendorfer Straße 57, 56410 Montabaur, Deutschland",
+    "serverstandort": "Deutschland",
+    "hinweis": "Deploy Now baut die Seite aus dem GitHub-Repo und legt sie auf IONOS-Webspace. Der Auftragsverarbeitungsvertrag nach Art. 28 DSGVO ist im IONOS-Kundenkonto abzuschließen — erst danach stimmt die Angabe in der Datenschutzerklärung."
   }
 }
