@@ -1,40 +1,40 @@
 {
-  "_hinweis": "PLATZHALTER — Adresse, Telefon, E-Mail und Sprechzeiten sind erfunden und MÜSSEN vor dem echten Start durch die echten Daten ersetzt werden. Sie speisen Kontaktkapitel, Fußzeile und (ab Phase 4) die strukturierten Daten für Google.",
-  "platzhalter": true,
+  "_hinweis": "Echte Praxisdaten (Stand 29.09.2026). Speisen Kontaktkapitel, Fußzeile, Impressum und die strukturierten Daten für Google. Offen: Rechtsform, USt-ID bzw. Befreiung nach §4 Nr. 14 UStG, Berufshaftpflicht — siehe src/data/impressum.json.",
+  "platzhalter": false,
   "name": "MLetics",
+  "langname": "MLetics — Osteopathie | Physiotherapie",
   "inhaber": "Maik Liesbrock",
-  "ort": "Bochum",
   "telefon": {
-    "anzeige": "0234 · 123 456 78",
-    "link": "+4923412345678"
+    "anzeige": "0176 66865146",
+    "link": "+4917666865146"
   },
-  "email": "praxis@mletics.de",
+  "email": "mletics@gmx.de",
   "adresse": {
-    "strasse": "Musterstraße 12",
-    "plz": "44787",
-    "ort": "Bochum"
+    "strasse": "An der Schalwiese 17d",
+    "plz": "44789",
+    "ort": "Bochum",
+    "land": "DE"
   },
-  "sprechzeiten": [
-    "Mo – Do  8:00 – 19:00",
-    "Fr  8:00 – 15:00",
-    "Termine nach Vereinbarung"
+  "termine": [
+    "Termine nach Vereinbarung",
+    "Hausbesuche nach Vereinbarung"
   ],
   "vita": [
     {
       "label": "Qualifikation",
-      "wert": "Physiotherapeut, Sektoraler Heilpraktiker für Physiotherapie"
+      "wert": "Staatlich anerkannter Physiotherapeut, Osteopath (B.Sc.), Sektoraler Heilpraktiker für Physiotherapie"
     },
     {
       "label": "Schwerpunkt",
-      "wert": "Sport-Osteopathie"
+      "wert": "Osteopathie, Sport-Osteopathie, Funktionelle Orthonomie und Integration"
     },
     {
       "label": "Erfahrung",
-      "wert": "16 Jahre im Profifußball"
+      "wert": "16 Jahre Profisport — Fußball, Handball, Leichtathletik, Hockey"
     },
     {
-      "label": "Station",
-      "wert": "Physiotherapeut, VfL Bochum 1848 (Saison 2020/21)"
+      "label": "Stationen",
+      "wert": "Borussia Dortmund, FC St. Pauli, Eintracht Frankfurt, VfL Bochum"
     }
   ]
 }

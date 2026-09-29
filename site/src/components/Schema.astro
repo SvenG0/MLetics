@@ -1,0 +1,46 @@
+---
+import praxis from '../data/praxis.json';
+import { getCollection } from 'astro:content';
+
+// Strukturierte Daten nach schema.org. Für eine lokale Praxis der wichtigste
+// SEO-Baustein überhaupt: Google liest daraus Adresse, Telefon und Leistungen
+// direkt aus und kann sie in der Suche und in Maps anzeigen.
+// Gespeist aus praxis.json und den Leistungen — eine Quelle, keine Dopplung.
+const leistungen = (await getCollection('leistungen')).sort((a, b) => a.data.reihenfolge - b.data.reihenfolge);
+const basis = Astro.site?.toString().replace(/\/$/, '') ?? '';
+
+const daten = {
+  '@context': 'https://schema.org',
+  '@type': 'Physiotherapy',
+  name: praxis.langname,
+  alternateName: praxis.name,
+  description:
+    'Physiotherapie, Osteopathie und Sport-Osteopathie von Maik Liesbrock in Bochum. 16 Jahre Erfahrung im Profisport.',
+  url: basis + '/',
+  telephone: praxis.telefon.link,
+  email: praxis.email,
+  image: basis + '/og-bild.jpg',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: praxis.adresse.strasse,
+    postalCode: praxis.adresse.plz,
+    addressLocality: praxis.adresse.ort,
+    addressCountry: praxis.adresse.land,
+  },
+  areaServed: { '@type': 'City', name: praxis.adresse.ort },
+  // Keine festen Sprechzeiten — Termine ausschließlich nach Vereinbarung.
+  availableService: leistungen.map((l) => ({
+    '@type': 'MedicalTherapy',
+    name: l.data.titel,
+    description: l.data.kurz,
+    url: basis + '/' + l.id + '/',
+  })),
+  founder: {
+    '@type': 'Person',
+    name: praxis.inhaber,
+    jobTitle: 'Staatlich anerkannter Physiotherapeut, Osteopath (B.Sc.), Sektoraler Heilpraktiker für Physiotherapie',
+  },
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(daten)} />

@@ -3,22 +3,32 @@
 // greifen kapitelübergreifend (.bg-03 .chapter__bg-img, #galerie{padding-block},
 // Abstand zum schwebenden .step-Button) — pro Komponente gescopete Styles
 // würden genau diese Querbezüge zerreißen.
+import '../styles/fonts.css';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import Schema from '../components/Schema.astro';
 
 interface Props {
   title?: string;
   description?: string;
   /** Präfix der Header-Ankerlinks: leer auf der Startseite, "/" auf Unterseiten. */
   headerPrefix?: string;
+  /** Strukturierte Daten nur dort ausgeben, wo sie hingehören. */
+  schema?: boolean;
 }
 
 const {
   title = 'MLetics — Physiotherapie & Sport-Osteopathie in Bochum',
-  description = 'MLetics: Physiotherapie und Sport-Osteopathie von Maik Liesbrock in Bochum. 16 Jahre Erfahrung im Profifußball — für Athletinnen, Athleten und Patientinnen, Patienten.',
+  description = 'Physiotherapie, Osteopathie und Sport-Osteopathie von Maik Liesbrock in Bochum. 16 Jahre Erfahrung im Profisport — Termine und Hausbesuche nach Vereinbarung.',
   headerPrefix = '',
+  schema = true,
 } = Astro.props;
+
+// Kanonische Adresse: sagt Google, welche URL die maßgebliche ist, falls eine
+// Seite über mehrere Wege erreichbar ist.
+const kanonisch = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString() : Astro.url.pathname;
+const ogBild = Astro.site ? new URL('/og-bild.jpg', Astro.site).toString() : '/og-bild.jpg';
 ---
 
 <!DOCTYPE html>
@@ -28,10 +38,23 @@ const {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title}</title>
 <meta name="description" content={description}>
+<link rel="canonical" href={kanonisch}>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#0A0B0D">
+
+<!-- Vorschau beim Teilen (WhatsApp, Facebook, LinkedIn) — ohne diese Angaben
+     zeigt ein geteilter Link nur die nackte Adresse. -->
+<meta property="og:type" content="website">
+<meta property="og:locale" content="de_DE">
+<meta property="og:site_name" content="MLetics">
+<meta property="og:title" content={title}>
+<meta property="og:description" content={description}>
+<meta property="og:url" content={kanonisch}>
+<meta property="og:image" content={ogBild}>
+<meta name="twitter:card" content="summary_large_image">
+
+{schema && <Schema />}
 </head>
 <body>
 
