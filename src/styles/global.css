@@ -527,6 +527,25 @@ main{position:relative;z-index:10}
 .service li{font-size:.85rem;color:var(--muted);line-height:1.5;padding-left:1rem;position:relative}
 .service li::before{content:"";position:absolute;left:0;top:.6em;width:6px;height:1px;background:var(--accent)}
 
+/* Die Karte führt jetzt auf ihre Unterseite. Der Link ist ein leeres
+   Element, das sich über die ganze Karte legt (Begründung im Markup von
+   ServiceCard.astro). inset:0 bezieht sich auf .service — das ist bereits
+   position:relative. Der Fokusring liegt damit um die ganze Karte, also
+   genau dort, wo man ihn erwartet. */
+.service__link{position:absolute;inset:0;z-index:2}
+.service__link:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}
+.service__mehr{
+  display:block;margin-top:1.4rem;font-size:.8rem;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);
+  opacity:0;transform:translateX(-.35rem);
+  transition:opacity .4s var(--ease),transform .4s var(--ease),color .4s var(--ease);
+}
+.service:hover .service__mehr,.service.is-inview .service__mehr,
+.service:focus-within .service__mehr{opacity:1;transform:none;color:var(--accent)}
+/* Ohne Hover (Touch) steht der Hinweis dauerhaft — dort gibt es keinen
+   Zustand, in dem er sonst je erschiene. */
+@media(hover:none){.service__mehr{opacity:1;transform:none}}
+
 /* „Für wen?" (CONNECT) — gleiche redaktionelle Sprache wie TREAT:
    Trennlinien statt Karten, freistehendes Icon in Akzentfarbe statt
    Icon-in-Badge (die eingefärbte Kachel war der auffälligste
@@ -713,3 +732,102 @@ footer{position:relative;z-index:10;background:var(--bg);border-top:1px solid va
   .rise[data-in="false"]{opacity:1;transform:none}
   .stage__layer{transition:none}
 }
+
+/* ── Leistungs-Unterseiten ──────────────────────────────────
+   Eigener Abschnitt statt gescopeter Komponentenstile: die Seiten
+   greifen bewusst auf dasselbe Vokabular zurück wie die Startseite
+   (.display, .lead, .body, .chapter__bg samt Lasur), damit sie sich
+   nicht wie ein fremdes Modul anfühlen. Der Kopf trägt NICHT .chapter —
+   sonst hielte das Startseiten-Skript ihn für ein Kapitel. */
+.leistung__kopf{
+  position:relative;                 /* Bezugsrahmen für .chapter__bg */
+  padding-block:11rem 5rem;
+  overflow:hidden;
+}
+@media(min-width:700px){.leistung__kopf{padding-block:13rem 6rem}}
+/* Derselbe Textschatten wie über den Kapitelbildern der Startseite —
+   dort per .chapter .wrap gesetzt, hier fürs Pendant wiederholt. */
+.leistung__kopf .wrap{
+  position:relative;z-index:10;
+  text-shadow:0 1px 3px rgba(0,0,0,.9),0 3px 14px rgba(0,0,0,.6),0 0 32px rgba(0,0,0,.4);
+}
+/* Auf schmalen Geräten deckelt die Regel weiter oben .chapter__bg auf
+   eine Bildschirmhöhe — hier soll das Foto den ganzen Kopf tragen. */
+@media(max-width:768px){.leistung__kopf .chapter__bg{height:100%}}
+
+.krume{
+  display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;
+  font-size:.78rem;letter-spacing:.08em;color:var(--muted);
+  margin:0 0 var(--sp-3);
+}
+.krume a{text-decoration:none;transition:color .3s var(--ease)}
+.krume a:hover{color:var(--text)}
+.krume [aria-current]{color:var(--text)}
+
+.leistung__aktionen{display:flex;gap:1rem;flex-wrap:wrap;align-items:center;margin-top:var(--sp-4)}
+
+/* Fließtext: zwei Spalten ab Tablet, damit die Seite nicht zur Bleiwüste
+   wird. max-width auf .body (44ch) bleibt dabei wirksam. */
+.leistung__text{padding-block:var(--sp-5)}
+@media(min-width:900px){
+  .leistung__text{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-5) var(--sp-4)}
+  .leistung__text .block + .block{margin-top:0}
+}
+
+/* Anlässe: zweispaltige Liste mit denselben Strich-Aufzählungszeichen
+   wie die Leistungskarten auf der Startseite. */
+.leistung__anlaesse{padding-block:var(--sp-5);border-top:1px solid var(--line)}
+.leistung__anlaesse ul{
+  list-style:none;margin:var(--sp-4) 0 0;padding:0;
+  display:grid;gap:.9rem;
+}
+@media(min-width:700px){.leistung__anlaesse ul{grid-template-columns:1fr 1fr;gap:.9rem var(--sp-4)}}
+.leistung__anlaesse li{
+  position:relative;padding-left:1.5rem;
+  color:var(--muted);line-height:1.6;
+  border-bottom:1px solid var(--line);padding-bottom:.9rem;
+}
+.leistung__anlaesse li::before{
+  content:"";position:absolute;left:0;top:.65em;
+  width:10px;height:1px;background:var(--accent);
+}
+
+/* Ablauf: nummerierte Schritte. Die Ziffer ist rein dekorativ (die
+   <ol> trägt die Reihenfolge bereits semantisch), deshalb aria-hidden. */
+.leistung__ablauf{padding-block:var(--sp-5);border-top:1px solid var(--line)}
+.leistung__ablauf ol{list-style:none;margin:var(--sp-4) 0 0;padding:0;display:grid;gap:var(--sp-4)}
+@media(min-width:900px){.leistung__ablauf ol{grid-template-columns:repeat(3,1fr);gap:var(--sp-4)}}
+.leistung__ablauf li{border-top:1px solid var(--line-strong);padding-top:var(--sp-2)}
+.leistung__schritt{
+  display:block;font-family:var(--f-display);font-weight:700;
+  font-variation-settings:'wdth' 80;font-size:2.4rem;line-height:1;
+  color:transparent;-webkit-text-stroke:1px var(--accent);
+  font-variant-numeric:tabular-nums;margin-bottom:.75rem;
+}
+.leistung__ablauf h3{
+  font-family:var(--f-display);font-weight:600;font-size:1.05rem;
+  margin:0 0 .5rem;color:var(--text);
+}
+.leistung__ablauf p{margin:0;color:var(--muted);line-height:1.65;font-size:.92rem}
+
+/* Abschluss: Handlungsaufforderung links, Querverweise rechts. Die
+   Querverlinkung ist nicht nur Navigation — sie verteilt Relevanz
+   zwischen den drei Seiten, statt jede allein stehen zu lassen. */
+.leistung__schluss{padding-block:var(--sp-5) var(--sp-6);border-top:1px solid var(--line);display:grid;gap:var(--sp-5)}
+@media(min-width:1024px){.leistung__schluss{grid-template-columns:minmax(0,1fr) minmax(0,.8fr);gap:var(--sp-5)}}
+.leistung__cta .body{margin-top:var(--sp-2)}
+
+.leistung__weitere{display:grid;gap:0;align-content:start;border-top:1px solid var(--line)}
+.leistung__link{
+  display:flex;gap:var(--sp-2);align-items:baseline;
+  padding:1.35rem .25rem;text-decoration:none;
+  border-bottom:1px solid var(--line);
+  transition:box-shadow .4s var(--ease),padding-inline .4s var(--ease);
+}
+.leistung__link:hover{box-shadow:inset 0 0 0 1px var(--accent);padding-inline:1rem}
+.leistung__link-no{
+  font-family:var(--f-display);font-weight:700;font-size:.85rem;
+  color:var(--accent);font-variant-numeric:tabular-nums;flex:none;
+}
+.leistung__link strong{display:block;font-weight:500;font-size:1.02rem;margin-bottom:.3rem}
+.leistung__link em{display:block;font-style:normal;font-size:.86rem;color:var(--muted);line-height:1.55}

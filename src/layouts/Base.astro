@@ -55,6 +55,9 @@ const ogBild = Astro.site ? new URL('/og-bild.jpg', Astro.site).toString() : '/o
 <meta name="twitter:card" content="summary_large_image">
 
 {schema && <Schema />}
+<!-- Seiten mit eigenen strukturierten Daten (z. B. die Leistungsseiten)
+     hängen sie hier ein, statt das Praxis-Schema der Startseite zu erben. -->
+<slot name="kopf" />
 </head>
 <body>
 

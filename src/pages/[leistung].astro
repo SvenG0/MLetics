@@ -1,0 +1,81 @@
+---
+import { getCollection } from 'astro:content';
+import type { ImageMetadata } from 'astro';
+import Leistung from '../layouts/Leistung.astro';
+import praxis from '../data/praxis.json';
+
+// Eine Route für alle Leistungsseiten: der Dateiname in
+// src/content/leistungen/ wird zur Adresse (physiotherapie.md → /physiotherapie).
+// Neue Leistung anlegen heißt damit: eine Markdown-Datei — Karte auf der
+// Startseite, Eintrag im Formular, JSON-LD und Unterseite entstehen mit.
+
+// Bilder müssen zur Bauzeit bekannt sein; ein Pfad aus dem Frontmatter lässt
+// sich nicht einfach importieren. Deshalb einmal alle Bilder einsammeln und
+// über den Dateinamen zuordnen.
+const bilder = import.meta.glob<{ default: ImageMetadata }>('../assets/*.{jpg,png,webp}', { eager: true });
+
+export async function getStaticPaths() {
+  const alle = (await getCollection('leistungen')).sort((a, b) => a.data.reihenfolge - b.data.reihenfolge);
+
+  return alle.map((l) => ({
+    params: { leistung: l.id },
+    props: {
+      eintrag: l,
+      // Die jeweils anderen zwei, in ihrer normalen Reihenfolge.
+      weitere: alle
+        .filter((a) => a.id !== l.id)
+        .map((a) => ({ id: a.id, nummer: a.data.nummer, titel: a.data.titel, kurz: a.data.kurz })),
+    },
+  }));
+}
+
+const { eintrag, weitere } = Astro.props;
+const d = eintrag.data;
+
+const bild = bilder[`../assets/${d.bild}`]?.default;
+if (!bild) throw new Error(`Bild "${d.bild}" aus ${eintrag.id}.md liegt nicht in src/assets/`);
+
+const basis = Astro.site?.toString().replace(/\/$/, '') ?? '';
+
+// Eigene strukturierte Daten statt des Praxis-Schemas der Startseite: hier
+// geht es um EINE Leistung, angeboten von der Praxis. Der Verweis über
+// provider verbindet beides, ohne die Praxis auf jeder Seite zu wiederholen.
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'MedicalTherapy',
+  name: d.titel,
+  alternateName: d.h1,
+  description: d.seoText,
+  url: `${basis}/${eintrag.id}/`,
+  provider: {
+    '@type': 'Physiotherapy',
+    name: praxis.langname,
+    url: basis + '/',
+    telephone: praxis.telefon.link,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: praxis.adresse.strasse,
+      postalCode: praxis.adresse.plz,
+      addressLocality: praxis.adresse.ort,
+      addressCountry: praxis.adresse.land,
+    },
+  },
+  areaServed: { '@type': 'City', name: praxis.adresse.ort },
+};
+---
+
+<Leistung
+  titel={d.titel}
+  nummer={d.nummer}
+  h1={d.h1}
+  seoTitel={d.seoTitel}
+  seoText={d.seoText}
+  intro={d.intro}
+  bild={bild}
+  bg={d.bg}
+  abschnitte={d.abschnitte}
+  anlaesse={d.anlaesse}
+  ablauf={d.ablauf}
+  weitere={weitere}
+  schema={schema}
+/>
