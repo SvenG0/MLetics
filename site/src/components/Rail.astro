@@ -1,0 +1,9 @@
+---
+import { kapitel } from '../data/kapitel';
+---
+
+<nav class="rail" id="rail" aria-label="Kapitel">
+  {kapitel.map((k, i) => (
+    <button data-go={k.id} aria-label={`Kapitel ${i + 1}: ${k.name}`} aria-current={i === 0 ? 'true' : undefined}><span></span></button>
+  ))}
+</nav>

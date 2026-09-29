@@ -1,0 +1,12 @@
+---
+import praxis from '../data/praxis.json';
+---
+
+<dl class="vita">
+  {praxis.vita.map((eintrag) => (
+    <div class="rise">
+      <dt>{eintrag.label}</dt>
+      <dd>{eintrag.wert}</dd>
+    </div>
+  ))}
+</dl>

@@ -1,0 +1,30 @@
+---
+// Bildpfade bewusst absolut (/assets/…): relativ würden sie auf Unterseiten
+// wie /physiotherapie/ ins Leere zeigen.
+interface Props {
+  /** Präfix der Ankerlinks: auf der Startseite leer, auf Unterseiten "/". */
+  prefix?: string;
+}
+const { prefix = '' } = Astro.props;
+---
+
+<header class="nav">
+  <div class="wrap">
+    <div class="bar">
+      <a href={`${prefix}#auftakt`} class="mark" aria-label="MLetics — Startseite">
+        <img class="mark__logo" src="/assets/logo/mletics-mark-dark.png" alt="MLetics — Osteopathie &amp; Physiotherapie">
+      </a>
+
+      <nav class="bar__nav" aria-label="Hauptnavigation">
+        <a href={`${prefix}#treat`}>Treat</a>
+        <a href={`${prefix}#connect`}>Connect</a>
+        <a href={`${prefix}#about`}>Über Maik</a>
+        <a href={`${prefix}#galerie`}>Galerie</a>
+      </nav>
+
+      <a href={`${prefix}#kontakt`} class="btn btn--solid bar__cta">Kontakt</a>
+
+      <span class="bar__progress" aria-hidden="true"><i></i></span>
+    </div>
+  </div>
+</header>

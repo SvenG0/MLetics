@@ -1,18 +1,23 @@
 ---
-// Grundgerüst aller Seiten. CSS und JS sind in Phase 1 bewusst 1:1 aus der
-// alten index.html übernommen — kein Scoping pro Komponente, weil viele
-// Regeln kapitelübergreifend greifen (z.B. .bg-03 .chapter__bg-img,
-// #galerie{padding-block}, Abstand zum schwebenden .step-Button).
+// Grundgerüst aller Seiten. CSS bewusst global und ungescopet: viele Regeln
+// greifen kapitelübergreifend (.bg-03 .chapter__bg-img, #galerie{padding-block},
+// Abstand zum schwebenden .step-Button) — pro Komponente gescopete Styles
+// würden genau diese Querbezüge zerreißen.
 import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
 
 interface Props {
   title?: string;
   description?: string;
+  /** Präfix der Header-Ankerlinks: leer auf der Startseite, "/" auf Unterseiten. */
+  headerPrefix?: string;
 }
 
 const {
   title = 'MLetics — Physiotherapie & Sport-Osteopathie in Bochum',
   description = 'MLetics: Physiotherapie und Sport-Osteopathie von Maik Liesbrock in Bochum. 16 Jahre Erfahrung im Profifußball — für Athletinnen, Athleten und Patientinnen, Patienten.',
+  headerPrefix = '',
 } = Astro.props;
 ---
 
@@ -29,7 +34,23 @@ const {
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body>
+
+<a href="#inhalt" class="btn" style="position:absolute;left:-9999px;top:1rem;z-index:99"
+   onfocus="this.style.left='1rem'" onblur="this.style.left='-9999px'">Zum Inhalt springen</a>
+
+<!-- Meldet Screenreadern den Kapitelwechsel. Bei Vollbildkapiteln
+     bemerkt die Vorlesesoftware den Wechsel sonst nicht. -->
+<p class="sr-only" id="announcer" aria-live="polite"></p>
+
+<Header prefix={headerPrefix} />
+
 <slot />
+
+<Footer />
+
+<!-- Fixierte Bedienelemente stehen im Original nach der Fußzeile. -->
+<slot name="ausserhalb" />
+
 <script>
   import '../scripts/main.js';
 </script>

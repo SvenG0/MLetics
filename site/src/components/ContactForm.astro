@@ -1,0 +1,49 @@
+---
+import { getCollection } from 'astro:content';
+
+// Die Auswahlliste „Anliegen" zieht die Leistungen aus derselben Quelle wie
+// die Karten im Kapitel Treat — neue Leistung anlegen genügt.
+const leistungen = (await getCollection('leistungen')).sort((a, b) => a.data.reihenfolge - b.data.reihenfolge);
+---
+
+<form class="form" id="form" novalidate>
+  <div class="row">
+    <div class="field">
+      <label for="f-name">Name</label>
+      <input id="f-name" name="name" type="text" autocomplete="name" required />
+    </div>
+    <div class="field">
+      <label for="f-tel">Telefon</label>
+      <input id="f-tel" name="tel" type="tel" autocomplete="tel" />
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="f-mail">E-Mail</label>
+    <input id="f-mail" name="email" type="email" autocomplete="email" required />
+  </div>
+
+  <div class="field">
+    <label for="f-art">Anliegen</label>
+    <select id="f-art" name="anliegen">
+      <option>Ersttermin</option>
+      {leistungen.map((l) => <option>{l.data.titel}</option>)}
+      <option>Sonstiges</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="f-msg">Nachricht</label>
+    <textarea id="f-msg" name="nachricht" placeholder="Was führt Dich zu uns?"></textarea>
+    <p class="hintline">Bitte keine Diagnosen oder Gesundheitsdaten im Formular senden — das klären wir persönlich.</p>
+  </div>
+
+  <label class="consent">
+    <input type="checkbox" id="f-ok" required />
+    <span>Ich bin einverstanden, dass meine Angaben zur Bearbeitung meiner Anfrage
+    gespeichert werden. Hinweise dazu in der <a href="#" style="color:var(--accent)">Datenschutzerklärung</a>.</span>
+  </label>
+
+  <button type="submit" class="btn btn--solid" style="justify-content:center">Anfrage senden</button>
+  <p class="hintline" id="formNote" role="status" aria-live="polite"></p>
+</form>

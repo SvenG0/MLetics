@@ -1,0 +1,30 @@
+---
+import praxis from '../data/praxis.json';
+
+const zeilenStil = 'font-weight:400;font-size:1rem;line-height:1.6';
+---
+
+<dl class="contact-list rise">
+  <div>
+    <dt>Telefon</dt>
+    <dd><a href={`tel:${praxis.telefon.link}`}>{praxis.telefon.anzeige}</a></dd>
+  </div>
+  <div>
+    <dt>E-Mail</dt>
+    <dd><a href={`mailto:${praxis.email}`}>{praxis.email}</a></dd>
+  </div>
+  <div>
+    <dt>Adresse</dt>
+    <dd style={zeilenStil}>
+      {praxis.adresse.strasse}<br />{praxis.adresse.plz} {praxis.adresse.ort}
+    </dd>
+  </div>
+  <div>
+    <dt>Sprechzeiten</dt>
+    <dd style={zeilenStil}>
+      {praxis.sprechzeiten.map((zeile, i) => (
+        <>{i > 0 && <br />}{zeile}</>
+      ))}
+    </dd>
+  </div>
+</dl>

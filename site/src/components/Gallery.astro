@@ -1,0 +1,34 @@
+---
+import galerie from '../data/galerie.json';
+
+// Die Reihenfolge ist nach Farbstimmung sortiert, nicht nach Dateiname:
+// Schwarzweiß zum Auftakt, dann Blau, Grün, Gelb/Orange, Rot, ein neutrales
+// Bild zum Herunterkühlen, zum Schluss das hellste, wärmste Foto. Slides und
+// Miniaturen entstehen aus derselben Liste — sie können dadurch nicht mehr
+// auseinanderlaufen (vorher zwei von Hand gepflegte Listen, bei denen ein
+// falscher data-index aufs falsche Bild gesprungen wäre).
+---
+
+<div class="gallery rise">
+  <div class="gallery__stage">
+    <button class="gallery__nav gallery__nav--prev" id="galPrev" aria-label="Vorheriges Bild">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <div class="gallery__track" id="galTrack">
+      {galerie.map((bild) => (
+        <figure class="gallery__slide">
+          <span class="gallery__ph" aria-hidden="true">Foto folgt</span>
+          <img src={`/assets/galerie/${bild.datei}`} alt={bild.alt} data-media loading={bild.eager ? 'eager' : 'lazy'} />
+        </figure>
+      ))}
+    </div>
+    <button class="gallery__nav gallery__nav--next" id="galNext" aria-label="Nächstes Bild">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+    </button>
+  </div>
+  <div class="gallery__thumbs" id="galThumbs" role="tablist" aria-label="Galerie-Miniaturen">
+    {galerie.map((bild, i) => (
+      <button class="gallery__thumb" data-index={i} role="tab" aria-current={i === 0 ? 'true' : 'false'} aria-label={`Bild ${i + 1}`}><img src={`/assets/galerie/${bild.datei}`} alt="" data-media loading="lazy" /></button>
+    ))}
+  </div>
+</div>

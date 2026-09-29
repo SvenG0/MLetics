@@ -1,0 +1,18 @@
+---
+interface Props {
+  nummer: string;
+  titel: string;
+  kurz: string;
+  punkte: string[];
+}
+const { nummer, titel, kurz, punkte } = Astro.props;
+---
+
+<article class="service rise">
+  <span class="service__no">{nummer}</span>
+  <h3>{titel}</h3>
+  <p>{kurz}</p>
+  <ul>
+    {punkte.map((p) => <li>{p}</li>)}
+  </ul>
+</article>

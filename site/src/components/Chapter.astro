@@ -1,0 +1,29 @@
+---
+// Hülle eines Kapitels: Vollbild-Sektion mit optionalem Hintergrundfoto und
+// der Lasur darüber. Die Galerie nutzt sie ohne Bild (bg/image weggelassen).
+interface Props {
+  id: string;
+  /** Nullbasiert, steuert Rail/Stepper über das JS. */
+  nr: number;
+  /** Farbverlauf-Rückfallebene, z.B. "bg-01". */
+  bg?: string;
+  /** Pfad des Kapitelfotos unter /assets. */
+  bild?: string;
+  /** Zweispaltiges Innenlayout (Text links, Inhalt rechts). */
+  grid?: boolean;
+  wrapStyle?: string;
+}
+const { id, nr, bg, bild, grid = false, wrapStyle } = Astro.props;
+---
+
+<section class="chapter" id={id} data-chapter={nr}>
+  {bg && (
+    <div class={`chapter__bg ${bg}`} aria-hidden="true">
+      {bild && <img class="chapter__bg-img" src={bild} alt="" data-media />}
+      <div class="chapter__bg-grade"></div>
+    </div>
+  )}
+  <div class={grid ? 'wrap chapter__grid' : 'wrap'} style={wrapStyle}>
+    <slot />
+  </div>
+</section>
