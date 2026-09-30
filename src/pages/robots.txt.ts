@@ -8,17 +8,29 @@ import type { APIRoute } from 'astro';
 // nicht mehr gibt. Jetzt wird sie beim Bauen aus `site` erzeugt — die Domain
 // steht wirklich nur noch in astro.config.mjs.
 export const GET: APIRoute = ({ site }) => {
-  const sitemap = site ? new URL('sitemap-index.xml', site).href : '/sitemap-index.xml';
+  // Unterordner = Testaufbau auf GitHub Pages (siehe src/lib/pfad.ts).
+  // Der muss sich aus der Suche heraushalten, sonst stehen später zwei
+  // identische Seiten im Index und Google sucht sich eine aus. Zusätzlich
+  // setzt Base.astro dort noindex in jede Seite — robots.txt allein genügt
+  // nicht, sie verhindert nur das Crawlen, nicht das Aufnehmen einer Adresse,
+  // auf die von woanders verlinkt wird.
+  const testaufbau = import.meta.env.BASE_URL !== '/';
 
-  return new Response(
-    [
-      '# Alles darf indexiert werden — die Seite hat keine internen Bereiche.',
-      'User-agent: *',
-      'Allow: /',
-      '',
-      `Sitemap: ${sitemap}`,
-      '',
-    ].join('\n'),
-    { headers: { 'Content-Type': 'text/plain; charset=utf-8' } },
-  );
+  const zeilen = testaufbau
+    ? [
+        '# Testaufbau — nicht die echte Seite. Bitte nicht indexieren.',
+        'User-agent: *',
+        'Disallow: /',
+      ]
+    : [
+        '# Alles darf indexiert werden — die Seite hat keine internen Bereiche.',
+        'User-agent: *',
+        'Allow: /',
+        '',
+        `Sitemap: ${site ? new URL('sitemap-index.xml', site).href : '/sitemap-index.xml'}`,
+      ];
+
+  return new Response(zeilen.join('\n') + '\n', {
+    headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+  });
 };

@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { pfad } from '../lib/pfad';
 
 // Die Auswahlliste „Anliegen" zieht die Leistungen aus derselben Quelle wie
 // die Karten im Kapitel Treat — neue Leistung anlegen genügt.
@@ -41,7 +42,7 @@ const leistungen = (await getCollection('leistungen')).sort((a, b) => a.data.rei
   <label class="consent">
     <input type="checkbox" id="f-ok" required />
     <span>Ich bin einverstanden, dass meine Angaben zur Bearbeitung meiner Anfrage
-    gespeichert werden. Hinweise dazu in der <a href="/datenschutz" style="color:var(--accent)">Datenschutzerklärung</a>.</span>
+    gespeichert werden. Hinweise dazu in der <a href={pfad('/datenschutz')} style="color:var(--accent)">Datenschutzerklärung</a>.</span>
   </label>
 
   <button type="submit" class="btn btn--solid" style="justify-content:center">Anfrage senden</button>

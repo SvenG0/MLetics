@@ -8,6 +8,7 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Schema from '../components/Schema.astro';
+import { pfad } from '../lib/pfad';
 
 interface Props {
   title?: string;
@@ -28,7 +29,14 @@ const {
 // Kanonische Adresse: sagt Google, welche URL die maßgebliche ist, falls eine
 // Seite über mehrere Wege erreichbar ist.
 const kanonisch = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString() : Astro.url.pathname;
-const ogBild = Astro.site ? new URL('/og-bild.jpg', Astro.site).toString() : '/og-bild.jpg';
+const ogBild = Astro.site ? new URL(pfad('/og-bild.jpg'), Astro.site).toString() : pfad('/og-bild.jpg');
+
+// Liegt die Seite in einem Unterordner, ist das der Testaufbau auf GitHub
+// Pages — die echte Seite liegt immer im Wurzelverzeichnis ihrer Domain.
+// Der Testaufbau darf NICHT in die Suche geraten: Sonst konkurrieren später
+// zwei identische Seiten um dieselben Suchbegriffe, und Google entscheidet
+// selbst welche es zeigt — womöglich die Testadresse.
+const testaufbau = import.meta.env.BASE_URL !== '/';
 ---
 
 <!DOCTYPE html>
@@ -39,8 +47,9 @@ const ogBild = Astro.site ? new URL('/og-bild.jpg', Astro.site).toString() : '/o
 <title>{title}</title>
 <meta name="description" content={description}>
 <link rel="canonical" href={kanonisch}>
+{testaufbau && <meta name="robots" content="noindex, nofollow" />}
 
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href={pfad('/favicon.svg')} type="image/svg+xml">
 <meta name="theme-color" content="#0A0B0D">
 
 <!-- Vorschau beim Teilen (WhatsApp, Facebook, LinkedIn) — ohne diese Angaben

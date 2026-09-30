@@ -5,6 +5,7 @@
 // weil sie mit dem Kapitel-System nichts zu tun haben und es auch nicht
 // stören sollen.
 import Base from './Base.astro';
+import { pfad } from '../lib/pfad';
 
 interface Props {
   title: string;
@@ -15,7 +16,7 @@ interface Props {
 const { title, description, ueberschrift, stand } = Astro.props;
 ---
 
-<Base title={title} description={description} headerPrefix="/" schema={false}>
+<Base title={title} description={description} headerPrefix={pfad('/')} schema={false}>
   <main id="inhalt" class="textseite">
     <div class="wrap">
       <h1>{ueberschrift}</h1>
