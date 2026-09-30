@@ -29,11 +29,13 @@ const daten = {
   },
   areaServed: { '@type': 'City', name: praxis.adresse.ort },
   // Keine festen Sprechzeiten — Termine ausschließlich nach Vereinbarung.
+  // Ohne url: Die Leistungen haben bewusst keine eigenen Unterseiten. Ein
+  // Verweis auf /physiotherapie/ o.ä. würde hier auf eine 404 zeigen —
+  // schlechter als gar kein Verweis.
   availableService: leistungen.map((l) => ({
     '@type': 'MedicalTherapy',
     name: l.data.titel,
     description: l.data.kurz,
-    url: basis + '/' + l.id + '/',
   })),
   founder: {
     '@type': 'Person',

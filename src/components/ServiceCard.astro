@@ -1,13 +1,11 @@
 ---
 interface Props {
-  /** Adresse der Unterseite; entspricht dem Dateinamen in content/leistungen. */
-  id: string;
   nummer: string;
   titel: string;
   kurz: string;
   punkte: string[];
 }
-const { id, nummer, titel, kurz, punkte } = Astro.props;
+const { nummer, titel, kurz, punkte } = Astro.props;
 ---
 
 <article class="service rise">
@@ -17,23 +15,4 @@ const { id, nummer, titel, kurz, punkte } = Astro.props;
   <ul>
     {punkte.map((p) => <li>{p}</li>)}
   </ul>
-  <span class="service__mehr" aria-hidden="true">Mehr erfahren →</span>
-
-  {/* Der Link liegt als eigenes Element über der ganzen Karte, statt den
-      Kartentext zu umschließen. Zwei Gründe:
-      1. Ein Link um den kompletten Inhalt würde Screenreadern Überschrift,
-         Beschreibung und alle vier Aufzählungspunkte am Stück als einen
-         einzigen, endlosen Linknamen vorlesen.
-      2. Der sonst übliche Kniff, das ::after der Überschrift über die Karte zu
-         ziehen, funktioniert hier nicht: .service h3 ist selbst position:relative
-         (für die einlaufende blaue Unterstreichung). Die Fläche hätte sich
-         deshalb nur über die Überschrift gespannt, nicht über die Karte.
-
-      Der Name steht als ausgeblendeter Text IM Link, nicht per
-      aria-labelledby auf der Überschrift: letzteres wurde im Test nicht
-      zuverlässig aufgelöst — der Link stand dann ohne Namen im
-      Accessibility-Baum, also als „Link" ohne Ziel-Angabe. */}
-  <a class="service__link" href={`/${id}/`}>
-    <span class="sr-only">{titel} — mehr erfahren</span>
-  </a>
 </article>
