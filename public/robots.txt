@@ -1,5 +1,0 @@
-# Alles darf indexiert werden — die Seite hat keine internen Bereiche.
-User-agent: *
-Allow: /
-
-Sitemap: https://mletics.de/sitemap-index.xml

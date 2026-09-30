@@ -6,9 +6,11 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   // Muss gesetzt sein, damit canonical-Adressen, die strukturierten Daten und
   // die sitemap.xml absolute URLs erzeugen können.
-  // ACHTUNG: Steht noch auf mletics.de — falls stattdessen mletics.com kommt,
-  // ist das hier die einzige Stelle, die geändert werden muss.
-  // Über SITE_URL überschreibbar (Netlify setzt so etwas beim Deploy).
+  // Steht vorläufig auf mletics.de. Das hier ist tatsächlich die EINZIGE
+  // Stelle, an der die Domain steht — canonical-Adressen, Open-Graph-Links,
+  // JSON-LD, sitemap.xml und robots.txt leiten sich alle daraus ab. Ein
+  // Wechsel auf z.B. mletics.com ist deshalb diese eine Zeile.
+  // Über SITE_URL überschreibbar, falls die Hosting-Umgebung sie setzt.
   site: process.env.SITE_URL ?? 'https://mletics.de',
   integrations: [sitemap()],
 });
