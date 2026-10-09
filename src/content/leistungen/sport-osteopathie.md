@@ -1,6 +1,6 @@
 ---
 reihenfolge: 2
-icon: "aufbau"
+icon: "ziel"
 titel: "Sport-Osteopathie"
 kurz: "Körperliche Zusammenhänge betrachten und funktionelle Einschränkungen ganzheitlich einordnen."
 punkte:

@@ -511,18 +511,17 @@ main{position:relative;z-index:10}
    Kante. */
 .service{transition:box-shadow .4s var(--ease)}
 .service:hover,.service.is-inview{box-shadow:inset 0 0 0 1px var(--accent);z-index:1}
-/* Bildzeichen statt Ziffer. Erbt bewusst den Auftritt der frueheren
-   01/02/03: gleiche Groesse, gleicher gedeckter Grundton, gleicher Wechsel
-   ins Markenblau beim Ueberfahren oder Vorbeiscrollen. Nur konturiert,
-   nie flaechig — sonst saesse ein massiger Block ueber einer feinen
-   Typografie. 46px statt 52px, weil eine Form bei gleicher Hoehe optisch
-   groesser wirkt als eine Zahl. */
+/* Bildzeichen über der Überschrift. Behandlung EINS ZU EINS wie
+   .audience__icon in Kapitel 03 — gleiche Größe, gleiche durchgehende
+   Akzentfarbe, gleicher Versatz beim Überfahren. Frühere Fassungen setzten
+   die Zeichen doppelt so groß und gedeckt; dadurch wirkten sie als eigene
+   Bildmarke statt als beiläufiger Hinweis, und die beiden Kapitel liefen
+   stilistisch auseinander. */
 .service__icon{
-  display:block;margin-bottom:1.4rem;
-  color:var(--line-strong);
-  transition:color .5s var(--ease),transform .5s var(--ease);
+  display:block;color:var(--accent);margin-bottom:1rem;
+  transition:transform .4s var(--ease);
 }
-.service:hover .service__icon,.service.is-inview .service__icon{color:var(--accent);transform:translateX(3px)}
+.service:hover .service__icon,.service.is-inview .service__icon{transform:translateX(3px)}
 .service h3{
   font-family:var(--f-display);font-weight:700;font-variation-settings:'wdth' 88;
   font-size:1.28rem;margin:0 0 .9rem;letter-spacing:-.005em;
