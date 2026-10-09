@@ -52,7 +52,7 @@ const zielgruppen = (await getCollection('zielgruppen')).sort((a, b) => a.data.r
 
       <div class="services">
         {leistungen.map((l) => (
-          <ServiceCard nummer={l.data.nummer} titel={l.data.titel} kurz={l.data.kurz} punkte={l.data.punkte} />
+          <ServiceCard icon={l.data.icon} titel={l.data.titel} kurz={l.data.kurz} punkte={l.data.punkte} />
         ))}
       </div>
     </Chapter>

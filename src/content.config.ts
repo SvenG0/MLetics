@@ -7,7 +7,9 @@ const leistungen = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/leistungen' }),
   schema: z.object({
     reihenfolge: z.number(),
-    nummer: z.string(),
+    /* Bildzeichen der Karte — loest die fruehere Ziffer ab.
+       Die Namen stehen in src/components/LeistungIcon.astro. */
+    icon: z.enum(['hand', 'laeufer', 'erlaubnis']),
     titel: z.string(),
     kurz: z.string(),
     punkte: z.array(z.string()),

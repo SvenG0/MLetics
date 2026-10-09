@@ -1,15 +1,17 @@
 ---
+import LeistungIcon from './LeistungIcon.astro';
+
 interface Props {
-  nummer: string;
+  icon: 'hand' | 'laeufer' | 'erlaubnis';
   titel: string;
   kurz: string;
   punkte: string[];
 }
-const { nummer, titel, kurz, punkte } = Astro.props;
+const { icon, titel, kurz, punkte } = Astro.props;
 ---
 
 <article class="service rise">
-  <span class="service__no">{nummer}</span>
+  <LeistungIcon name={icon} />
   <h3>{titel}</h3>
   <p>{kurz}</p>
   <ul>

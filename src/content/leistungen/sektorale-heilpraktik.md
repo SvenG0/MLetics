@@ -1,6 +1,6 @@
 ---
 reihenfolge: 3
-nummer: "03"
+icon: "erlaubnis"
 titel: "Sektorale Heilpraktik Physiotherapie"
 kurz: "Eigenständige physiotherapeutische Befundung und Behandlung im Rahmen der bestehenden Erlaubnis."
 punkte:
