@@ -321,23 +321,42 @@ function initMLetics(){
       var basisHoehe = galSlides[0].offsetHeight;
       var cs = getComputedStyle(galChapter);
       var polsterung = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
-      var restInhalt = galWrap.offsetHeight - basisHoehe;
-      var verfuegbar = innerHeight - polsterung - restInhalt - 8;
-      /* Ab 240px Bildhöhe greift wie gehabt der übliche Mindestwert
-         (genug Platz vorhanden) — reicht der Platz nicht (sehr flaches
-         Fenster, z.B. Handy im Querformat), schrumpft das Bild lieber
-         weiter (bis zu einem kleinen Sicherheitswert von 90px), statt
-         über den verfügbaren Platz hinauszuwachsen: die Polsterung
-         unten ist fest für den Abstand zum fixierten Vor/Zurück-Button
-         reserviert (siehe #galerie) und darf dafür nicht verdrängt
-         werden. */
-      var hoehe = verfuegbar >= 240
-        ? Math.min(verfuegbar, innerHeight * 0.82)
-        : Math.max(verfuegbar, 90);
+      /* Früher wurde ausschließlich gerechnet, was nach Polsterung,
+         Label und Miniaturen von EINER Bildschirmhöhe übrig bleibt — die
+         Galerie sollte um jeden Preis auf einen Bildschirm passen. Bei
+         einem flachen Fenster ging das nach hinten los: 184px Polsterung,
+         rund 75px Miniaturen und das Label gehen vorweg ab, und übrig
+         blieb ein Briefmarkenbild. Gemessen bei 2000px Breite:
+
+             Fensterhöhe 1032  ->  Foto 1022x682
+             Fensterhöhe  760  ->  Foto  614x410
+             Fensterhöhe  620  ->  Foto  406x271
+             Fensterhöhe  500  ->  Foto  225x150   <- unbrauchbar
+
+         Jetzt umgekehrt gedacht: Das Foto bekommt eine vernünftige Größe,
+         und wenn das Kapitel dadurch höher wird als der Bildschirm, darf
+         man eben scrollen. .chapter ist min-height, wächst also mit. Der
+         Abstand zum schwebenden Vor/Zurück-Button bleibt gewahrt, weil er
+         in der unteren Polsterung von #galerie steckt und nicht hier. */
+      var ausHoehe = innerHeight * 0.68;
+      /* Höher als die Breite hergibt bringt nichts: ein liegendes Foto
+         wird dann nur seitlich beschnitten-- es bliebe oben und unten
+         Luft stehen. 1.55 entspricht etwa dem Seitenverhältnis 3:2. */
+      var ausBreite = galTrack.clientWidth / 1.55;
+      /* Untergrenze, damit das Bild bei flachem Fenster nicht kollabiert
+         — aber selbst relativ zur Fensterhöhe, damit sie auf einem Handy
+         im Querformat nicht absurd wird. */
+      var mindest = Math.min(300, innerHeight * 0.55);
+      var hoehe = Math.min(ausBreite, Math.max(mindest, ausHoehe));
       galSlides.forEach(function(s){ s.style.height = Math.round(hoehe) + 'px'; });
     }
     galHoeheAnpassen();
     window.addEventListener('resize', galHoeheAnpassen);
+    /* Noch einmal nachmessen, wenn Schriften und Bilder stehen: vorher
+       kann galWrap.offsetHeight (Label, Miniaturen) noch abweichen und
+       die Rechnung verzerren. */
+    if(document.fonts && document.fonts.ready){ document.fonts.ready.then(galHoeheAnpassen); }
+    window.addEventListener('load', galHoeheAnpassen);
   }
 
   /* Formular — Prototyp, versendet noch nicht */

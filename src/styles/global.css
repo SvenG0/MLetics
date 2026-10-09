@@ -372,7 +372,19 @@ main{position:relative;z-index:10}
    galHoeheAnpassen() liest die Polsterung live aus, das Bild wird
    also automatisch kleiner statt dass hier eine zweite Zahl gepflegt
    werden müsste. */
-#galerie{padding-block:6rem 5.5rem}
+/* Obere Polsterung schrumpft bei flachem Fenster mit: 6rem sind dort ein
+   Fünftel der gesamten Höhe und gehen dem Foto verloren. Unten bleibt der
+   Wert fest — dort ist der Abstand zum schwebenden Vor/Zurück-Button
+   reserviert und darf nicht schrumpfen. */
+#galerie{padding-block:clamp(3rem,6vh,6rem) 5.5rem}
+/* Flaches Fenster (kleiner Laptop, nicht maximiertes Fenster): Miniaturen
+   kleiner, damit mehr für das eigentliche Foto bleibt. */
+@media(max-height:760px){
+  .gallery{margin-top:1rem}
+  .gallery__thumbs{margin-top:.6rem}
+  .gallery__thumb{flex-basis:34px;height:48px}
+  .gallery__thumb[aria-current="true"]{flex-basis:96px}
+}
 .chapter__grid{display:grid;gap:var(--sp-5);align-items:center}
 @media(min-width:1024px){
   .chapter__grid{grid-template-columns:minmax(0,1fr) minmax(0,.85fr)}
