@@ -1,6 +1,6 @@
 ---
 reihenfolge: 1
-icon: "gelenk"
+icon: "beweglichkeit"
 titel: "Physiotherapie"
 kurz: "Beschwerden behandeln, Beweglichkeit verbessern und Funktionen wiederherstellen."
 punkte:

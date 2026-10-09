@@ -1,77 +1,70 @@
 ---
 // Icons der Leistungskarten — ersetzen die früheren Ziffern 01/02/03.
 //
-// GESTALTUNGSPRINZIP: konstruierte Zeichen, keine gezeichneten Gegenstände.
-// Der erste Entwurf arbeitete gegenständlich (Hand, laufende Figur, Schild)
-// und wirkte dadurch wie aus einem Icon-Baukasten — Strichmännchen und
-// Comic-Hand passen nicht zu einer Praxis, die mit Profisportlern arbeitet.
+// GESTALTUNGSPRINZIP: ein offener, fein gezogener Ring, in dem eine einzige
+// Geste sitzt. Alle drei teilen denselben Ring — was sie unterscheidet, ist
+// allein die Linie darin. Dadurch wirken sie als Satz, wie drei Signets,
+// und nicht als drei zusammengesuchte Symbole.
 //
-// Diese Fassung baut alle drei aus denselben Grundformen: Kreis, Gerade,
-// Kreisbogen, auf dem 24er-Raster, Winkel in geraden Schritten. Dieselbe
-// Logik wie die Haarlinien und die schmale Archivo auf der Seite: wenige,
-// exakt gesetzte Elemente statt vieler erzählender Details. Die Zeichen
-// tragen nicht allein die Bedeutung — die Überschrift steht direkt
-// darunter. Sie tragen den Ton.
+// Der Ring ist bewusst nicht geschlossen: oben rechts bleibt eine Lücke,
+// durch die die innere Linie hinausläuft. Diese eine Unregelmäßigkeit
+// nimmt der Form das Mechanische — sie wirkt gezogen statt gezirkelt.
 //
-// Farbe kommt aus dem CSS (.service__icon), deshalb stroke="currentColor".
+// Drei Fassungen waren vorher daneben:
+//   1. Gegenständliche Piktogramme (Hand, Läufer, Schild) — Icon-Baukasten.
+//   2. Geometrische Konstruktionen (Knoten, Drehpunkt, Doppelring) —
+//      sauber, aber technische Diagramme.
+//   3. Freie Bögen ohne Klammer — die drei Bogenlinien lasen sich als
+//      WLAN-Zeichen, die geschwungene Linie als Flamme.
+// Der offene Ring aus Fassung 3 war der einzige Treffer; er ist jetzt die
+// gemeinsame Form.
+//
+// Strichstärke 0.85 bei 54px — die Seite lebt von Haarlinien, die Zeichen
+// jetzt auch. Farbe kommt aus dem CSS (.service__icon).
 
 interface Props {
-  name: 'gelenk' | 'kette' | 'siegel';
+  name: 'beweglichkeit' | 'aufbau' | 'erlaubnis';
 }
 const { name } = Astro.props;
 
 const gemeinsam = {
-  width: '48',
-  height: '48',
+  width: '54',
+  height: '54',
   viewBox: '0 0 24 24',
   fill: 'none',
   stroke: 'currentColor',
-  'stroke-width': '1.25',
+  'stroke-width': '0.85',
   'stroke-linecap': 'round' as const,
-  'stroke-linejoin': 'round' as const,
   'aria-hidden': 'true',
 };
+
+// Der gemeinsame Ring: fast geschlossen, Lücke oben rechts.
+const ring = 'M18.9 7.2a9 9 0 1 1-4.3-4';
 ---
 
-{name === 'gelenk' && (
+{name === 'beweglichkeit' && (
   <svg class="service__icon" {...gemeinsam}>
-    {/* Physiotherapie: ein Segment schwingt um einen Drehpunkt — zwei
-        Stellungen, dazwischen der Weg. Bewegungsumfang, wie er in der
-        Befundung gemessen wird.
-
-        Zwei Verwerfungen vorher: ein Goniometer aus zwei Schenkeln war
-        unten links zusammengedrängt und der Bogen lief falsch herum;
-        danach Punkt mit aufsteigenden Bögen — das liest sich zwingend als
-        WLAN-Symbol. Diese Fassung nutzt denselben Knotenpunkt wie die
-        Kette daneben, die drei Zeichen wirken dadurch als Satz. */}
-    <circle cx="7" cy="17" r="1.9" />
-    <path d="M7 15.1V6.5" />
-    <path d="m8.5 15.8 6.5-5.5" />
-    <path d="M7 6.5A10.5 10.5 0 0 1 15 10.3" />
+    {/* Physiotherapie: eine ruhige S-Linie — die wiedergewonnene
+        Beweglichkeit, die aufgerichtete Haltung. */}
+    <path d={ring} />
+    <path d="M9.2 16.9C13.2 15 10.4 9 14.4 7.1" />
   </svg>
 )}
 
-{name === 'kette' && (
+{name === 'aufbau' && (
   <svg class="service__icon" {...gemeinsam}>
-    {/* Sport-Osteopathie: drei verbundene Punkte — die funktionelle Kette.
-        Der Kern der Leistung ist, dass die Ursache selten dort liegt, wo es
-        weh tut; das Zeichen zeigt Zusammenhang, nicht Sport. */}
-    <circle cx="5.6" cy="6.2" r="2.1" />
-    <circle cx="18.4" cy="10.4" r="2.1" />
-    <circle cx="9.8" cy="18.9" r="2.1" />
-    <path d="M7.6 6.9 16.4 9.8" />
-    <path d="M17.5 12.3 10.8 17" />
-    <path d="M6.2 8.2 9.2 16.9" />
+    {/* Sport-Osteopathie: eine Linie, die ansteigt und über den Ring
+        hinausführt — Belastbarkeit, die aufgebaut wird. */}
+    <path d={ring} />
+    <path d="M8.2 16.2C11 10.2 15.4 6.4 21.2 4.6" />
   </svg>
 )}
 
-{name === 'siegel' && (
+{name === 'erlaubnis' && (
   <svg class="service__icon" {...gemeinsam}>
-    {/* Sektorale Heilpraktik: Siegel — zwei konzentrische Ringe mit Haken,
-        die Form amtlicher Beglaubigung. Bewusst kein Schild: das steht für
-        Abwehr und Sicherheitssoftware, hier geht es um eine Erlaubnis. */}
-    <circle cx="12" cy="12" r="9.1" />
-    <circle cx="12" cy="12" r="6.4" />
-    <path d="m9.4 12.1 1.9 1.9 3.6-4" />
+    {/* Sektorale Heilpraktik: der Haken, der aus dem Ring hinausläuft —
+        eine Erlaubnis, als Signatur gesetzt statt als Stempel. */}
+    <path d={ring} />
+    <path d="m8.9 11.9 2.8 2.8 8.4-9.1" />
   </svg>
 )}
