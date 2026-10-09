@@ -21,7 +21,6 @@ const zielgruppen = defineCollection({
   schema: z.object({
     reihenfolge: z.number(),
     titel: z.string(),
-    icon: z.enum(['trend', 'herz']),
     text: z.string(),
   }),
 });

@@ -532,12 +532,12 @@ main{position:relative;z-index:10}
    Kante. */
 .service{transition:box-shadow .4s var(--ease)}
 .service:hover,.service.is-inview{box-shadow:inset 0 0 0 1px var(--accent);z-index:1}
-/* Bildzeichen über der Überschrift. Behandlung EINS ZU EINS wie
-   .audience__icon in Kapitel 03 — gleiche Größe, gleiche durchgehende
-   Akzentfarbe, gleicher Versatz beim Überfahren. Frühere Fassungen setzten
-   die Zeichen doppelt so groß und gedeckt; dadurch wirkten sie als eigene
-   Bildmarke statt als beiläufiger Hinweis, und die beiden Kapitel liefen
-   stilistisch auseinander. */
+/* Bildzeichen über der Überschrift. Die Behandlung stammt von den Icons,
+   die bis vor Kurzem in Kapitel 03 standen: 26px, durchgehend in der
+   Akzentfarbe, 3px Versatz beim Überfahren. Dort sind sie inzwischen
+   entfernt, damit allein die Überschrift vorne steht — hier blieben sie.
+   Frühere Fassungen setzten die Zeichen doppelt so groß und gedeckt;
+   dadurch wirkten sie als eigene Bildmarke statt als beiläufiger Hinweis. */
 .service__icon{
   display:block;color:var(--accent);margin-bottom:1rem;
   transition:transform .4s var(--ease);
@@ -580,11 +580,6 @@ main{position:relative;z-index:10}
    (box-shadow statt border, damit die Nachbarkarte nicht verschoben
    wird). */
 .audience__card:hover,.audience__card.is-inview{box-shadow:inset 0 0 0 1px var(--accent);z-index:1}
-.audience__icon{
-  display:block;color:var(--accent);margin-bottom:1rem;
-  transition:transform .4s var(--ease);
-}
-.audience__card:hover .audience__icon,.audience__card.is-inview .audience__icon{transform:translateX(3px)}
 
 /* ── Kennzahlen ─────────────────────────────────────────── */
 .stats{display:grid;gap:var(--sp-3);margin-top:var(--sp-4)}
