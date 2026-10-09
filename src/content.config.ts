@@ -9,7 +9,7 @@ const leistungen = defineCollection({
     reihenfolge: z.number(),
     /* Bildzeichen der Karte — loest die fruehere Ziffer ab.
        Die Namen stehen in src/components/LeistungIcon.astro. */
-    icon: z.enum(['hand', 'laeufer', 'erlaubnis']),
+    icon: z.enum(['gelenk', 'kette', 'siegel']),
     titel: z.string(),
     kurz: z.string(),
     punkte: z.array(z.string()),

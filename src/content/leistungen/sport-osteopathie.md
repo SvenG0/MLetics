@@ -1,6 +1,6 @@
 ---
 reihenfolge: 2
-icon: "laeufer"
+icon: "kette"
 titel: "Sport-Osteopathie"
 kurz: "Körperliche Zusammenhänge betrachten und funktionelle Einschränkungen ganzheitlich einordnen."
 punkte:
