@@ -118,15 +118,36 @@ a{color:inherit}
 .eyebrow::after{content:"";height:1px;flex:1;max-width:5rem;background:var(--line-strong)}
 
 /* ── Navigation: EINE schwebende Leiste — Marke, Links und CTA
-   in einem Container. Bewusst NICHT fixed: auf Wunsch nicht mehr
-   dauerhaft sichtbar beim Scrollen, sondern nur oben auf der Seite —
-   position:absolute setzt sie einmalig an den Seitenanfang und lässt
-   sie dann normal mit dem Dokument nach oben aus dem Bild scrollen,
-   statt am Bildschirm zu kleben wie bei position:fixed. */
+   in einem Container. Jetzt FIXIERT, also dauerhaft sichtbar.
+   (Sie war zwischenzeitlich absolut positioniert und scrollte weg.)
+
+   Fixiert kostet sie allerdings dauerhaft Platz: auf einem 390x740-Handy
+   reichte sie bis 94px herunter — 13% des Bildschirms, die nie wieder
+   frei werden. Dagegen zwei Stufen:
+
+   1. KOMPAKT ab 80px Scrollweg: kleineres Logo, weniger Polsterung.
+   2. WEGFAHREN auf engen Bildschirmen beim Runterscrollen, Rückkehr
+      beim ersten Hochscrollen. Bewusst nicht nur nach Breite, sondern
+      auch nach Höhe: ein flaches Fenster am Rechner hat dasselbe
+      Platzproblem wie ein Telefon. */
 .nav{
-  position:absolute;inset:0 0 auto;z-index:60;
+  position:fixed;inset:0 0 auto;z-index:60;
   padding:1.35rem 0;pointer-events:none;
+  transition:transform .38s var(--ease),padding .3s var(--ease);
 }
+/* Stufe 1 — kompakt, sobald gescrollt wird. */
+.nav[data-kompakt="true"]{padding-block:.6rem}
+.nav[data-kompakt="true"] .mark__logo{height:42px}
+@media(min-width:700px){.nav[data-kompakt="true"] .mark__logo{height:50px}}
+
+/* Stufe 2 — nur auf engen oder flachen Bildschirmen. 130% statt 100%,
+   damit auch der Schlagschatten der Leiste mit aus dem Bild läuft. */
+@media(max-width:699px),(max-height:700px){
+  .nav[data-weg="true"]{transform:translateY(-130%)}
+}
+/* Bewegung ist hier reine Bequemlichkeit — wer sie abgestellt hat,
+   bekommt die Leiste ohne Fahrt, aber mit derselben Logik. */
+@media(prefers-reduced-motion:reduce){.nav{transition:none}}
 .bar{
   position:relative;
   pointer-events:auto;
@@ -376,7 +397,10 @@ main{position:relative;z-index:10}
    Fünftel der gesamten Höhe und gehen dem Foto verloren. Unten bleibt der
    Wert fest — dort ist der Abstand zum schwebenden Vor/Zurück-Button
    reserviert und darf nicht schrumpfen. */
-#galerie{padding-block:clamp(3rem,6vh,6rem) 5.5rem}
+/* Untergrenze 4.75rem statt 3rem: Tiefer darf die Polsterung nicht, sonst
+   verschwindet das Kapitel-Label hinter der fixierten Kopfleiste, wenn man
+   von unten wieder hochscrollt und sie dabei zurueckkommt. */
+#galerie{padding-block:clamp(5.75rem,6vh,6rem) 5.5rem}
 /* Flaches Fenster (kleiner Laptop, nicht maximiertes Fenster): Miniaturen
    kleiner, damit mehr für das eigentliche Foto bleibt. */
 @media(max-height:760px){
