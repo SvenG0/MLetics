@@ -29,49 +29,24 @@ function initMLetics(){
     if(m.tagName === 'IMG' && m.complete && m.naturalWidth === 0) m.remove();
   });
 
-  /* Kopfleiste: kompakt ab 80px Scrollweg, und auf engen oder flachen
-     Bildschirmen zusätzlich wegfahren beim Runterscrollen. Läuft auf JEDER
-     Seite — die Leiste steht überall.
+  /* Kopfleiste: schrumpft ab 80px Scrollweg. Läuft auf JEDER Seite —
+     die Leiste steht überall. 80px, damit das Zusammenschrumpfen erst nach
+     einer bewussten Bewegung greift und nicht beim Antippen des Scrollrads.
 
-     Die Schwellen sind nicht beliebig: 80px, damit das Zusammenschrumpfen
-     erst nach einer bewussten Bewegung greift und nicht beim Antippen des
-     Scrollrads. 6px Mindestweg, damit die Leiste beim Gummiband-Effekt auf
-     iOS und bei winzigen Bewegungen nicht flackert. 200px, bevor sie
-     überhaupt wegfahren darf — ganz oben soll sie immer stehen. */
+     Eine frühere Fassung ließ sie auf engen Bildschirmen zusätzlich
+     wegfahren (mit Richtungserkennung und Fokus-Absicherung). Auf Wunsch
+     wieder entfernt: Sie soll stehen bleiben, nur eben flacher. */
   var navEl = document.querySelector('.nav');
   if(navEl){
-    var navLetzterY = window.scrollY;
     var navTicking = false;
-
     function navAktualisieren(){
-      var y = window.scrollY;
-      navEl.dataset.kompakt = y > 80 ? 'true' : 'false';
-      /* Solange der Tastaturfokus in der Leiste sitzt, fährt sie nie weg.
-         Bewusst hier UND unten als focusin-Ereignis: das Ereignis reagiert
-         sofort, diese Abfrage fängt den Fall, dass es ausbleibt (etwa wenn
-         das Fenster keinen Systemfokus hat). Sonst säße der Fokus auf einem
-         Link, den niemand sieht. */
-      if(navEl.contains(document.activeElement)){
-        navEl.dataset.weg = 'false';
-        navLetzterY = y;
-        navTicking = false;
-        return;
-      }
-      if(Math.abs(y - navLetzterY) > 6){
-        navEl.dataset.weg = (y > navLetzterY && y > 200) ? 'true' : 'false';
-        navLetzterY = y;
-      }
+      navEl.dataset.kompakt = window.scrollY > 80 ? 'true' : 'false';
       navTicking = false;
     }
     window.addEventListener('scroll', function(){
       if(!navTicking){ navTicking = true; requestAnimationFrame(navAktualisieren); }
     }, {passive: true});
     navAktualisieren();
-
-    /* Wandert der Tastaturfokus in die weggefahrene Leiste, holen wir sie
-       zurück. Ohne das säße der Fokus auf einem Link, den niemand sieht —
-       ein Fehler, der mit der Maus nie auffällt. */
-    navEl.addEventListener('focusin', function(){ navEl.dataset.weg = 'false'; });
   }
 
   /* ── Teil 2: nur Seiten mit Kapiteln ───────────────────────────────

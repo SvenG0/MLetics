@@ -22,6 +22,9 @@ pnpm-debug.log*
 # ── Arbeitsmaterial, das nicht auf den Server gehört ────────────────
 # Rohmaterial und Notizen: liegen lokal, sind für die Seite nicht nötig.
 Bilder/
+# Quellordner der Galeriefotos. Im Repo liegen nur die fertig
+# umgewandelten Graustufen-Fassungen in src/assets/galerie/.
+Galerie Neu/
 # Nur der Quellordner im Projektstamm mit den Original-Logodateien.
 # Ohne den führenden Schrägstrich griff das Muster auf dem Mac (Dateisystem
 # unterscheidet keine Groß-/Kleinschreibung) auch auf src/assets/logo/ — das im

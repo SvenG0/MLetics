@@ -125,28 +125,25 @@ a{color:inherit}
    reichte sie bis 94px herunter — 13% des Bildschirms, die nie wieder
    frei werden. Dagegen zwei Stufen:
 
-   1. KOMPAKT ab 80px Scrollweg: kleineres Logo, weniger Polsterung.
-   2. WEGFAHREN auf engen Bildschirmen beim Runterscrollen, Rückkehr
-      beim ersten Hochscrollen. Bewusst nicht nur nach Breite, sondern
-      auch nach Höhe: ein flaches Fenster am Rechner hat dasselbe
-      Platzproblem wie ein Telefon. */
+   Sie schrumpft deshalb ab 80px Scrollweg: kleineres Logo, weniger
+   Polsterung. Weiter geht es nicht — .mark hat min-height:44px, das ist
+   die Mindestgröße einer Schaltfläche für den Finger und darf nicht
+   unterschritten werden. Damit liegt die Unterkante bei rund 64px statt
+   94px, also 8,6% statt 13% eines 740px-Schirms.
+
+   Eine frühere Fassung ließ die Leiste auf engen Bildschirmen beim
+   Runterscrollen wegfahren. Das brachte mehr Platz, aber die Leiste war
+   dann eben zeitweise weg — auf Wunsch wieder entfernt. */
 .nav{
   position:fixed;inset:0 0 auto;z-index:60;
   padding:1.35rem 0;pointer-events:none;
   transition:transform .38s var(--ease),padding .3s var(--ease);
 }
-/* Stufe 1 — kompakt, sobald gescrollt wird. */
-.nav[data-kompakt="true"]{padding-block:.6rem}
-.nav[data-kompakt="true"] .mark__logo{height:42px}
-@media(min-width:700px){.nav[data-kompakt="true"] .mark__logo{height:50px}}
-
-/* Stufe 2 — nur auf engen oder flachen Bildschirmen. 130% statt 100%,
-   damit auch der Schlagschatten der Leiste mit aus dem Bild läuft. */
-@media(max-width:699px),(max-height:700px){
-  .nav[data-weg="true"]{transform:translateY(-130%)}
-}
-/* Bewegung ist hier reine Bequemlichkeit — wer sie abgestellt hat,
-   bekommt die Leiste ohne Fahrt, aber mit derselben Logik. */
+/* Kompakt, sobald gescrollt wird. */
+.nav[data-kompakt="true"]{padding-block:.45rem}
+.nav[data-kompakt="true"] .bar{padding-block:.35rem}
+.nav[data-kompakt="true"] .mark__logo{height:34px}
+@media(min-width:700px){.nav[data-kompakt="true"] .mark__logo{height:46px}}
 @media(prefers-reduced-motion:reduce){.nav{transition:none}}
 .bar{
   position:relative;
