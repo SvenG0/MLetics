@@ -214,6 +214,15 @@ a{color:inherit}
 /* Auf jeder Breite sichtbar — ersetzt den Menü-Button. Ab 980px kommen
    die Textlinks (.bar__nav) links dazu; darunter ist der CTA der
    einzige, direkte Weg von der Kopfzeile zum Kontakt-Kapitel. */
+/* Kein Leuchten fuer den Knopf INNERHALB der Leiste. Das
+   box-shadow von .btn--solid reicht 12px nach unten (8px Versatz,
+   24px Weichzeichnung, -8px Verkleinerung). Im kompakten Zustand
+   bleiben unter dem Knopf aber nur 7px bis zur Unterkante der Leiste —
+   der blaue Schein stand damit 5px ueber deren Linie hinaus. Gemessen
+   bei 390px Breite. Frei auf dem Foto (Auftakt, Leistungsseiten) bleibt
+   das Leuchten erhalten; dort traegt es den Knopf. */
+.bar .bar__cta{box-shadow:none}
+
 /* margin-left:auto schiebt den Knopf an den rechten Rand.
    Vorher uebernahm das .bar__nav — die ist aber unter 980px ausgeblendet,
    und eine ausgeblendete Box traegt keine auto-Marge. Dadurch klebte der
