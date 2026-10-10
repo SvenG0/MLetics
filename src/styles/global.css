@@ -214,7 +214,14 @@ a{color:inherit}
 /* Auf jeder Breite sichtbar — ersetzt den Menü-Button. Ab 980px kommen
    die Textlinks (.bar__nav) links dazu; darunter ist der CTA der
    einzige, direkte Weg von der Kopfzeile zum Kontakt-Kapitel. */
-.bar .bar__cta{margin-left:.3rem;display:inline-flex}
+/* margin-left:auto schiebt den Knopf an den rechten Rand.
+   Vorher uebernahm das .bar__nav — die ist aber unter 980px ausgeblendet,
+   und eine ausgeblendete Box traegt keine auto-Marge. Dadurch klebte der
+   Kontakt-Knopf auf dem Handy am Logo und rechts standen 52px (15% der
+   Leiste) leer. Jetzt traegt der Knopf die Marge selbst; ab 980px ueber-
+   nimmt zusaetzlich die Menueleiste, beides stoert sich nicht. */
+.bar .bar__cta{margin-left:auto;display:inline-flex}
+@media(min-width:980px){.bar .bar__cta{margin-left:.3rem}}
 
 .btn{
   display:inline-flex;align-items:center;gap:.5rem;
