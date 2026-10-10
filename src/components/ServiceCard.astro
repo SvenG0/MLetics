@@ -1,17 +1,17 @@
 ---
-import LeistungIcon from './LeistungIcon.astro';
-
+// Leistungskarte — bewusst OHNE Bildzeichen: Die Überschrift soll allein
+// vorne stehen, wie in Kapitel 03. Damit hat die Seite nun gar keine
+// dekorativen Icons mehr; die einzigen verbliebenen SVGs sind die
+// Pfeiltasten der Galerie, und die sind Bedienelemente, keine Zierde.
 interface Props {
-  icon: 'puls' | 'ziel' | 'siegel';
   titel: string;
   kurz: string;
   punkte: string[];
 }
-const { icon, titel, kurz, punkte } = Astro.props;
+const { titel, kurz, punkte } = Astro.props;
 ---
 
 <article class="service rise">
-  <LeistungIcon name={icon} />
   <h3>{titel}</h3>
   <p>{kurz}</p>
   <ul>
