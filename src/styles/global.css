@@ -221,7 +221,25 @@ a{color:inherit}
    der blaue Schein stand damit 5px ueber deren Linie hinaus. Gemessen
    bei 390px Breite. Frei auf dem Foto (Auftakt, Leistungsseiten) bleibt
    das Leuchten erhalten; dort traegt es den Knopf. */
-.bar .bar__cta{box-shadow:none}
+.bar .bar__cta{
+  box-shadow:none;
+  /* Schlanker als die freistehenden Knoepfe. .btn bringt min-height:44px
+     mit und wurde damit 48px hoch — in der kompakten Leiste (61px) blieb
+     unten kein Platz mehr fuer den Lesefortschritt, der 2px hoch am
+     unteren Innenrand sitzt. Gemessen: Knopf endete bei 54.8px, die Linie
+     begann bei 52.8px — 2px Ueberlappung, der blaue Knopf lag also auf
+     der Linie. Mit 34px bleiben in beiden Zustaenden mindestens 3px frei.
+     24px waeren das Minimum fuer ein Zeigerziel (WCAG 2.2 AA), 34 liegt
+     komfortabel darueber. */
+  /* Feste Hoehe statt min-height plus Polsterung: Die Hoehe ergab sich
+     sonst aus Zeilenhoehe und Schriftmetrik und fiel je nach Browser
+     anders aus — genau deshalb sah es auf dem iPhone anders aus als im
+     Test. 32px sind in beiden Zustaenden deterministisch und lassen
+     rund 5px Luft bis zur Fortschrittslinie (vorher 0.7px, davor 2px
+     Ueberlappung). Als Zeigerziel bleibt der Knopf mit 32px klar ueber
+     den 24px, die WCAG 2.2 AA im Web verlangt. */
+  min-height:0;height:32px;padding:0 1.05rem;font-size:.82rem;
+}
 
 /* margin-left:auto schiebt den Knopf an den rechten Rand.
    Vorher uebernahm das .bar__nav — die ist aber unter 980px ausgeblendet,
