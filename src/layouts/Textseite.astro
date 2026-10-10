@@ -64,7 +64,10 @@ const { title, description, ueberschrift, stand } = Astro.props;
   .textseite p { margin: 0 0 1rem; max-width: 62ch; }
   .textseite ul { margin: 0 0 1rem; padding-left: 1.1rem; max-width: 62ch; }
   .textseite li { margin-bottom: 0.4rem; }
-  .textseite a { color: var(--accent-soft); text-decoration: underline; text-underline-offset: 3px; }
+  /* --accent-soft erreichte hier nur 3.71:1; Links im Fliesstext sind
+     normal grosser Text und brauchen 4.5:1. Unterstrichen bleiben sie
+     ohnehin, Farbe ist also nicht das einzige Erkennungsmerkmal. */
+  .textseite a { color: var(--accent-text); text-decoration: underline; text-underline-offset: 3px; }
   .textseite a:hover { color: var(--text); }
   .textseite dt { color: var(--text); font-weight: 500; margin-top: 1rem; }
   .textseite dd { color: var(--muted); margin: 0.2rem 0 0; line-height: 1.75; }

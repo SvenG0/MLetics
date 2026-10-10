@@ -15,6 +15,12 @@
   --brand-light:#4A8CC9;    /* aufgehelltes Blau für Glüh-/Lichteffekte */
   --accent:#2765A5;
   --accent-soft:#346EAA;
+  /* Markenblau NUR fuer Text. --accent (#2765A5) erreicht auf dem dunklen
+     Grund gemessene 3.27:1 — genug fuer Linien, Rahmen und Fokusringe
+     (dort verlangt WCAG 3:1), aber zu wenig fuer Text (4.5:1). Das
+     aufgehellte Blau kommt auf 5.52:1. Deshalb getrennt gehalten: wer
+     --accent anfasst, aendert nicht versehentlich die Lesbarkeit. */
+  --accent-text:#4A8CC9;
   --on-accent:#F2F0EA;      /* Text auf Akzent-Blau — 5.3:1 */
   /* Das Logo-PNG ist bewusst teiltransparent gerendert (kein einziges
      Blau-Pixel darin ist voll deckend, größtenteils ~65-70% Deckkraft)
@@ -53,7 +59,11 @@
    „ansmoothen" und leicht ruckelig wirken. Wo wir selbst weich scrollen
    wollen, übergeben wir behavior:'smooth' gezielt per JS an
    scrollIntoView() — siehe unten. */
-html{-webkit-text-size-adjust:100%}
+/* Seit die Kopfleiste fixiert ist, kann sie beim Tabben oder bei einem
+   Ankersprung das fokussierte Element verdecken — WCAG 2.2 AA „Focus Not
+   Obscured". scroll-padding hält oben so viel frei, wie die Leiste in
+   ihrem groessten Zustand einnimmt (1.35rem Polsterung + 84px Leiste). */
+html{-webkit-text-size-adjust:100%;scroll-padding-top:7.5rem}
 body{
   margin:0;background:var(--bg);color:var(--text);
   font-family:var(--f-body);font-weight:300;font-size:1rem;line-height:1.7;
@@ -93,7 +103,11 @@ a{color:inherit}
 }
 .display--sm{font-size:clamp(2rem,4.5vw,3.5rem)}
 .lead{font-size:clamp(1.05rem,1.35vw,1.25rem);line-height:1.75;max-width:42ch;color:#D6D5D2}
-.lead--brand{color:var(--accent-soft);font-weight:500}
+/* War --accent-soft (#346EAA): auf dem dunklen Grund nur 3.71:1 und damit
+   unter den 4.5:1, die WCAG fuer normal grossen Text verlangt — 19.4px
+   zaehlen noch nicht als "large text" (dafuer braeuchte es 24px). Das
+   aufgehellte Marken-Blau erreicht gemessene 5.52:1. */
+.lead--brand{color:var(--accent-text);font-weight:500}
 /* War bisher starr 1rem, während .lead auf breiten Screens bis 1.25rem
    mitwuchs — auf großen Bildschirmen wirkte Fließtext dadurch neben
    der Bildgröße klein und beiläufig. Skaliert jetzt genauso mit. */
@@ -114,7 +128,7 @@ a{color:inherit}
   font-size:.8rem;letter-spacing:.22em;text-transform:uppercase;
   color:var(--muted);margin:0 0 var(--sp-3);
 }
-.eyebrow b{color:var(--accent);font-weight:700}
+.eyebrow b{color:var(--accent-text);font-weight:700}
 .eyebrow::after{content:"";height:1px;flex:1;max-width:5rem;background:var(--line-strong)}
 
 /* ── Navigation: EINE schwebende Leiste — Marke, Links und CTA
@@ -595,7 +609,12 @@ main{position:relative;z-index:10}
 .field input:focus,.field textarea:focus,.field select:focus{border-color:var(--accent);background:rgba(255,255,255,.06);outline:none}
 .hintline{font-size:.78rem;color:var(--muted);margin:.4rem 0 0}
 .consent{display:flex;gap:.75rem;align-items:flex-start;font-size:.85rem;color:var(--muted);line-height:1.6}
-.consent input{width:20px;height:20px;margin-top:.2rem;flex:none;accent-color:var(--accent)}
+/* 24px statt 20px: WCAG 2.2 AA verlangt fuer Zeigerziele im Web
+   mindestens 24x24 CSS-Pixel. (Die 44pt aus den Apple-Richtlinien sind
+   eine Plattformempfehlung, keine Web-Anforderung — hier zaehlen 24.)
+   Der Link „Datenschutzerklaerung" im Satz daneben bleibt klein: fuer
+   Ziele innerhalb eines Satzes greift die Inline-Ausnahme. */
+.consent input{width:24px;height:24px;margin-top:.1rem;flex:none;accent-color:var(--accent)}
 
 .contact-list,.vita{display:grid;gap:var(--sp-3);margin-top:var(--sp-3)}
 .contact-list dt,.vita dt{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
@@ -612,10 +631,18 @@ main{position:relative;z-index:10}
 /* Kleines Standalone-Label, z. B. „Für wen?" über zwei Textblöcken */
 .tag{
   display:block;font-family:var(--f-body);font-weight:600;font-size:.72rem;
-  letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--accent-text);margin-bottom:1rem;
 }
 
-.contact-list a{position:relative;text-decoration:none;border-bottom:1px solid var(--line-strong);padding-bottom:2px;transition:border-color .3s}
+/* Telefon und E-Mail stehen allein in ihrer Zeile, nicht in einem Satz —
+   die Inline-Ausnahme greift hier also nicht. Mit inline-flex und
+   min-height erreichen sie die geforderten 24px Hoehe, ohne dass sich
+   optisch etwas aendert. */
+.contact-list a{
+  position:relative;display:inline-flex;align-items:center;min-height:24px;
+  text-decoration:none;border-bottom:1px solid var(--line-strong);
+  padding-bottom:2px;transition:border-color .3s;
+}
 .contact-list a:hover{border-color:var(--accent)}
 /* Klickfläche unsichtbar auf 44px vergrößern, ohne die Optik zu ändern. */
 .contact-list a::after{content:"";position:absolute;inset:-11px -6px}

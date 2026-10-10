@@ -36,9 +36,18 @@ const bild = (datei: string) => dateien[`../assets/galerie/${datei}`].default;
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
     </button>
   </div>
-  <div class="gallery__thumbs" id="galThumbs" role="tablist" aria-label="Galerie-Miniaturen">
+  {/* Bewusst OHNE role="tablist"/role="tab": Diese Rollen versprechen
+      Screenreadern ein Register mit zugehoerigen Tabpanels, Pfeiltasten-
+      Navigation und aria-selected. Nichts davon gibt es hier — es sind
+      schlicht Schaltflaechen, die das Karussell weiterschieben. Falsch
+      gesetzte Rollen fuehren mehr in die Irre als gar keine. Geprueft
+      wurde: 30 role="tab", aber 0 Tabpanels und 0 aria-controls.
+
+      Die Beschriftung nennt zusaetzlich das Motiv — "Bild 7" allein hilft
+      niemandem, der die Vorschau nicht sieht. */}
+  <div class="gallery__thumbs" id="galThumbs" role="group" aria-label="Zu einem Bild springen">
     {galerie.map((g, i) => (
-      <button class="gallery__thumb" data-index={i} role="tab" aria-current={i === 0 ? 'true' : 'false'} aria-label={`Bild ${i + 1}`}>
+      <button class="gallery__thumb" data-index={i} aria-current={i === 0 ? 'true' : 'false'} aria-label={`Bild ${i + 1} von ${galerie.length}: ${g.alt}`}>
         {/* Eigene kleine Größe: vorher luden die zehn Miniaturen die
             Vollbilder (je ~400 KB) — der größte Einzelposten der Seite. */}
         <Image src={bild(g.datei)} alt="" widths={[128, 256]} sizes="128px" format="webp" loading="lazy" data-media />
