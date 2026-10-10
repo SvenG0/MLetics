@@ -178,7 +178,11 @@ a{color:inherit}
    das Logo-Blau bleibt original. Der Balken aus der Vorlage wurde entfernt. */
 .mark{display:inline-flex;align-items:center;text-decoration:none;line-height:1;min-height:44px}
 .mark__logo{height:56px;width:auto;display:block}
-@media(min-width:700px){.mark__logo{height:68px}}
+/* Grosses Logo erst ab 900px. Zwischen 768 und 900 teilt es sich die
+   Leiste mit dem Menue; mit 68px Hoehe (197px breit) waere es dort
+   breiter als seine Rasterspalte und wuerde das Menue aus der Mitte
+   druecken. Mit 56px (163px breit) passt es. */
+@media(min-width:900px){.mark__logo{height:68px}}
 
 /* Lesefortschritt als Haarlinie im unteren Rand der Leiste.
    --p wird per JS gesetzt (0–1). */
@@ -192,7 +196,30 @@ a{color:inherit}
 }
 
 .bar__nav{display:none;align-items:center;gap:.1rem;margin-left:auto}
-@media(min-width:980px){.bar__nav{display:flex}}
+/* ── Ab hier zwei getrennte Fassungen der Leiste ──────────────────
+   HANDY (unter 768px): zwei Elemente, Logo links und Knopf rechts.
+   Flexbox mit auto-Marge genuegt.
+
+   AB TABLET (ab 768px): vier Elemente in einer bis zu 1344px breiten
+   Leiste. Mit derselben Flex-Logik sammelte sich alles an den Raendern
+   und in der Mitte klaffte ein Loch — gemessen 673px bei 2000px
+   Fensterbreite, also 50% der Leiste. Deshalb hier ein Raster aus drei
+   Spalten: Logo links, Menue EXAKT mittig, Knopf rechts. Die beiden
+   Luecken werden dadurch gleich gross und wirken gesetzt statt
+   uebriggeblieben.
+
+   Die Grenze lag zuvor bei 980px. Dazwischen war das Menue ausgeblendet,
+   die Leiste aber schon fast 1000px breit — bei 979px klafften 612px
+   zwischen Logo und Knopf. Ab 768px passen Logo (163px), Menue (340px)
+   und Knopf (98px) samt Luecken in die Leiste; darunter bleibt die
+   Zwei-Element-Fassung, wo der Abstand nicht stoert. 768px ist
+   bewusst gewaehlt: das iPad im Hochformat liegt genau dort. */
+@media(min-width:768px){
+  .bar{display:grid;grid-template-columns:1fr auto 1fr;gap:1rem}
+  .bar .mark{justify-self:start}
+  .bar__nav{display:flex;justify-self:center;margin-left:0}
+  .bar .bar__cta{justify-self:end;margin-left:0}
+}
 .bar__nav a{
   position:relative;padding:.65rem .8rem;text-decoration:none;
   font-size:.68rem;font-weight:500;letter-spacing:.13em;text-transform:uppercase;
@@ -238,8 +265,14 @@ a{color:inherit}
      rund 5px Luft bis zur Fortschrittslinie (vorher 0.7px, davor 2px
      Ueberlappung). Als Zeigerziel bleibt der Knopf mit 32px klar ueber
      den 24px, die WCAG 2.2 AA im Web verlangt. */
-  min-height:0;height:32px;padding:0 1.05rem;font-size:.82rem;
+  /* Feste Hoehe statt min-height plus Polsterung: Die Hoehe ergab sich
+     sonst aus Zeilenhoehe und Schriftmetrik und fiel je nach Browser
+     anders aus. Sie wandert MIT der Leiste — oben ist die Leiste 72px
+     hoch, dort wirkte ein 32px-Knopf verloren; kompakt sind es 57px,
+     dort passt kein 44px-Knopf mehr neben die Fortschrittslinie. */
+  min-height:0;height:44px;padding:0 1.3rem;font-size:.875rem;
 }
+.nav[data-kompakt="true"] .bar__cta{height:32px;padding:0 1.05rem;font-size:.82rem}
 
 /* margin-left:auto schiebt den Knopf an den rechten Rand.
    Vorher uebernahm das .bar__nav — die ist aber unter 980px ausgeblendet,
@@ -248,7 +281,7 @@ a{color:inherit}
    Leiste) leer. Jetzt traegt der Knopf die Marge selbst; ab 980px ueber-
    nimmt zusaetzlich die Menueleiste, beides stoert sich nicht. */
 .bar .bar__cta{margin-left:auto;display:inline-flex}
-@media(min-width:980px){.bar .bar__cta{margin-left:.3rem}}
+
 
 .btn{
   display:inline-flex;align-items:center;gap:.5rem;
