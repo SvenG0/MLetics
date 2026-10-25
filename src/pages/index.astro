@@ -31,7 +31,12 @@ const zielgruppen = (await getCollection('zielgruppen')).sort((a, b) => a.data.r
     <!-- ── 01 AUFTAKT ─────────────────────────────────────── -->
     <Chapter id="auftakt" nr={0} bg="bg-01" bild={hero}>
       <p class="eyebrow rise"><b>01</b> <span>MLetics · Maik Liesbrock</span></p>
-      <h1 class="display rise">UNDERSTAND. TREAT.<br>CONNECT.</h1>
+      {/* War "UNDERSTAND. TREAT. CONNECT." mit der deutschen Uebersetzung
+          als blaue Zeile darunter. Maik fand beides nebeneinander doppelt
+          und wollte nur das Deutsche gross. Kein fester Umbruch mehr: die
+          deutschen Woerter sind laenger als die englischen, text-wrap
+          balance auf .display verteilt sie je nach Breite selbst. */}
+      <h1 class="display rise">Verstehen. Behandeln. Vernetzen.</h1>
       {/* Stand vorher in Markenblau und war die woertliche Uebersetzung der
           Ueberschrift — doppelt gemoppelt. Jetzt eigener Inhalt, dafuer
           weiss und kraeftig gesetzt (lead--stark statt lead--brand). */}
