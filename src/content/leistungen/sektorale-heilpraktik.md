@@ -1,6 +1,6 @@
 ---
-reihenfolge: 3
-titel: "Sektorale Heilpraktik Physiotherapie"
+reihenfolge: 2
+titel: "Heilpraktik"
 kurz: "Eigenständige physiotherapeutische Befundung und Behandlung im Rahmen der bestehenden Erlaubnis."
 punkte:
   - "Direkter Zugang ohne ärztliche Verordnung"

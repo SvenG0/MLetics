@@ -603,9 +603,14 @@ main{position:relative;z-index:10}
   .services{grid-template-columns:1fr 1fr}
   .service:nth-child(2){border-top:0;border-left:1px solid var(--line)}
 }
+/* Drei Spalten NUR, wenn es auch drei Karten gibt. Die Regel stand
+   vorher fest auf repeat(3,1fr); nach dem Streichen der dritten Leistung
+   blieb dadurch eine leere Spalte stehen. Mit :has() richtet sich das
+   Raster nach dem Inhalt — wird spaeter wieder eine Leistung ergaenzt,
+   greift es von allein. */
 @media(min-width:1024px){
-  .services{grid-template-columns:repeat(3,1fr)}
-  .service:nth-child(3){border-top:0;border-left:1px solid var(--line)}
+  .services:has(> :nth-child(3)){grid-template-columns:repeat(3,1fr)}
+  .services:has(> :nth-child(3)) .service:nth-child(3){border-top:0;border-left:1px solid var(--line)}
 }
 .service{position:relative;padding:2.25rem 2rem 2.5rem}
 /* Hover war bisher kaum wahrzunehmen (nur Ziffer + eine 2.25rem breite

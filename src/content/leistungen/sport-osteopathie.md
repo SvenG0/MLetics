@@ -1,6 +1,6 @@
 ---
-reihenfolge: 2
-titel: "Sport-Osteopathie"
+reihenfolge: 1
+titel: "Osteopathie"
 kurz: "Körperliche Zusammenhänge betrachten und funktionelle Einschränkungen ganzheitlich einordnen."
 punkte:
   - "Prävention von Sportverletzungen"
