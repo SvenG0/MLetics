@@ -13,7 +13,11 @@ import ContactForm from '../components/ContactForm.astro';
 import hero from '../assets/01-hero.jpg';
 import treat from '../assets/02-treat.jpg';
 import connect from '../assets/03-connect.jpg';
-import about from '../assets/04-about.jpg';
+/* Maiks Vorschlag: das Behandlungsfoto von der Liege (vormals Galeriebild 2)
+   als Kapitelbild. Es zeigt die Arbeit statt nur die Person — und es ist
+   bereits in Graustufen, passt also zur neuen Galerie. Das alte
+   04-about.jpg bleibt als Datei liegen, der Tausch ist eine Zeile. */
+import about from '../assets/04-about-neu.jpg';
 
 const leistungen = (await getCollection('leistungen')).sort((a, b) => a.data.reihenfolge - b.data.reihenfolge);
 const zielgruppen = (await getCollection('zielgruppen')).sort((a, b) => a.data.reihenfolge - b.data.reihenfolge);
@@ -26,13 +30,17 @@ const zielgruppen = (await getCollection('zielgruppen')).sort((a, b) => a.data.r
 
     <!-- ── 01 AUFTAKT ─────────────────────────────────────── -->
     <Chapter id="auftakt" nr={0} bg="bg-01" bild={hero}>
-      <p class="eyebrow rise"><b>01</b> <span>MLetics by Maik Liesbrock — Bochum</span></p>
+      <p class="eyebrow rise"><b>01</b> <span>MLetics · Maik Liesbrock</span></p>
       <h1 class="display rise">UNDERSTAND. TREAT.<br>CONNECT.</h1>
-      <p class="lead lead--brand rise" style="margin-top:1.25rem">Verstehen. Behandeln. Vernetzen.</p>
+      {/* Stand vorher in Markenblau und war die woertliche Uebersetzung der
+          Ueberschrift — doppelt gemoppelt. Jetzt eigener Inhalt, dafuer
+          weiss und kraeftig gesetzt (lead--stark statt lead--brand). */}
+      <p class="lead lead--stark rise" style="margin-top:1.25rem">Den Körper verstehen. Individuell behandeln. Kompetenzen verbinden.</p>
       <p class="lead rise" style="margin-top:1.25rem">
-        Den Körper verstehen. Funktionelle Zusammenhänge erkennen. Individuell
-        behandeln. Und dort, wo weitere Expertise sinnvoll ist, die richtigen
-        Kompetenzen miteinander verbinden.
+        16 Jahre Erfahrung im Profifußball. Heute verbinde ich bei MLetics
+        Physiotherapie und Osteopathie mit einem ganzheitlichen Blick — und
+        hole dort, wo weitere Expertise sinnvoll ist, die richtigen
+        Kompetenzen dazu.
       </p>
       <div class="rise" style="margin-top:3rem;display:flex;gap:1rem;flex-wrap:wrap;align-items:center">
         <a href="#kontakt" class="btn btn--solid">Termin anfragen</a>
@@ -63,16 +71,21 @@ const zielgruppen = (await getCollection('zielgruppen')).sort((a, b) => a.data.r
         <p class="eyebrow rise"><b>03</b> <span>Connect</span></p>
         <h2 class="display display--sm rise">Mehr als eine<br>Perspektive.</h2>
         <p class="lead rise" style="margin-top:1.75rem">
-          Ich sehe meine Arbeit als Teil eines größeren Umfelds. Wo sinnvoll,
-          arbeite ich mit Athletiktrainern, Ärzten und weiteren Spezialisten
-          zusammen — nicht um Kompetenzen zu ersetzen, sondern um sie zu verbinden.
+          Nicht jede Fragestellung lässt sich aus einer einzigen fachlichen
+          Perspektive beantworten. Bei Bedarf arbeite ich mit versierten
+          Athletiktrainern, Ärzten und weiteren Spezialisten zusammen.
+        </p>
+        <p class="lead rise" style="margin-top:1.25rem">
+          Ich konzentriere mich auf meine therapeutische Expertise und bringe
+          weitere Kompetenzen zusammen — mit dem Ziel einer abgestimmten
+          Betreuung.
         </p>
       </div>
       <div>
         <span class="tag rise">Für wen?</span>
         <div class="audience">
           {zielgruppen.map((z) => (
-            <AudienceCard titel={z.data.titel} icon={z.data.icon} text={z.data.text} />
+            <AudienceCard titel={z.data.titel} text={z.data.text} />
           ))}
         </div>
       </div>

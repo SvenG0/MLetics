@@ -108,6 +108,12 @@ a{color:inherit}
    zaehlen noch nicht als "large text" (dafuer braeuchte es 24px). Das
    aufgehellte Marken-Blau erreicht gemessene 5.52:1. */
 .lead--brand{color:var(--accent-text);font-weight:500}
+/* Kraeftig und weiss statt blau: Die Zeile unter der Ueberschrift war die
+   woertliche Uebersetzung von "UNDERSTAND. TREAT. CONNECT." und wirkte
+   dadurch doppelt. Sie traegt jetzt eigenen Inhalt und entsprechend mehr
+   Gewicht. --text statt --muted, damit sie sich klar vom Fliesstext
+   darunter absetzt. */
+.lead--stark{color:var(--text);font-weight:500}
 /* War bisher starr 1rem, während .lead auf breiten Screens bis 1.25rem
    mitwuchs — auf großen Bildschirmen wirkte Fließtext dadurch neben
    der Bildgröße klein und beiläufig. Skaliert jetzt genauso mit. */
