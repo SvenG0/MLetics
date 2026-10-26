@@ -2,11 +2,18 @@
 // Absolute Pfade, damit die Links auch aus den Unterseiten heraus stimmen.
 // pfad() setzt auf GitHub Pages den Unterordner davor — siehe src/lib/pfad.ts.
 import { pfad } from '../lib/pfad';
+import praxis from '../data/praxis.json';
+
+/* Name und Ort aus praxis.json statt fest getippt — dieselbe Quelle wie
+   Impressum, Kontaktkapitel und die strukturierten Daten.
+   Das Jahr stand fest auf 2026 und waere im Januar falsch gewesen. Es
+   wird jetzt beim Bauen gesetzt; jede Veroeffentlichung bringt es mit. */
+const jahr = new Date().getFullYear();
 ---
 
 <footer>
   <div class="wrap foot">
-    <p style="margin:0">© 2026 MLetics by Maik Liesbrock · Bochum</p>
+    <p style="margin:0">© {jahr} {praxis.name} · {praxis.adresse.ort}</p>
     <nav aria-label="Rechtliches">
       <a href={pfad('/impressum')}>Impressum</a>
       <a href={pfad('/datenschutz')}>Datenschutz</a>
