@@ -100,9 +100,12 @@ const punkte = alleKapitel.filter((k) => k.id !== 'auftakt' && k.id !== 'kontakt
 
 /* ── Menue-Knopf (Handy) ───────────────────────────────────────── */
 /* Squared nutzt ein abgerundetes Quadrat statt eines Kreises. */
+/* margin-left:auto schiebt ihn an den rechten Rand. Das hing bisher am
+   Kontakt-Knopf; der ist auf dem Handy jetzt weg, und eine ausgeblendete
+   Box traegt keine auto-Marge. */
 .nav--flach .rundknopf{
   display:inline-flex;align-items:center;justify-content:center;
-  width:44px;height:44px;padding:0;flex:0 0 auto;
+  width:44px;height:44px;padding:0;flex:0 0 auto;margin-left:auto;
   border:1px solid var(--line-strong);border-radius:12px;
   background:rgba(242,240,234,.06);color:var(--text);cursor:pointer;
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
@@ -139,13 +142,14 @@ const punkte = alleKapitel.filter((k) => k.id !== 'auftakt' && k.id !== 'kontakt
 }
 .nav--flach[data-kompakt="true"] .bar .bar__cta{height:38px;font-size:.9rem}
 
-/* Unter 360px passen Logo (133.5px), Kontakt-Knopf (95.5px) und
-   Menue-Knopf (44px) samt Luecken nicht mehr in die 272px Innenmass
-   eines 320px-Schirms — gemessen 292.4px. Der Menue-Knopf stand dann
-   3.8px statt 24px vom Rand und damit aus der Flucht. Dort traegt er
-   allein; "Termin anfragen" steht gross im Schubfach. */
-@media(max-width:359.98px){
-  .nav--flach .bar .bar__cta{display:none}
+/* Auf dem Handy ausgeblendet: Dort traegt der Menue-Knopf allein, und
+   "06 Kontakt" steht als letzter Punkt in der aufklappbaren Karte.
+   Nebenbei loest das die Enge auf schmalen Geraeten — bei 320px passten
+   Logo (133.5px), Knopf (95.5px) und Menue-Knopf (44px) samt Luecken
+   ohnehin nicht in die 272px Innenmass, gemessen 292.4px. */
+.nav--flach .bar .bar__cta{display:none}
+@media(min-width:768px){
+  .nav--flach .bar .bar__cta{display:inline-flex}
 }
 
 /* ── Menuepunkte: blanke Schrift neben dem Logo ────────────────── */
