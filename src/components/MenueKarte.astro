@@ -1,0 +1,159 @@
+---
+/* Menue fuers Handy: Aufklapp-Karte unter der Kopfleiste.
+
+   Faehrt direkt unter der Kopfleiste heraus und nimmt nur so viel Platz
+   wie noetig. Der Seiteninhalt bleibt sichtbar, die Karte liegt
+   erkennbar davor — gerundet, schwebend, mit Schatten.
+
+   Sie sitzt im selben .wrap wie die Leiste und ist absolut auf deren
+   Unterkante gesetzt. Dadurch liegen ihre Kanten automatisch auf
+   derselben Linie wie Logo und Kontakt-Knopf, ohne dass irgendwo eine
+   Hoehe nachgerechnet werden muesste. */
+import praxis from '../data/praxis.json';
+
+interface Props {
+  prefix?: string;
+  punkte: { id: string; titel: string }[];
+}
+const { prefix = '', punkte } = Astro.props;
+---
+
+<div class="karte" id="schub" hidden>
+  <nav class="karte__blatt" role="dialog" aria-modal="true" aria-label="Menü">
+    <ul class="karte__liste">
+      {punkte.map((p, i) => (
+        <li>
+          <a href={`${prefix}#${p.id}`} data-zu>
+            <b>{String(i + 1).padStart(2, '0')}</b>
+            <span>{p.titel}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+    <a href={`mailto:${praxis.email}`} class="karte__mail">{praxis.email}</a>
+  </nav>
+</div>
+
+<style is:global>
+/* Bezugspunkt fuer die Karte — sie sitzt im .wrap der Kopfleiste und
+   haengt mit top:100% an deren Unterkante. Gilt fuer beide Fassungen. */
+.nav--flach .wrap{position:relative}
+
+.karte{
+  position:absolute;top:100%;left:0;right:0;margin-top:.6rem;
+  pointer-events:none;
+}
+.karte[hidden]{display:none}
+
+.karte__blatt{
+  pointer-events:auto;
+  border-radius:18px;
+  background:rgba(14,16,19,.97);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border:1px solid var(--line);
+  box-shadow:0 30px 70px -25px rgba(0,0,0,.95);
+  padding:.5rem .9rem .9rem;
+  transform-origin:top right;
+  opacity:0;transform:translateY(-10px) scale(.97);
+  transition:opacity .28s var(--ease),transform .28s var(--ease);
+}
+.karte[data-offen="true"] .karte__blatt{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.karte__blatt{transition:none}}
+
+.karte__liste{list-style:none;margin:0;padding:0}
+.karte__liste a{
+  display:flex;align-items:baseline;gap:.9rem;
+  padding:.72rem .25rem;text-decoration:none;color:var(--text);
+  border-bottom:1px solid var(--line);
+  transition:color .3s var(--ease);
+}
+.karte__liste li:last-child a{border-bottom:0}
+.karte__liste a:hover{color:var(--accent-text)}
+.karte__liste a b{
+  flex:0 0 auto;font-family:var(--f-body);font-weight:500;
+  font-size:.66rem;letter-spacing:.14em;color:var(--accent-text);
+}
+.karte__liste a span{
+  font-family:var(--f-display);font-weight:600;
+  font-variation-settings:'wdth' 90;
+  font-size:1.15rem;line-height:1.2;
+}
+
+.karte__mail{
+  display:inline-flex;align-items:center;min-height:24px;
+  margin-top:.9rem;padding-inline:.25rem;
+  color:var(--muted);text-decoration:none;font-size:.85rem;
+}
+.karte__mail:hover{color:var(--text)}
+
+/* Fangflaeche fuer Klicks daneben — unsichtbar, nur zum Schliessen. */
+.karte__aussen{position:fixed;inset:0;z-index:40}
+.karte__aussen[hidden]{display:none}
+</style>
+
+<script>
+  var burger = document.getElementById('burger');
+  var karte  = document.getElementById('schub');
+
+  if(burger && karte){
+    var blatt = karte.querySelector('.karte__blatt');
+    var aussen = document.createElement('div');
+    aussen.className = 'karte__aussen';
+    aussen.hidden = true;
+    document.body.appendChild(aussen);
+
+    function fokussierbare(){
+      /* Der Menue-Knopf schliesst, der Kontakt-Knopf bleibt sichtbar —
+         beide gehoeren in den Tastaturkreis. */
+      return [burger].concat(
+        Array.prototype.slice.call(document.querySelectorAll('.bar__cta')),
+        Array.prototype.slice.call(blatt.querySelectorAll('a[href]'))
+      ).filter(function(e){ return e.offsetParent !== null; });
+    }
+
+    function auf(){
+      karte.hidden = false;
+      aussen.hidden = false;
+      requestAnimationFrame(function(){ karte.dataset.offen = 'true'; });
+      burger.setAttribute('aria-expanded', 'true');
+    }
+
+    function zu(){
+      karte.dataset.offen = 'false';
+      aussen.hidden = true;
+      burger.setAttribute('aria-expanded', 'false');
+      window.setTimeout(function(){
+        if(karte.dataset.offen !== 'true') karte.hidden = true;
+      }, 300);
+    }
+
+    burger.addEventListener('click', function(){
+      if(burger.getAttribute('aria-expanded') === 'true') zu(); else auf();
+    });
+    aussen.addEventListener('click', zu);
+    karte.addEventListener('click', function(e){
+      if(e.target.closest('[data-zu]')) zu();
+    });
+
+    document.addEventListener('keydown', function(e){
+      if(karte.hidden) return;
+      if(e.key === 'Escape'){ zu(); burger.focus(); return; }
+      if(e.key !== 'Tab') return;
+      var f = fokussierbare();
+      if(!f.length) return;
+      var erste = f[0], letzte = f[f.length - 1];
+      if(e.shiftKey && document.activeElement === erste){ e.preventDefault(); letzte.focus(); }
+      else if(!e.shiftKey && document.activeElement === letzte){ e.preventDefault(); erste.focus(); }
+    });
+
+    /* Beim Scrollen schrumpft die Kopfleiste — eine offene Karte wuerde
+       mitspringen. Lieber schliessen. */
+    window.addEventListener('scroll', function(){
+      if(!karte.hidden) zu();
+    }, {passive: true});
+
+    window.addEventListener('resize', function(){
+      if(!karte.hidden && window.innerWidth >= 768) zu();
+    });
+  }
+</script>

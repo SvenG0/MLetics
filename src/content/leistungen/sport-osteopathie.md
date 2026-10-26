@@ -1,5 +1,5 @@
 ---
-reihenfolge: 1
+reihenfolge: 2
 titel: "Osteopathie"
 kurz: "Körperliche Zusammenhänge betrachten und funktionelle Einschränkungen ganzheitlich einordnen."
 punkte:

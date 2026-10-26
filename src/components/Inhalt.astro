@@ -1,0 +1,149 @@
+---
+/* Der gesamte Inhalt der Startseite — alle sechs Kapitel. Liegt als
+   eigene Komponente, damit die Kopfzeilen-Testseiten denselben Inhalt
+   zeigen statt ihn zu kopieren. Vorher waren es vier Kopien derselben
+   120 Zeilen; eine Textaenderung an der Startseite kam auf den
+   Testseiten schlicht nicht an. */
+import { getCollection } from 'astro:content';
+import Chapter from './Chapter.astro';
+import Rail from './Rail.astro';
+import ServiceCard from './ServiceCard.astro';
+import AudienceCard from './AudienceCard.astro';
+import Gallery from './Gallery.astro';
+import Vita from './Vita.astro';
+import ContactList from './ContactList.astro';
+import ContactForm from './ContactForm.astro';
+import hero from '../assets/01-hero.jpg';
+import treat from '../assets/02-treat.jpg';
+import connect from '../assets/03-connect.jpg';
+/* Maiks Vorschlag: das Behandlungsfoto von der Liege (vormals Galeriebild 2)
+   als Kapitelbild. Es zeigt die Arbeit statt nur die Person — und es ist
+   bereits in Graustufen, passt also zur neuen Galerie. Das alte
+   04-about.jpg bleibt als Datei liegen, der Tausch ist eine Zeile. */
+import about from '../assets/04-about-neu.jpg';
+
+const leistungen = (await getCollection('leistungen')).sort((a, b) => a.data.reihenfolge - b.data.reihenfolge);
+const zielgruppen = (await getCollection('zielgruppen')).sort((a, b) => a.data.reihenfolge - b.data.reihenfolge);
+---
+
+  <Rail />
+
+  <main id="inhalt">
+
+    <!-- ── 01 AUFTAKT ─────────────────────────────────────── -->
+    <Chapter id="auftakt" nr={0} bg="bg-01" bild={hero}>
+      {/* War "MLetics · Maik Liesbrock". Die Ueberschrift kuendigt
+          Understand — Treat — Connect an, 02 und 03 heissen auch so, nur
+          01 trug keinen der drei Namen: der erste Schritt fehlte in der
+          Gliederung. Jetzt lesen Lesezeichen, Seitenzaehler und das
+          Handy-Menue 01 Understand, 02 Treat, 03 Connect.
+          Der Praxisname stand hier direkt unter dem Logo und war damit
+          ohnehin doppelt. */}
+      <p class="eyebrow rise"><b>01</b> <span>Understand</span></p>
+      {/* Zurueck auf Englisch. Der feste Umbruch ist wieder drin: bei den
+          deutschen Woertern war er falsch gesetzt (sie sind laenger),
+          bei den englischen sass er von Anfang an richtig. */}
+      <h1 class="display rise">UNDERSTAND. TREAT.<br>CONNECT.</h1>
+      {/* Bleibt stehen und ist keine Dopplung mehr: Solange die
+          Ueberschrift deutsch war, sagte diese Zeile dasselbe noch einmal
+          — darum ging es Maik. Neben der englischen Ueberschrift ist sie
+          jetzt die deutsche Entsprechung und traegt den Satz. */}
+      <p class="lead lead--stark rise" style="margin-top:1.25rem">Den Körper verstehen. Individuell behandeln. Kompetenzen verbinden.</p>
+      <p class="lead rise" style="margin-top:1.25rem">
+        16 Jahre Erfahrung im Profifußball. Heute verbinde ich bei MLetics
+        Physiotherapie und Osteopathie mit einem ganzheitlichen Blick — und
+        hole dort, wo weitere Expertise sinnvoll ist, die richtigen
+        Kompetenzen dazu.
+      </p>
+      <div class="rise" style="margin-top:3rem;display:flex;gap:1rem;flex-wrap:wrap;align-items:center">
+        <a href="#kontakt" class="btn btn--solid">Termin anfragen</a>
+        <a href="#treat" class="btn">Leistungen ansehen</a>
+      </div>
+    </Chapter>
+
+    <!-- ── 02 TREAT (Leistungen) ──────────────────────────── -->
+    <Chapter id="treat" nr={1} bg="bg-02" bild={treat}>
+      <p class="eyebrow rise"><b>02</b> <span>Treat</span></p>
+      <h2 class="display display--sm rise">Individuelle Therapie<br>statt Behandlung nach Schema.</h2>
+      <p class="lead rise" style="margin-top:1.75rem">
+        Auf Basis der Befundung entsteht ein individuelles Behandlungskonzept.
+        Physiotherapie und osteopathische Ansätze werden dabei gezielt miteinander
+        verbunden und an Deine persönliche Situation angepasst.
+      </p>
+
+      <div class="services">
+        {leistungen.map((l) => (
+          <ServiceCard titel={l.data.titel} kurz={l.data.kurz} punkte={l.data.punkte} />
+        ))}
+      </div>
+    </Chapter>
+
+    <!-- ── 03 CONNECT ─────────────────────────────────────── -->
+    <Chapter id="connect" nr={2} bg="bg-03" bild={connect} grid>
+      <div>
+        <p class="eyebrow rise"><b>03</b> <span>Connect</span></p>
+        <h2 class="display display--sm rise">Mehr als eine<br>Perspektive.</h2>
+        <p class="lead rise" style="margin-top:1.75rem">
+          Nicht jede Fragestellung lässt sich aus einer einzigen fachlichen
+          Perspektive beantworten. Bei Bedarf arbeite ich mit versierten
+          Athletiktrainern, Ärzten und weiteren Spezialisten zusammen.
+        </p>
+        <p class="lead rise" style="margin-top:1.25rem">
+          Ich konzentriere mich auf meine therapeutische Expertise und bringe
+          weitere Kompetenzen zusammen — mit dem Ziel einer abgestimmten
+          Betreuung.
+        </p>
+      </div>
+      <div>
+        <span class="tag rise">Für wen?</span>
+        <div class="audience">
+          {zielgruppen.map((z) => (
+            <AudienceCard titel={z.data.titel} text={z.data.text} />
+          ))}
+        </div>
+      </div>
+    </Chapter>
+
+    <!-- ── 04 ÜBER MAIK ───────────────────────────────────── -->
+    <Chapter id="about" nr={3} bg="bg-04" bild={about} grid>
+      <div>
+        <p class="eyebrow rise"><b>04</b> <span>Über Maik</span></p>
+        <h2 class="display rise">Ganzheitlich. Nachhaltig.<br>Professionell.</h2>
+        <p class="lead rise" style="margin-top:2rem">
+          Prävention beginnt vor der Verletzung. 16 Jahre im Profisport prägen
+          meinen Blick auf Körper, Belastung und Regeneration — nicht erst
+          reagieren, wenn es weh tut, sondern verstehen, was Dein Körper braucht.
+        </p>
+      </div>
+      <div class="rise">
+        <Vita />
+      </div>
+    </Chapter>
+
+    <!-- ── 05 GALERIE ─────────────────────────────────────── -->
+    <Chapter id="galerie" nr={4}>
+      <!-- Nur das kleine Kapitel-Label, wie bei den anderen Kapiteln —
+           der große Titel und Fließtext bleiben bewusst weg, „nur die
+           Bilder". Die sichtbare Überschrift steht deshalb nur für
+           Screenreader im Dokument. -->
+      <p class="eyebrow rise"><b>05</b> <span>Galerie</span></p>
+      <h2 class="sr-only">Galerie</h2>
+      <Gallery />
+    </Chapter>
+
+    <!-- ── 06 KONTAKT ─────────────────────────────────────── -->
+    {/* Ohne Kapitelfoto: assets/06-kontakt.jpg existiert nicht. Der Verlauf
+        .bg-06 trägt das Kapitel bereits — vorher erzeugte das fehlende Bild
+        bei jedem Aufruf einen 404, den JS anschließend wieder aufräumte. */}
+    <Chapter id="kontakt" nr={5} bg="bg-06" grid wrapStyle="align-items:start">
+      <div>
+        <p class="eyebrow rise"><b>06</b> <span>Kontakt</span></p>
+        <h2 class="display display--sm rise">Sprechen wir<br>über Deinen Weg.</h2>
+        <ContactList />
+      </div>
+      <div class="rise">
+        <ContactForm />
+      </div>
+    </Chapter>
+
+  </main>

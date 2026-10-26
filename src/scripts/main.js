@@ -1,3 +1,5 @@
+import { kapitel } from '../data/kapitel';
+
 function initMLetics(){
   'use strict';
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -98,7 +100,11 @@ function initMLetics(){
     });
   });
 
-  var namen =['Auftakt','Treat','Connect','Über Maik','Galerie','Kontakt'];
+  /* Aus data/kapitel.ts statt aus einer eigenen Kopie — die Liste stand
+     hier jahrelang doppelt und musste bei jeder Umbenennung zweimal
+     gepflegt werden. Genau das ist beim Wechsel von "Auftakt" auf
+     "Understand" aufgefallen. */
+  var namen = kapitel.map(function(k){ return k.name; });
   var announcer = document.getElementById('announcer');
   var stepPrev  = document.getElementById('stepPrev');
   var stepNext  = document.getElementById('stepNext');

@@ -7,7 +7,7 @@ export interface Kapitel {
 }
 
 export const kapitel: Kapitel[] = [
-  { id: 'auftakt', name: 'Auftakt' },
+  { id: 'auftakt', name: 'Understand' },
   { id: 'treat',   name: 'Treat' },
   { id: 'connect', name: 'Connect' },
   { id: 'about',   name: 'Über Maik' },

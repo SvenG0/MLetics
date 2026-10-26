@@ -8,15 +8,13 @@ const leistungen = (await getCollection('leistungen')).sort((a, b) => a.data.rei
 ---
 
 <form class="form" id="form" novalidate>
-  <div class="row">
-    <div class="field">
-      <label for="f-name">Name</label>
-      <input id="f-name" name="name" type="text" autocomplete="name" required />
-    </div>
-    <div class="field">
-      <label for="f-tel">Telefon</label>
-      <input id="f-tel" name="tel" type="tel" autocomplete="tel" />
-    </div>
+  {/* Telefonfeld auf Wunsch entfernt. Damit steht Name allein — die
+      .row mit ihren zwei Spalten ab 640px entfaellt deshalb mit, sonst
+      haette das Feld nur die halbe Breite und rechts daneben waere eine
+      leere Spalte geblieben. Jetzt volle Breite wie E-Mail darunter. */}
+  <div class="field">
+    <label for="f-name">Name</label>
+    <input id="f-name" name="name" type="text" autocomplete="name" required />
   </div>
 
   <div class="field">

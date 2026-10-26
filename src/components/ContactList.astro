@@ -5,10 +5,9 @@ const zeilenStil = 'font-weight:400;font-size:1rem;line-height:1.6';
 ---
 
 <dl class="contact-list rise">
-  <div>
-    <dt>Telefon</dt>
-    <dd><a href={`tel:${praxis.telefon.link}`}>{praxis.telefon.anzeige}</a></dd>
-  </div>
+  {/* Telefonnummer auf Wunsch raus — wie im Formular und im Handy-Menue.
+      Sie steht weiterhin in Impressum und Datenschutzerklaerung: dort ist
+      sie eine Pflicht- bzw. Kontaktangabe und keine Werbeflaeche. */}
   <div>
     <dt>E-Mail</dt>
     <dd><a href={`mailto:${praxis.email}`}>{praxis.email}</a></dd>

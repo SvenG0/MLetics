@@ -1,41 +1,183 @@
 ---
+/* Kopfzeile der Seite.
+
+   Bewusst ohne Flaeche: Logo links auf der Textkante, Menuepunkte direkt
+   daneben, Kontakt-Knopf rechts aussen auf einer Linie mit Seitenzaehler
+   und Kapitel-Punkten. Vorbild waren squared-media.nl und otsuka-air.jp,
+   beide im Browser vermessen — ihr gemeinsamer Nenner ist, dass die
+   Navigation keinen eigenen Kasten hat, sondern blanke Schrift auf dem
+   Bild ist. Daher --flach.
+
+   Auf dem Handy ersetzt ein Menue-Knopf die Punkte; er klappt eine Karte
+   unter der Leiste auf (siehe MenueKarte.astro).
+
+   .bar, .bar__nav a und .bar__progress behalten die Namen aus global.css,
+   damit main.js unveraendert weiterlaeuft: Lesefortschritt (--p) und
+   Kapitel-Hervorhebung (aria-current) haengen daran. */
 import { Image } from 'astro:assets';
 import logo from '../assets/mletics-mark-dark.png';
+import MenueKarte from './MenueKarte.astro';
+import { kapitel } from '../data/kapitel';
 
 interface Props {
-  /** Präfix der Ankerlinks: auf der Startseite leer, auf Unterseiten "/". */
+  /** Praefix der Ankerlinks: auf der Startseite leer, auf Textseiten "/". */
   prefix?: string;
 }
 const { prefix = '' } = Astro.props;
+
+
+
+/* Eine Quelle fuer alles: data/kapitel.ts. Das Handy-Menue zeigt alle
+   sechs Kapitel, die Leiste auf dem Laptop laesst Understand und Kontakt
+   weg — dorthin fuehren Logo und Kontakt-Knopf. */
+const alleKapitel = kapitel.map((k) => ({ id: k.id, titel: k.name }));
+const punkte = alleKapitel.filter((k) => k.id !== 'auftakt' && k.id !== 'kontakt');
 ---
 
-<header class="nav">
+<header class="nav nav--flach">
   <div class="wrap">
     <div class="bar">
       <a href={`${prefix}#auftakt`} class="mark" aria-label="MLetics — Startseite">
-        {/* Bewusst ohne widths/sizes, also nur umcodiert statt verkleinert:
-            jede Skalierung rundet die Zielmaße auf ganze Pixel und verschiebt
-            damit das Seitenverhältnis minimal — das Logo wurde dadurch bei
-            56px Höhe 1px schmaler als zuvor. Die Datei ist klein genug, dass
-            allein PNG → WebP den Großteil der Ersparnis bringt. */}
-        <Image
-          class="mark__logo"
-          src={logo}
-          alt="MLetics — Osteopathie & Physiotherapie"
-          format="webp"
-        />
+        <Image class="mark__logo" src={logo} alt="MLetics — Osteopathie & Physiotherapie" format="webp" />
       </a>
 
       <nav class="bar__nav" aria-label="Hauptnavigation">
-        <a href={`${prefix}#treat`}>Treat</a>
-        <a href={`${prefix}#connect`}>Connect</a>
-        <a href={`${prefix}#about`}>Über Maik</a>
-        <a href={`${prefix}#galerie`}>Galerie</a>
+        {punkte.map((p) => <a href={`${prefix}#${p.id}`}>{p.titel}</a>)}
       </nav>
 
       <a href={`${prefix}#kontakt`} class="btn btn--solid bar__cta">Kontakt</a>
 
+      <button type="button" class="rundknopf" id="burger"
+              aria-controls="schub" aria-expanded="false">
+        <span class="rundknopf__striche" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="sr-only">Menü öffnen</span>
+      </button>
+
       <span class="bar__progress" aria-hidden="true"><i></i></span>
     </div>
+
+    <MenueKarte prefix={prefix} punkte={alleKapitel} />
   </div>
 </header>
+
+
+<style is:global>
+/* ── Rahmen ────────────────────────────────────────────────────── */
+.nav--flach{padding:.9rem 0}
+.nav--flach[data-kompakt="true"]{padding-block:.6rem}
+
+/* Beide Vorlagen bleiben auch gescrollt transparent — ihre Seiten sind
+   aber durchgehend einfarbig. Unsere Kopfzeile steht ueber wechselnden
+   Fotos; ohne etwas dahinter waeren die Punkte ueber hellen Bildstellen
+   nicht mehr lesbar. Deshalb derselbe weiche Schleier wie in B. */
+.nav--flach::before{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(to bottom,rgba(10,11,13,.88),rgba(10,11,13,.55) 60%,transparent);
+  opacity:0;transition:opacity .35s var(--ease);pointer-events:none;
+}
+.nav--flach[data-kompakt="true"]::before{opacity:1}
+@media(prefers-reduced-motion:reduce){.nav--flach::before{transition:none}}
+
+/* Keine Flaeche, kein Rahmen, keine Rundung — das ist der Kern. */
+.nav--flach .bar{
+  display:flex;align-items:center;gap:.6rem;padding:0;
+  background:none;border:0;border-radius:0;box-shadow:none;
+  backdrop-filter:none;-webkit-backdrop-filter:none;
+  pointer-events:none;
+}
+.nav--flach .mark,
+.nav--flach .bar__nav,
+.nav--flach .bar__cta,
+.nav--flach .rundknopf{pointer-events:auto}
+
+/* Logo auf der Textkante (wie in B abgestimmt). */
+.nav--flach .mark{flex:0 0 auto;margin-left:0}
+.nav--flach .mark__logo{flex:none;height:50px}
+.nav--flach[data-kompakt="true"] .mark__logo{height:40px}
+@media(min-width:1024px){
+  .nav--flach .mark{margin-left:max(1.5rem, calc((100% + 3rem - 84rem) / 2 - 1.5rem))}
+}
+
+/* ── Menue-Knopf (Handy) ───────────────────────────────────────── */
+/* Squared nutzt ein abgerundetes Quadrat statt eines Kreises. */
+.nav--flach .rundknopf{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:44px;height:44px;padding:0;flex:0 0 auto;
+  border:1px solid var(--line-strong);border-radius:12px;
+  background:rgba(242,240,234,.06);color:var(--text);cursor:pointer;
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  transition:background-color .3s var(--ease);
+}
+.nav--flach .rundknopf:hover{background:rgba(242,240,234,.12)}
+.nav--flach .rundknopf__striche{display:block;width:18px;height:12px;position:relative}
+.nav--flach .rundknopf__striche i{
+  position:absolute;left:0;right:0;height:1.5px;border-radius:2px;background:currentColor;
+  transition:transform .3s var(--ease),opacity .2s var(--ease);
+}
+.nav--flach .rundknopf__striche i:nth-child(1){top:0}
+.nav--flach .rundknopf__striche i:nth-child(2){top:5.25px}
+.nav--flach .rundknopf__striche i:nth-child(3){bottom:0}
+.nav--flach .rundknopf[aria-expanded="true"] .rundknopf__striche i:nth-child(1){transform:translateY(5.25px) rotate(45deg)}
+.nav--flach .rundknopf[aria-expanded="true"] .rundknopf__striche i:nth-child(2){opacity:0}
+.nav--flach .rundknopf[aria-expanded="true"] .rundknopf__striche i:nth-child(3){transform:translateY(-5.25px) rotate(-45deg)}
+
+/* ── Lesefortschritt an der Oberkante ──────────────────────────── */
+.nav--flach .bar__progress{
+  position:fixed;left:0;right:0;top:0;bottom:auto;height:2px;
+  border-radius:0;background:transparent;
+}
+.nav--flach .bar__progress i{background:var(--accent)}
+
+/* ── Handlungsknopf ────────────────────────────────────────────── */
+/* Radius 12px statt 999px: beide Vorlagen setzen ein abgerundetes
+   Rechteck, nicht die Pillenform, die wir sonst benutzen. Genau das
+   macht ihren Kopfbereich sachlicher. Eine Zeile, falls doch Pille. */
+.nav--flach .bar .bar__cta{
+  margin-left:auto;flex:0 0 auto;
+  height:44px;padding:0 1.2rem;border-radius:12px;
+  font-size:.94rem;font-weight:600;box-shadow:none;
+}
+.nav--flach[data-kompakt="true"] .bar .bar__cta{height:38px;font-size:.9rem}
+
+/* Unter 360px passen Logo (133.5px), Kontakt-Knopf (95.5px) und
+   Menue-Knopf (44px) samt Luecken nicht mehr in die 272px Innenmass
+   eines 320px-Schirms — gemessen 292.4px. Der Menue-Knopf stand dann
+   3.8px statt 24px vom Rand und damit aus der Flucht. Dort traegt er
+   allein; "Termin anfragen" steht gross im Schubfach. */
+@media(max-width:359.98px){
+  .nav--flach .bar .bar__cta{display:none}
+}
+
+/* ── Menuepunkte: blanke Schrift neben dem Logo ────────────────── */
+.nav--flach .bar__nav{display:none}
+@media(min-width:768px){
+  .nav--flach .rundknopf{display:none}
+  .nav--flach .mark__logo{height:64px}
+  .nav--flach[data-kompakt="true"] .mark__logo{height:52px}
+
+  /* Direkt neben dem Logo, linksbuendig — nicht mittig, nicht rechts.
+     Das ist die Anordnung von squared-media.nl. */
+  .nav--flach .bar__nav{
+    display:flex;align-items:center;gap:.25rem;
+    margin-left:2.25rem;
+  }
+  .nav--flach .bar__nav a{
+    padding:.5rem .95rem;border-radius:10px;
+    font-size:1rem;font-weight:400;letter-spacing:0;text-transform:none;
+    color:rgba(242,240,234,.78);
+    transition:color .3s var(--ease),background-color .3s var(--ease);
+  }
+  .nav--flach .bar__nav a:hover{color:var(--text);background:rgba(242,240,234,.08)}
+  .nav--flach .bar__nav a[aria-current="true"]{color:var(--text);background:rgba(242,240,234,.1)}
+  .nav--flach .bar__nav a::after{display:none}
+}
+@media(min-width:1024px){
+  .nav--flach .mark__logo{height:72px}
+  .nav--flach[data-kompakt="true"] .mark__logo{height:58px}
+}
+
+/* Rechte Kante auf einer Linie mit Seitenzaehler und Kapitelpunkten. */
+.nav--flach .wrap{width:calc(100% - 3rem)}
+body:has(.nav--flach) .rail{right:1.5rem}
+body:has(.nav--flach) .step{right:1.5rem}
+</style>

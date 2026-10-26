@@ -1,5 +1,5 @@
 ---
-reihenfolge: 2
+reihenfolge: 3
 titel: "Heilpraktik"
 kurz: "Eigenständige physiotherapeutische Befundung und Behandlung im Rahmen der bestehenden Erlaubnis."
 punkte:
