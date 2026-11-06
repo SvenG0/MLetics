@@ -16,13 +16,12 @@
     "land": "DE"
   },
   "termine": [
-    "Termine nach Vereinbarung",
-    "Hausbesuche nach Vereinbarung"
+    "Termine nach Vereinbarung"
   ],
   "vita": [
     {
       "label": "Qualifikation",
-      "wert": "Physiotherapeut (NL), Osteopath (B.Sc.), Sektoraler Heilpraktiker für Physiotherapie"
+      "wert": "Physiotherapeut, Osteopath (B.Sc.), Sektoraler Heilpraktiker für Physiotherapie"
     },
     {
       "label": "Schwerpunkte",

@@ -30,23 +30,16 @@ const offen = (wert: string | null | undefined) => wert === null || wert === und
     E-Mail: <a href={`mailto:${praxis.email}`}>{praxis.email}</a>
   </p>
 
-  <h3>Rechtsform</h3>
-  <p>
-    {offen(impressum.rechtsform)
-      ? <span class="offen">noch zu ergänzen — z. B. „Einzelunternehmen"</span>
-      : impressum.rechtsform}
-  </p>
+  {/* Rechtsform entfaellt: § 5 Abs. 1 Nr. 4 DDG verlangt Register und
+      Registernummer nur "soweit eingetragen". Ein Freiberufler nach § 18 EStG
+      steht in keinem Handelsregister. Von acht geprueften Praxisseiten nennt
+      nur eine die Rechtsform — und das ist eine GmbH, dort ist es Pflicht. */}
 
   <h3>Umsatzsteuer</h3>
   <p>
-    {offen(impressum.umsatzsteuerId) ? (
-      <span class="offen">
-        noch zu ergänzen — entweder Umsatzsteuer-Identifikationsnummer nach § 27 a UStG
-        oder der Hinweis, dass Heilbehandlungen nach § 4 Nr. 14 UStG umsatzsteuerfrei sind
-      </span>
-    ) : (
-      <>Umsatzsteuer-Identifikationsnummer nach § 27 a UStG: {impressum.umsatzsteuerId}</>
-    )}
+    Heilbehandlungen im Bereich der Humanmedizin sind nach § 4 Nr. 14 a UStG
+    von der Umsatzsteuer befreit. Eine Umsatzsteuer-Identifikationsnummer nach
+    § 27 a UStG liegt daher nicht vor.
   </p>
 
   <h2>Berufsrechtliche Angaben</h2>
@@ -63,12 +56,24 @@ const offen = (wert: string | null | undefined) => wert === null || wert === und
     ))}
   </ul>
 
+  {/* Osteopathie ist in Deutschland kein reglementierter Beruf, "Osteopath"
+      also keine gesetzliche Berufsbezeichnung im Sinne des § 5 Abs. 1 Nr. 5
+      DDG, sondern ein akademischer Grad. Deshalb eigener Abschnitt. */}
+  <h3>Akademischer Grad</h3>
+  <p>
+    {impressum.akademischerGrad.grad}
+    {offen(impressum.akademischerGrad.hochschule)
+      ? <> — <span class="offen">verleihende Hochschule noch zu ergänzen</span></>
+      : <> — verliehen von {impressum.akademischerGrad.hochschule}</>}
+  </p>
+
   <h3>Zuständige Aufsichtsbehörde</h3>
   <p>
     {impressum.aufsichtsbehoerde.name}<br />
-    {offen(impressum.aufsichtsbehoerde.anschrift)
-      ? <span class="offen">Anschrift der Behörde noch zu ergänzen</span>
-      : impressum.aufsichtsbehoerde.anschrift}
+    {impressum.aufsichtsbehoerde.anschrift}<br />
+    <a href={impressum.aufsichtsbehoerde.web} target="_blank" rel="noopener noreferrer">
+      {impressum.aufsichtsbehoerde.web.replace('https://', '')}
+    </a>
   </p>
 
   <h3>Berufsrechtliche Regelungen</h3>
@@ -78,18 +83,12 @@ const offen = (wert: string | null | undefined) => wert === null || wert === und
     ))}
   </ul>
 
-  <h3>Berufshaftpflichtversicherung</h3>
-  <p>
-    {offen(impressum.haftpflicht.versicherer) ? (
-      <span class="offen">noch zu ergänzen — Versicherer, Anschrift und räumlicher Geltungsbereich</span>
-    ) : (
-      <>
-        {impressum.haftpflicht.versicherer}<br />
-        {impressum.haftpflicht.anschrift}<br />
-        Geltungsraum: {impressum.haftpflicht.geltungsraum}
-      </>
-    )}
-  </p>
+  {/* Berufshaftpflicht entfaellt: Die Angabepflicht steht in § 2 Abs. 1
+      Nr. 11 DL-InfoV. Die setzt die EU-Dienstleistungsrichtlinie um, und
+      Gesundheitsdienstleistungen sind davon ausdruecklich ausgenommen
+      (Art. 2 Abs. 2 lit. f RL 2006/123/EG). Von acht geprueften Praxisseiten
+      nennt sie genau eine. Eine Versicherung zu HABEN bleibt selbstredend
+      noetig — sie hier zu nennen, ist es nicht. */}
 
   <h2>Streitbeilegung</h2>
   <p>

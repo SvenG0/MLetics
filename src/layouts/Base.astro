@@ -20,8 +20,11 @@ interface Props {
 }
 
 const {
-  title = 'MLetics — Physiotherapie & Sport-Osteopathie in Bochum',
-  description = 'Physiotherapie, Osteopathie und Sport-Osteopathie von Maik Liesbrock in Bochum. 16 Jahre Erfahrung im Profisport — Termine und Hausbesuche nach Vereinbarung.',
+  title = 'MLetics — Physiotherapie & Osteopathie in Bochum',
+  // Beschreibung fuer Suchergebnis und Teilen-Vorschau. "Sport-Osteopathie"
+  // ist raus: Die Leistung heisst seit Maiks Durchsicht schlicht
+  // "Osteopathie". "Hausbesuche" ebenfalls — die bietet er nicht mehr an.
+  description = 'Physiotherapie und Osteopathie von Maik Liesbrock in Bochum. 16 Jahre Erfahrung im Profisport. Privatleistung, Termine nach Vereinbarung.',
   headerPrefix = '',
   schema = true,
 } = Astro.props;

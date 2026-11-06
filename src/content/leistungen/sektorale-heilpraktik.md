@@ -6,5 +6,4 @@ punkte:
   - "Direkter Zugang ohne ärztliche Verordnung"
   - "Umfassende Befunderhebung"
   - "Individuelle Behandlungskonzepte"
-  - "Hausbesuche nach Vereinbarung"
 ---

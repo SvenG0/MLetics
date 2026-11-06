@@ -12,10 +12,15 @@ const zeilenStil = 'font-weight:400;font-size:1rem;line-height:1.6';
     <dt>E-Mail</dt>
     <dd><a href={`mailto:${praxis.email}`}>{praxis.email}</a></dd>
   </div>
+  {/* Adresse auf Wunsch raus. Sie bleibt im Impressum stehen — § 5 Abs. 1
+      Nr. 1 DDG verlangt eine ladungsfaehige Anschrift, darauf kann nicht
+      verzichtet werden. Hier im Kontaktblock ist sie dagegen freiwillig. */}
+  {/* Keine Rechtspflicht — aber ein Missverstaendnis ueber Kostenerstattung
+      waere wettbewerbsrechtlich unangenehmer als jede Impressumsluecke. */}
   <div>
-    <dt>Adresse</dt>
+    <dt>Abrechnung</dt>
     <dd style={zeilenStil}>
-      {praxis.adresse.strasse}<br />{praxis.adresse.plz} {praxis.adresse.ort}
+      Privatleistung — keine Abrechnung über die gesetzliche Krankenkasse
     </dd>
   </div>
   <div>

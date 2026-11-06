@@ -1,31 +1,29 @@
 {
-  "_hinweis": "Angaben fürs Impressum. Felder mit null sind noch offen und werden auf der Seite sichtbar als 'noch zu ergänzen' ausgewiesen, damit sie nicht unbemerkt fehlen. §5 DDG (seit 2024 Nachfolger von §5 TMG).",
-  "rechtsform": null,
-  "umsatzsteuerId": null,
-  "umsatzsteuerBefreit": null,
+  "_hinweis": "Angaben fuers Impressum nach § 5 DDG. Geprueft gegen acht vergleichbare Praxisseiten; Vorbild ist medifit-stiepel.de (Bochum), die einzige davon mit vollstaendigen berufsrechtlichen Angaben. Felder mit null sind offen und werden auf der Seite sichtbar ausgewiesen.",
+  "umsatzsteuerBefreit": true,
   "berufsbezeichnungen": [
     {
-      "titel": "Staatlich anerkannter Physiotherapeut",
+      "titel": "Physiotherapeut",
       "staat": "Deutschland"
     },
     {
       "titel": "Sektoraler Heilpraktiker für Physiotherapie",
       "staat": "Deutschland"
-    },
-    {
-      "titel": "Osteopath (B.Sc.)",
-      "staat": null
     }
   ],
   "aufsichtsbehoerde": {
     "name": "Gesundheitsamt der Stadt Bochum",
-    "anschrift": null,
-    "web": "https://www.bochum.de"
+    "anschrift": "Westring 28/30, 44777 Bochum",
+    "web": "https://www.bochum.de/gesundheitsamt"
   },
   "berufsrecht": [
     {
       "name": "Masseur- und Physiotherapeutengesetz (MPhG)",
       "url": "https://www.gesetze-im-internet.de/mphg/"
+    },
+    {
+      "name": "Ausbildungs- und Prüfungsverordnung für Physiotherapeuten (PhysTh-APrV)",
+      "url": "https://www.gesetze-im-internet.de/physth-aprv/"
     },
     {
       "name": "Heilpraktikergesetz (HeilprG)",
@@ -36,15 +34,14 @@
       "url": "https://www.gesetze-im-internet.de/heilprgdv_1/"
     }
   ],
-  "haftpflicht": {
-    "versicherer": null,
-    "anschrift": null,
-    "geltungsraum": null
-  },
   "hosting": {
-    "anbieter": "IONOS SE",
-    "anschrift": "Elgendorfer Straße 57, 56410 Montabaur, Deutschland",
+    "anbieter": "netcup GmbH",
+    "anschrift": "Emmy-Noether-Straße 10, 76131 Karlsruhe, Deutschland",
     "serverstandort": "Deutschland",
-    "hinweis": "Deploy Now baut die Seite aus dem GitHub-Repo und legt sie auf IONOS-Webspace. Der Auftragsverarbeitungsvertrag nach Art. 28 DSGVO ist im IONOS-Kundenkonto abzuschließen — erst danach stimmt die Angabe in der Datenschutzerklärung."
+    "hinweis": "Webhosting-Paket. Der Auftragsverarbeitungsvertrag nach Art. 28 DSGVO ist im netcup-Kundenkonto (CCP) abzuschliessen — erst danach stimmt die Angabe in der Datenschutzerklaerung."
+  },
+  "akademischerGrad": {
+    "grad": "Osteopath (B.Sc.)",
+    "hochschule": null
   }
 }
