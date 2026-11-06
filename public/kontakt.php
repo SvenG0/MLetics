@@ -60,6 +60,7 @@ if ($start > 0 && (time() - $start) < 3) {
 
 $name      = trim((string) ($_POST['name'] ?? ''));
 $email     = trim((string) ($_POST['email'] ?? ''));
+$telefon   = trim((string) ($_POST['tel'] ?? ''));
 $anliegen  = trim((string) ($_POST['anliegen'] ?? ''));
 $nachricht = trim((string) ($_POST['nachricht'] ?? ''));
 
@@ -77,7 +78,11 @@ if ($laenge($nachricht) > 5000 || $laenge($name) > 200) {
 /* Kopfzeilen-Einschleusung: Wer Zeilenumbrueche in Name oder Adresse
    unterbringt, koennte sonst eigene Empfaenger ergaenzen und den Server
    zum Spamversand missbrauchen. */
-foreach ([$name, $email, $anliegen] as $feld) {
+if ($telefon !== '' && !preg_match('/^[0-9 +().\/-]{5,30}$/', $telefon)) {
+    antwort(400, 'Die Telefonnummer sieht nicht richtig aus.', $willJson);
+}
+
+foreach ([$name, $email, $telefon, $anliegen] as $feld) {
     if (preg_match('/[\r\n]/', $feld)) {
         antwort(400, 'Ungültige Eingabe.', $willJson);
     }
@@ -88,6 +93,7 @@ $betreff = '=?UTF-8?B?' . base64_encode('Anfrage über mletics.de: ' . ($anliege
 $text = "Neue Anfrage über das Kontaktformular auf mletics.de\n\n"
       . "Name:     $name\n"
       . "E-Mail:   $email\n"
+      . "Telefon:  " . ($telefon !== '' ? $telefon : '—') . "\n"
       . "Anliegen: " . ($anliegen ?: '—') . "\n\n"
       . "Nachricht:\n$nachricht\n";
 

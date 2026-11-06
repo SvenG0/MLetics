@@ -8,13 +8,19 @@ const leistungen = (await getCollection('leistungen')).sort((a, b) => a.data.rei
 ---
 
 <form class="form" id="form" action={pfad('/kontakt.php')} method="post">
-  {/* Telefonfeld auf Wunsch entfernt. Damit steht Name allein — die
-      .row mit ihren zwei Spalten ab 640px entfaellt deshalb mit, sonst
-      haette das Feld nur die halbe Breite und rechts daneben waere eine
-      leere Spalte geblieben. Jetzt volle Breite wie E-Mail darunter. */}
-  <div class="field">
-    <label for="f-name">Name</label>
-    <input id="f-name" name="name" type="text" autocomplete="name" required />
+  {/* Name und Telefon teilen sich eine Zeile (.row wird ab 640px
+      zweispaltig). Telefon ist freiwillig — darum ohne required und mit
+      dem Zusatz im Beschriftungstext, nicht nur als Platzhalter: Ein
+      Platzhalter verschwindet beim Tippen, die Beschriftung bleibt. */}
+  <div class="row">
+    <div class="field">
+      <label for="f-name">Name</label>
+      <input id="f-name" name="name" type="text" autocomplete="name" required />
+    </div>
+    <div class="field">
+      <label for="f-tel">Telefon <span class="freiwillig">(optional)</span></label>
+      <input id="f-tel" name="tel" type="tel" inputmode="tel" autocomplete="tel" />
+    </div>
   </div>
 
   <div class="field">
@@ -34,7 +40,6 @@ const leistungen = (await getCollection('leistungen')).sort((a, b) => a.data.rei
   <div class="field">
     <label for="f-msg">Nachricht</label>
     <textarea id="f-msg" name="nachricht" placeholder="Was führt Dich zu uns?"></textarea>
-    <p class="hintline">Bitte keine Diagnosen oder Gesundheitsdaten im Formular senden — das klären wir persönlich.</p>
   </div>
 
   {/* Spam-Abwehr ohne Captcha. Ein Captcha waere eine Huerde fuer
@@ -57,5 +62,9 @@ const leistungen = (await getCollection('leistungen')).sort((a, b) => a.data.rei
   </label>
 
   <button type="submit" class="btn btn--solid" style="justify-content:center">Anfrage senden</button>
-  <p class="hintline" id="formNote" role="status" aria-live="polite"></p>
+  {/* Leer ist der Kasten unsichtbar (.meldung:empty). Er bleibt dabei im
+      Dokument stehen, statt ein- und ausgehaengt zu werden — eine
+      Live-Region meldet Aenderungen zuverlaessiger, wenn sie von Anfang
+      an da ist. */}
+  <p class="meldung" id="formNote" role="status" aria-live="polite"></p>
 </form>

@@ -394,6 +394,32 @@ function initMLetics(){
   var formEl = document.getElementById('form');
   if(formEl){
     var notiz  = document.getElementById('formNote');
+    var wegTimer = null;
+
+    /* Eine Meldung setzen. "art" faerbt den Balken, der Text traegt die
+       Aussage. Erfolgsmeldungen blenden nach acht Sekunden aus —
+       Fehlermeldungen bleiben stehen, denn dort muss jemand etwas tun. */
+    function melden(text, art){
+      window.clearTimeout(wegTimer);
+      notiz.removeAttribute('data-weg');
+      notiz.textContent = text;
+      if(art) notiz.setAttribute('data-art', art);
+      else notiz.removeAttribute('data-art');
+
+      if(art === 'ok'){
+        wegTimer = window.setTimeout(function(){
+          notiz.setAttribute('data-weg', 'true');
+          /* Erst nach dem Ausblenden leeren, sonst springt der Kasten weg,
+             bevor man ihn verschwinden sieht. */
+          window.setTimeout(function(){
+            if(notiz.getAttribute('data-weg') === 'true'){
+                    notiz.removeAttribute('data-art');
+              notiz.removeAttribute('data-weg');
+            }
+          }, 600);
+        }, 8000);
+      }
+    }
     var knopf  = formEl.querySelector('button[type="submit"]');
     var start  = document.getElementById('f-start');
 
@@ -408,7 +434,7 @@ function initMLetics(){
 
       var ok = document.getElementById('f-ok');
       if(ok && !ok.checked){
-        notiz.textContent = 'Bitte bestätige noch die Einwilligung.';
+        melden('Bitte bestätige noch die Einwilligung.', 'fehler');
         ok.focus();
         return;
       }
@@ -429,14 +455,14 @@ function initMLetics(){
       })
       .then(function(a){ return a.json().catch(function(){ return {ok:false, text:'Unerwartete Antwort vom Server.'}; }); })
       .then(function(d){
-        notiz.textContent = d.text;
+        melden(d.text, d.ok ? 'ok' : 'fehler');
         if(d.ok){
           formEl.reset();
           if(start) start.value = Math.floor(Date.now() / 1000);
         }
       })
       .catch(function(){
-        notiz.textContent = 'Keine Verbindung. Bitte später erneut versuchen oder direkt eine E-Mail schreiben.';
+        melden('Keine Verbindung. Bitte später erneut versuchen oder direkt eine E-Mail schreiben.', 'fehler');
       })
       .then(function(){
         knopf.disabled = false;
