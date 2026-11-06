@@ -67,24 +67,40 @@ jobs:
           PASSWORT: ${{ secrets.NETCUP_PASSWORT }}
           PFAD: ${{ secrets.NETCUP_PFAD }}
         run: |
-          # Sicherung vor dem Loeschen. Der naechste Schritt raeumt im
-          # Zielverzeichnis auf — landet er im falschen, waere der Schaden
-          # gross. Deshalb vorher nachsehen, wo wir ueberhaupt stehen: Der
-          # Pfad MUSS auf httpdocs enden. Tut er das nicht, bricht der
-          # Ablauf ab, bevor irgendetwas angefasst wird.
-          ziel=$(lftp -c "
+          # Sicherung vor dem Loeschen: Der naechste Schritt raeumt im
+          # Zielverzeichnis auf. Landet er im falschen, waere der Schaden
+          # gross.
+          #
+          # Erster Versuch prüfte, ob der Pfad auf "httpdocs" endet — das
+          # war falsch gedacht. Das FTP-Konto hat /mletics.de/httpdocs als
+          # Basisverzeichnis und sieht genau das als sein "/". Es KANN also
+          # nie auf httpdocs enden. Die Sicherung verhinderte damit genau
+          # den Fall, den sie absichern sollte.
+          #
+          # Jetzt wird die echte Gefahr geprüft: dass wir eine oder zwei
+          # Ebenen zu hoch stehen. Dort laegen Verzeichnisse namens
+          # "mletics.de" bzw. "httpdocs" — im richtigen Ziel gibt es die
+          # nicht. Tauchen sie auf, wird abgebrochen.
+          inhalt=$(lftp -c "
             set ftp:ssl-force true;
             set ftp:ssl-protect-data true;
             set ssl:verify-certificate yes;
             open -u '$BENUTZER','$PASSWORT' ftp://$HOST;
             cd '$PFAD';
             pwd;
-          " | tail -1)
-          echo "Zielverzeichnis: $ziel"
-          case "$ziel" in
-            *httpdocs) echo "Sieht richtig aus." ;;
-            *) echo "ABBRUCH: Das Ziel endet nicht auf httpdocs."; exit 1 ;;
-          esac
+            cls -1;
+          ")
+          echo "── Das Konto landet hier: ──"
+          echo "$inhalt"
+          echo "────────────────────────────"
+          if echo "$inhalt" | grep -qxE 'mletics\.de/?|httpdocs/?'; then
+            echo "ABBRUCH: Im Ziel liegt ein Verzeichnis 'mletics.de' oder"
+            echo "'httpdocs'. Das Konto steht damit zu hoch — es soll IM"
+            echo "httpdocs landen, nicht darueber. Basisverzeichnis des"
+            echo "FTP-Kontos in Plesk pruefen."
+            exit 1
+          fi
+          echo "Ziel sieht richtig aus."
 
       - name: Hochladen
         env:
