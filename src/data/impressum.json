@@ -3,13 +3,11 @@
   "berufsbezeichnungen": [
     {
       "titel": "Physiotherapeut",
-      "staat": "Deutschland",
-      "zusatz": "Ausbildung in den Niederlanden, in Deutschland anerkannt nach § 2 Abs. 2 MPhG"
+      "angabe": "Berufsqualifikation erworben in den Niederlanden; Erlaubnis zum Führen der Berufsbezeichnung in Deutschland nach § 1 MPhG (Anerkennung nach § 2 Abs. 2 MPhG)"
     },
     {
       "titel": "Sektoraler Heilpraktiker für Physiotherapie",
-      "staat": "Deutschland",
-      "zusatz": null
+      "angabe": "verliehen in Deutschland durch das Gesundheitsamt der Stadt Bochum"
     }
   ],
   "aufsichtsbehoerde": {

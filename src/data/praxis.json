@@ -2,7 +2,6 @@
   "_hinweis": "Echte Praxisdaten (Stand 29.09.2026). Speisen Kontaktkapitel, Fußzeile, Impressum und die strukturierten Daten für Google. Offen: Rechtsform, USt-ID bzw. Befreiung nach §4 Nr. 14 UStG, Berufshaftpflicht — siehe src/data/impressum.json.",
   "platzhalter": false,
   "name": "MLetics",
-  "langname": "MLetics — Osteopathie | Physiotherapie",
   "inhaber": "Maik Liesbrock",
   "telefon": {
     "anzeige": "0176 66865146",
