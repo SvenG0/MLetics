@@ -9,6 +9,12 @@
 # in astro.config.mjs (https://mletics.de, Wurzelverzeichnis) sind genau
 # die richtigen für die echte Seite.
 #
+# VERSCHLÜSSELUNG: FTPS, nicht SFTP. Ein zusätzliches FTP-Konto in Plesk
+# kann kein SFTP — das haengt am SSH-Zugang des Systembenutzers. Mit
+# ssl-force und ssl-protect-data sind Steuer- UND Datenkanal verschluesselt;
+# ohne TLS bricht lftp ab, statt still im Klartext zu uebertragen.
+# ssl:verify-certificate prueft zusaetzlich das Serverzertifikat.
+#
 # ZUGANGSDATEN liegen als "Secrets" im Repository und sind für niemanden
 # lesbar, auch nicht für mich. Anzulegen unter:
 #   Settings -> Secrets and variables -> Actions -> New repository secret
@@ -67,8 +73,10 @@ jobs:
           # Pfad MUSS auf httpdocs enden. Tut er das nicht, bricht der
           # Ablauf ab, bevor irgendetwas angefasst wird.
           ziel=$(lftp -c "
-            set sftp:auto-confirm yes;
-            open -u '$BENUTZER','$PASSWORT' sftp://$HOST;
+            set ftp:ssl-force true;
+            set ftp:ssl-protect-data true;
+            set ssl:verify-certificate yes;
+            open -u '$BENUTZER','$PASSWORT' ftp://$HOST;
             cd '$PFAD';
             pwd;
           " | tail -1)
@@ -94,9 +102,11 @@ jobs:
           # gehoert. Mitgeloescht hiesse: Zertifikat laeuft ab, Browser
           # zeigen eine Sicherheitswarnung.
           lftp -c "
-            set sftp:auto-confirm yes;
+            set ftp:ssl-force true;
+            set ftp:ssl-protect-data true;
+            set ssl:verify-certificate yes;
             set net:max-retries 3;
-            open -u '$BENUTZER','$PASSWORT' sftp://$HOST;
+            open -u '$BENUTZER','$PASSWORT' ftp://$HOST;
             mirror --reverse --delete --parallel=4 --verbose \
                    --exclude-glob .well-known/ \
                    dist/ '$PFAD';
