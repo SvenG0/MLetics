@@ -1,0 +1,36 @@
+# Zwischenspeicher-Regeln.
+#
+# Ohne diese Datei schickt der Server gar keine Anweisung mit. Browser
+# raten dann anhand des Aenderungsdatums und behalten das HTML oft
+# tagelang. Das ist hier besonders schaedlich: Astro haengt an jede CSS-,
+# JS- und Bilddatei einen Pruefcode im Namen, und beim Veroeffentlichen
+# werden die alten geloescht. Ein Browser mit altem HTML verlangt dann
+# Dateien, die es nicht mehr gibt — die Seite erscheint ohne Gestaltung.
+#
+# Die Loesung ist die uebliche Zweiteilung:
+#   HTML    immer nachfragen (dank ETag meist eine 304-Antwort, also
+#           ein paar hundert Byte statt des ganzen Dokuments)
+#   Dateien mit Pruefcode im Namen koennen ewig bleiben — aendert sich
+#           ihr Inhalt, aendert sich der Name, und das HTML verweist
+#           dann ohnehin woandershin
+
+<IfModule mod_headers.c>
+  # Alles unter /_astro/ traegt einen Pruefcode im Namen.
+  SetEnvIf Request_URI "^/_astro/" MIT_PRUEFCODE
+  Header set Cache-Control "public, max-age=31536000, immutable" env=MIT_PRUEFCODE
+
+  # Schriften aendern sich praktisch nie, haben aber feste Namen —
+  # deshalb 30 Tage statt ewig.
+  SetEnvIf Request_URI "^/fonts/" SCHRIFTEN
+  Header set Cache-Control "public, max-age=2592000" env=SCHRIFTEN
+
+  # HTML: immer nachfragen.
+  <FilesMatch "\.html$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+
+  # Sitemap und robots.txt aendern sich mit jeder Veroeffentlichung.
+  <FilesMatch "\.(xml|txt)$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+</IfModule>

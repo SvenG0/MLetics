@@ -102,7 +102,31 @@ jobs:
           fi
           echo "Ziel sieht richtig aus."
 
-      - name: Hochladen
+      - name: Dateien hochladen (vor dem HTML)
+        env:
+          HOST: ${{ secrets.NETCUP_HOST }}
+          BENUTZER: ${{ secrets.NETCUP_BENUTZER }}
+          PASSWORT: ${{ secrets.NETCUP_PASSWORT }}
+          PFAD: ${{ secrets.NETCUP_PFAD }}
+        run: |
+          # Erst CSS, JS, Schriften und Bilder — ohne zu loeschen. Danach
+          # erst das HTML, das darauf verweist. Andersherum koennte ein
+          # Besucher waehrend der Uebertragung neues HTML erhalten, dessen
+          # Dateien noch nicht oben sind: die Seite erschiene ohne
+          # Gestaltung. Das Fenster dafuer ist jetzt nur noch so lang wie
+          # das Hochladen von drei HTML-Dateien.
+          lftp -c "
+            set ftp:ssl-force true;
+            set ftp:ssl-protect-data true;
+            set ssl:verify-certificate yes;
+            set net:max-retries 3;
+            open -u '$BENUTZER','$PASSWORT' ftp://$HOST;
+            mirror --reverse --parallel=4 \
+                   --exclude-glob *.html \
+                   dist/ '$PFAD';
+          "
+
+      - name: HTML hochladen und aufräumen
         env:
           HOST: ${{ secrets.NETCUP_HOST }}
           BENUTZER: ${{ secrets.NETCUP_BENUTZER }}
