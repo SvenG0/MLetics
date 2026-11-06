@@ -54,6 +54,30 @@ jobs:
       - name: lftp installieren
         run: sudo apt-get update -qq && sudo apt-get install -y lftp
 
+      - name: Ziel prüfen
+        env:
+          HOST: ${{ secrets.NETCUP_HOST }}
+          BENUTZER: ${{ secrets.NETCUP_BENUTZER }}
+          PASSWORT: ${{ secrets.NETCUP_PASSWORT }}
+          PFAD: ${{ secrets.NETCUP_PFAD }}
+        run: |
+          # Sicherung vor dem Loeschen. Der naechste Schritt raeumt im
+          # Zielverzeichnis auf — landet er im falschen, waere der Schaden
+          # gross. Deshalb vorher nachsehen, wo wir ueberhaupt stehen: Der
+          # Pfad MUSS auf httpdocs enden. Tut er das nicht, bricht der
+          # Ablauf ab, bevor irgendetwas angefasst wird.
+          ziel=$(lftp -c "
+            set sftp:auto-confirm yes;
+            open -u '$BENUTZER','$PASSWORT' sftp://$HOST;
+            cd '$PFAD';
+            pwd;
+          " | tail -1)
+          echo "Zielverzeichnis: $ziel"
+          case "$ziel" in
+            *httpdocs) echo "Sieht richtig aus." ;;
+            *) echo "ABBRUCH: Das Ziel endet nicht auf httpdocs."; exit 1 ;;
+          esac
+
       - name: Hochladen
         env:
           HOST: ${{ secrets.NETCUP_HOST }}
