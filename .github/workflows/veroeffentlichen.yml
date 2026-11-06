@@ -1,0 +1,85 @@
+# Veröffentlichung auf mletics.de (netcup Webhosting).
+#
+# Läuft bei jedem Push auf main: baut die Seite und spiegelt den Ordner
+# dist/ in das Web-Verzeichnis bei netcup. Danach ist die Änderung live.
+#
+# Unterschied zur Testseite auf GitHub Pages (testseite.yml): Dort werden
+# SITE_URL und BASE_PATH gesetzt, weil sie in einem Unterordner liegt und
+# nicht in die Suche geraten soll. Hier wird NICHTS gesetzt — die Vorgaben
+# in astro.config.mjs (https://mletics.de, Wurzelverzeichnis) sind genau
+# die richtigen für die echte Seite.
+#
+# ZUGANGSDATEN liegen als "Secrets" im Repository und sind für niemanden
+# lesbar, auch nicht für mich. Anzulegen unter:
+#   Settings -> Secrets and variables -> Actions -> New repository secret
+#     NETCUP_HOST      z. B. abc.kasserver.de oder die IP des Webhostings
+#     NETCUP_BENUTZER  der SFTP-Benutzer aus Plesk
+#     NETCUP_PASSWORT  dessen Passwort
+#     NETCUP_PFAD      Zielverzeichnis, bei Plesk üblicherweise /httpdocs
+
+name: Veröffentlichen auf mletics.de
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: veroeffentlichen
+  cancel-in-progress: false
+
+jobs:
+  veroeffentlichen:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v7
+
+      - name: Node einrichten
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Pakete installieren
+        run: npm ci
+
+      - name: Seite bauen
+        run: npx astro build
+
+      # Bewusst kein fertiger Upload-Baustein aus dem Marktplatz: Ein solcher
+      # bekäme das Passwort in die Hand, und was er damit tut, steht in
+      # fremdem Code. lftp ist ein Standardwerkzeug, der Befehl steht hier
+      # vollständig und ist nachlesbar.
+      - name: lftp installieren
+        run: sudo apt-get update -qq && sudo apt-get install -y lftp
+
+      - name: Hochladen
+        env:
+          HOST: ${{ secrets.NETCUP_HOST }}
+          BENUTZER: ${{ secrets.NETCUP_BENUTZER }}
+          PASSWORT: ${{ secrets.NETCUP_PASSWORT }}
+          PFAD: ${{ secrets.NETCUP_PFAD }}
+        run: |
+          # --delete raeumt alte Dateien weg. Astro haengt an jede CSS- und
+          # Bilddatei einen Pruefcode im Namen; ohne das Aufraeumen blieben
+          # alle frueheren Fassungen fuer immer liegen (rund 25 MB je Build).
+          #
+          # .well-known ist ausgenommen: Dort legt Let's Encrypt die Dateien
+          # ab, mit denen es alle 90 Tage prueft, ob die Domain noch euch
+          # gehoert. Mitgeloescht hiesse: Zertifikat laeuft ab, Browser
+          # zeigen eine Sicherheitswarnung.
+          lftp -c "
+            set sftp:auto-confirm yes;
+            set net:max-retries 3;
+            open -u '$BENUTZER','$PASSWORT' sftp://$HOST;
+            mirror --reverse --delete --parallel=4 --verbose \
+                   --exclude-glob .well-known/ \
+                   dist/ '$PFAD';
+          "
+
+      - name: Erreichbarkeit prüfen
+        run: |
+          code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 https://mletics.de/ || true)
+          echo "mletics.de antwortet mit $code"
+          test "$code" = "200"
