@@ -385,13 +385,63 @@ function initMLetics(){
     window.addEventListener('load', galHoeheAnpassen);
   }
 
-  /* Formular — Prototyp, versendet noch nicht */
+  /* Kontaktformular.
+
+     Es funktioniert auch OHNE dieses Skript: Das Formular hat action und
+     method, der Browser schickt es dann ganz normal ab und kontakt.php
+     antwortet mit einer eigenen Seite. Was hier passiert, ist nur die
+     angenehmere Fassung — abschicken, ohne die Seite zu verlassen. */
   var formEl = document.getElementById('form');
   if(formEl){
+    var notiz  = document.getElementById('formNote');
+    var knopf  = formEl.querySelector('button[type="submit"]');
+    var start  = document.getElementById('f-start');
+
+    /* Zeitstempel erst jetzt setzen, nicht beim Bauen der Seite — sonst
+       waere er bei einer zwischengespeicherten Seite uralt. */
+    if(start) start.value = Math.floor(Date.now() / 1000);
+
     formEl.addEventListener('submit', function(e){
+      /* Browser ohne fetch bekommen den normalen Weg. */
+      if(!window.fetch) return;
       e.preventDefault();
-      document.getElementById('formNote').textContent =
-        'Prototyp: Der Versand wird angebunden, sobald Formspree oder Netlify Forms eingerichtet ist.';
+
+      var ok = document.getElementById('f-ok');
+      if(ok && !ok.checked){
+        notiz.textContent = 'Bitte bestätige noch die Einwilligung.';
+        ok.focus();
+        return;
+      }
+      if(!formEl.checkValidity()){
+        formEl.reportValidity();
+        return;
+      }
+
+      knopf.disabled = true;
+      var beschriftung = knopf.textContent;
+      knopf.textContent = 'Wird gesendet …';
+      notiz.textContent = '';
+
+      fetch(formEl.action, {
+        method: 'POST',
+        body: new FormData(formEl),
+        headers: {'Accept': 'application/json'}
+      })
+      .then(function(a){ return a.json().catch(function(){ return {ok:false, text:'Unerwartete Antwort vom Server.'}; }); })
+      .then(function(d){
+        notiz.textContent = d.text;
+        if(d.ok){
+          formEl.reset();
+          if(start) start.value = Math.floor(Date.now() / 1000);
+        }
+      })
+      .catch(function(){
+        notiz.textContent = 'Keine Verbindung. Bitte später erneut versuchen oder direkt eine E-Mail schreiben.';
+      })
+      .then(function(){
+        knopf.disabled = false;
+        knopf.textContent = beschriftung;
+      });
     });
   }
 }

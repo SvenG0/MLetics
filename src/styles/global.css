@@ -839,3 +839,8 @@ footer{position:relative;z-index:10;background:var(--bg);border-top:1px solid va
   .rise[data-in="false"]{opacity:1;transform:none}
   .stage__layer{transition:none}
 }
+
+/* Honigtopf des Kontaktformulars: fuer Menschen unsichtbar, fuer
+   automatische Skripte ein ganz normales Feld. Bewusst NICHT
+   display:none — darauf pruefen viele Spam-Skripte inzwischen. */
+.honigtopf{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}

@@ -7,7 +7,7 @@ import { pfad } from '../lib/pfad';
 const leistungen = (await getCollection('leistungen')).sort((a, b) => a.data.reihenfolge - b.data.reihenfolge);
 ---
 
-<form class="form" id="form" novalidate>
+<form class="form" id="form" action={pfad('/kontakt.php')} method="post">
   {/* Telefonfeld auf Wunsch entfernt. Damit steht Name allein — die
       .row mit ihren zwei Spalten ab 640px entfaellt deshalb mit, sonst
       haette das Feld nur die halbe Breite und rechts daneben waere eine
@@ -36,6 +36,19 @@ const leistungen = (await getCollection('leistungen')).sort((a, b) => a.data.rei
     <textarea id="f-msg" name="nachricht" placeholder="Was führt Dich zu uns?"></textarea>
     <p class="hintline">Bitte keine Diagnosen oder Gesundheitsdaten im Formular senden — das klären wir persönlich.</p>
   </div>
+
+  {/* Spam-Abwehr ohne Captcha. Ein Captcha waere eine Huerde fuer
+      Menschen mit Behinderung und bindet meist einen US-Dienst ein.
+      Stattdessen: ein Feld, das niemand sieht (automatische Skripte
+      fuellen stumpf alles aus) und ein Zeitstempel (wer in unter drei
+      Sekunden abschickt, hat nicht gelesen).
+      aria-hidden und tabindex halten es auch von Screenreadern und der
+      Tastaturreihenfolge fern. */}
+  <div class="honigtopf" aria-hidden="true">
+    <label for="f-web">Website (bitte frei lassen)</label>
+    <input id="f-web" name="website" type="text" tabindex="-1" autocomplete="off" />
+  </div>
+  <input type="hidden" name="gestartet" id="f-start" value="" />
 
   <label class="consent">
     <input type="checkbox" id="f-ok" required />
