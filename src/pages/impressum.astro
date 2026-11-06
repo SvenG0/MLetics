@@ -41,10 +41,8 @@ const offen = (wert: string | null | undefined) => wert === null || wert === und
   <ul>
     {impressum.berufsbezeichnungen.map((b) => (
       <li>
-        {b.titel} —{' '}
-        {offen(b.staat)
-          ? <span class="offen">Verleihungsstaat noch zu ergänzen (in den Niederlanden erworben?)</span>
-          : <>verliehen in {b.staat}</>}
+        {b.titel} — verliehen in {b.staat}
+        {!offen(b.zusatz) && <><br /><small>{b.zusatz}</small></>}
       </li>
     ))}
   </ul>

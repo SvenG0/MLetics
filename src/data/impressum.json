@@ -3,11 +3,13 @@
   "berufsbezeichnungen": [
     {
       "titel": "Physiotherapeut",
-      "staat": "Deutschland"
+      "staat": "Deutschland",
+      "zusatz": "Ausbildung in den Niederlanden, in Deutschland anerkannt nach § 2 Abs. 2 MPhG"
     },
     {
       "titel": "Sektoraler Heilpraktiker für Physiotherapie",
-      "staat": "Deutschland"
+      "staat": "Deutschland",
+      "zusatz": null
     }
   ],
   "aufsichtsbehoerde": {
