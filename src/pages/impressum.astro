@@ -35,13 +35,6 @@ const offen = (wert: string | null | undefined) => wert === null || wert === und
       steht in keinem Handelsregister. Von acht geprueften Praxisseiten nennt
       nur eine die Rechtsform — und das ist eine GmbH, dort ist es Pflicht. */}
 
-  <h3>Umsatzsteuer</h3>
-  <p>
-    Heilbehandlungen im Bereich der Humanmedizin sind nach § 4 Nr. 14 a UStG
-    von der Umsatzsteuer befreit. Eine Umsatzsteuer-Identifikationsnummer nach
-    § 27 a UStG liegt daher nicht vor.
-  </p>
-
   <h2>Berufsrechtliche Angaben</h2>
 
   <h3>Gesetzliche Berufsbezeichnungen</h3>
@@ -55,17 +48,6 @@ const offen = (wert: string | null | undefined) => wert === null || wert === und
       </li>
     ))}
   </ul>
-
-  {/* Osteopathie ist in Deutschland kein reglementierter Beruf, "Osteopath"
-      also keine gesetzliche Berufsbezeichnung im Sinne des § 5 Abs. 1 Nr. 5
-      DDG, sondern ein akademischer Grad. Deshalb eigener Abschnitt. */}
-  <h3>Akademischer Grad</h3>
-  <p>
-    {impressum.akademischerGrad.grad}
-    {offen(impressum.akademischerGrad.hochschule)
-      ? <> — <span class="offen">verleihende Hochschule noch zu ergänzen</span></>
-      : <> — verliehen von {impressum.akademischerGrad.hochschule}</>}
-  </p>
 
   <h3>Zuständige Aufsichtsbehörde</h3>
   <p>
@@ -90,44 +72,10 @@ const offen = (wert: string | null | undefined) => wert === null || wert === und
       nennt sie genau eine. Eine Versicherung zu HABEN bleibt selbstredend
       noetig — sie hier zu nennen, ist es nicht. */}
 
-  <h2>Streitbeilegung</h2>
-  <p>
-    Wir sind nicht bereit und nicht verpflichtet, an Streitbeilegungsverfahren vor
-    einer Verbraucherschlichtungsstelle teilzunehmen.
-  </p>
-  <p>
-    <em>
-      Hinweis: Die früher übliche Verlinkung auf die EU-Plattform zur
-      Online-Streitbeilegung entfällt — sie wurde im Juli 2025 eingestellt. Viele
-      Impressum-Vorlagen führen den Link weiterhin, er geht inzwischen ins Leere.
-    </em>
-  </p>
+  {/* Entfernt: Streitbeilegung, Haftungsausschluss, Urheberrechtshinweis.
+      Alle drei sind freiwillig. § 36 VSBG greift erst ab mehr als zehn
+      Beschaeftigten; die Haftung fuer eigene und fremde Inhalte richtet
+      sich nach §§ 7-10 DDG, ob man sie abschreibt oder nicht; und das
+      Urheberrecht gilt ohne Hinweis. Was bleibt, ist Pflicht. */}
 
-  <h2>Haftung für Inhalte und Links</h2>
-  <p>
-    Die Inhalte dieser Seiten wurden mit Sorgfalt erstellt. Für die Richtigkeit,
-    Vollständigkeit und Aktualität der Inhalte kann jedoch keine Gewähr übernommen
-    werden. Als Diensteanbieter sind wir nach § 7 Abs. 1 DDG für eigene Inhalte auf
-    diesen Seiten verantwortlich, nach §§ 8 bis 10 DDG jedoch nicht verpflichtet,
-    übermittelte oder gespeicherte fremde Informationen zu überwachen.
-  </p>
-  <p>
-    Unser Angebot enthält Links zu externen Websites Dritter, auf deren Inhalte wir
-    keinen Einfluss haben. Für diese fremden Inhalte ist stets der jeweilige Anbieter
-    verantwortlich. Bei Bekanntwerden von Rechtsverletzungen entfernen wir
-    entsprechende Links umgehend.
-  </p>
-
-  <h2>Urheberrecht</h2>
-  <p>
-    Die auf dieser Website veröffentlichten Inhalte und Werke unterliegen dem
-    deutschen Urheberrecht. Vervielfältigung, Bearbeitung, Verbreitung und jede Art
-    der Verwertung außerhalb der Grenzen des Urheberrechts bedürfen der schriftlichen
-    Zustimmung des jeweiligen Autors bzw. Erstellers.
-  </p>
-  <p>
-    Auf einzelnen Fotografien dieser Website sind Vereins- und Sponsorenkennzeichen
-    Dritter erkennbar. Die Rechte an diesen Kennzeichen liegen bei den jeweiligen
-    Inhabern.
-  </p>
 </Textseite>

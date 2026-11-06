@@ -1,6 +1,5 @@
 {
   "_hinweis": "Angaben fuers Impressum nach § 5 DDG. Geprueft gegen acht vergleichbare Praxisseiten; Vorbild ist medifit-stiepel.de (Bochum), die einzige davon mit vollstaendigen berufsrechtlichen Angaben. Felder mit null sind offen und werden auf der Seite sichtbar ausgewiesen.",
-  "umsatzsteuerBefreit": true,
   "berufsbezeichnungen": [
     {
       "titel": "Physiotherapeut",
@@ -39,9 +38,5 @@
     "anschrift": "Emmy-Noether-Straße 10, 76131 Karlsruhe, Deutschland",
     "serverstandort": "Deutschland",
     "hinweis": "Webhosting-Paket. Der Auftragsverarbeitungsvertrag nach Art. 28 DSGVO ist im netcup-Kundenkonto (CCP) abzuschliessen — erst danach stimmt die Angabe in der Datenschutzerklaerung."
-  },
-  "akademischerGrad": {
-    "grad": "Osteopath (B.Sc.)",
-    "hochschule": null
   }
 }
