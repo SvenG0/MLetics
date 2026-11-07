@@ -69,13 +69,18 @@ jobs:
       # "umgeleitet". Das Werkzeug legt zugleich die .htaccess an, die
       # alles mit Status 503 beantwortet.
       #
-      # Bei einem gewoehnlichen Push greift der Modus ebenfalls, solange
-      # die Variable WARTUNG auf 'an' steht — sonst wuerde die naechste
+      # Bei einem gewoehnlichen Push greift der Modus, solange die Datei
+      # WARTUNG im Projekt liegt — sonst wuerde die naechste
       # Textaenderung die Seite versehentlich wieder freischalten.
+      #
+      # Bewusst eine Datei und keine GitHub-Einstellung: Sie steht in der
+      # Versionsgeschichte, ist beim Durchsehen sichtbar und laesst sich
+      # mit einem Commit umlegen. Eine Einstellung im Weboberflaechen-
+      # Menue findet in zwei Wochen niemand wieder.
       - name: Nur die Baustelle veröffentlichen
         if: >-
           (github.event_name == 'workflow_dispatch' && inputs.modus == 'baustelle')
-          || (github.event_name != 'workflow_dispatch' && vars.WARTUNG == 'an')
+          || (github.event_name != 'workflow_dispatch' && hashFiles('WARTUNG') != '')
         run: |
           node werkzeuge/nur-baustelle.mjs
           echo "── Was hochgeladen wird ──"

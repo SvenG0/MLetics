@@ -1,0 +1,15 @@
+Solange diese Datei existiert, veröffentlicht der Ablauf
+.github/workflows/veroeffentlichen.yml unter mletics.de ausschließlich
+die Baustellenseite — mit Status 503.
+
+Seite wieder freischalten:
+  1. Diese Datei löschen
+  2. Auf main pushen
+
+Oder von Hand: Actions → „Veröffentlichen auf mletics.de" → Run workflow
+→ „echte-seite" wählen. Das umgeht diese Datei einmalig.
+
+Zurück auf den Stand vom 7.11.2026: Run workflow mit dem Etikett
+live-stand-2026-11-07.
+
+Angelegt am 7.11.2026 für den Umbau.
