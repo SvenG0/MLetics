@@ -1,0 +1,98 @@
+# Arbeitsfassung unter mletics.de/vorschauM
+#
+# Zweck: Maik soll den Zwischenstand vom Handy ansehen koennen, waehrend
+# unter mletics.de die Baustellenseite steht. Laeuft bei jedem Push auf
+# den Zweig "umbau" — die echte Seite bleibt davon unberuehrt, die haengt
+# an "main".
+#
+# Kein Passwort, sondern ein nicht erratbarer Pfad. Das schuetzt gegen
+# die Scanner, die taeglich /vorschau, /test und /beta abklopfen; gegen
+# jemanden, der es gezielt darauf anlegt, nicht. Dahinter liegt aber
+# nichts Schuetzenswertes ausser einer unfertigen Seite.
+#
+# Drei Vorkehrungen:
+#   - BASE_PATH setzt die Seite in den Unterordner. Dadurch greift die
+#     vorhandene Regel in Base.astro und robots.txt.ts, die jede Fassung
+#     ausserhalb des Wurzelverzeichnisses auf "noindex" stellt.
+#   - X-Robots-Tag als zweite Sperre, falls die Regel je wegfaellt.
+#   - Referrer-Policy: Ohne sie stuende die Vorschau-Adresse im Protokoll
+#     jeder Seite, die von hier aus verlinkt wird (etwa
+#     gesetze-im-internet.de aus den Rechtstexten).
+
+name: Vorschau auf mletics.de/vorschauM
+
+on:
+  push:
+    branches: [umbau]
+  workflow_dispatch:
+
+concurrency:
+  group: vorschau
+  cancel-in-progress: false
+
+jobs:
+  vorschau:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v7
+
+      - name: Node einrichten
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Pakete installieren
+        run: npm ci
+
+      - name: Seite für den Unterordner bauen
+        env:
+          SITE_URL: https://mletics.de
+          BASE_PATH: /vorschauM
+        run: npx astro build
+
+      - name: Vorschau abdichten
+        run: |
+          # Ohne Heredoc geschrieben: Dessen Inhalt muesste auf Spalte 0
+          # stehen, was den YAML-Block hier sprengt.
+          {
+            echo ""
+            echo "# --- Nur in der Vorschau ---"
+            echo "<IfModule mod_headers.c>"
+            echo '  Header always set X-Robots-Tag "noindex, nofollow"'
+            echo '  Header always set Referrer-Policy "no-referrer"'
+            echo "</IfModule>"
+          } >> dist/.htaccess
+
+          echo "── Gegenprobe: steht noindex in der Seite? ──"
+          grep -o 'name="robots" content="[^"]*"' dist/index.html
+          grep -q 'name="robots"' dist/index.html
+
+      - name: lftp installieren
+        run: sudo apt-get update -qq && sudo apt-get install -y lftp
+
+      - name: Hochladen
+        env:
+          HOST: ${{ secrets.NETCUP_HOST }}
+          BENUTZER: ${{ secrets.NETCUP_BENUTZER }}
+          PASSWORT: ${{ secrets.NETCUP_PASSWORT }}
+          PFAD: ${{ secrets.NETCUP_PFAD }}
+        run: |
+          # Zielt in den Unterordner. --delete wirkt dadurch nur dort und
+          # kann die echte Seite nicht anfassen.
+          lftp -c "
+            set ftp:ssl-force true;
+            set ftp:ssl-protect-data true;
+            set ssl:verify-certificate yes;
+            set net:max-retries 3;
+            open -u '$BENUTZER','$PASSWORT' ftp://$HOST;
+            mirror --reverse --delete --parallel=4 \
+                   dist/ '$PFAD/vorschauM';
+          "
+
+      - name: Erreichbarkeit prüfen
+        run: |
+          code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 https://mletics.de/vorschauM/ || true)
+          echo "mletics.de/vorschauM antwortet mit $code"
+          test "$code" = "200"

@@ -75,7 +75,7 @@ ErrorDocument 503 /index.html
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
-  RewriteCond %{REQUEST_URI} !^/(_astro|fonts|favicon|\\.well-known|index\\.html)
+  RewriteCond %{REQUEST_URI} !^/(_astro|fonts|favicon|\\.well-known|index\\.html|vorschauM)
   RewriteRule ^ - [R=503,L]
 </IfModule>
 
