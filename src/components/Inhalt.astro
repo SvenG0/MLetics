@@ -24,6 +24,7 @@ import about from '../assets/04-about-neu.jpg';
 
 const leistungen = (await getCollection('leistungen')).sort((a, b) => a.data.reihenfolge - b.data.reihenfolge);
 const zielgruppen = (await getCollection('zielgruppen')).sort((a, b) => a.data.reihenfolge - b.data.reihenfolge);
+const fragen = (await getCollection('fragen')).sort((a, b) => a.data.reihenfolge - b.data.reihenfolge);
 ---
 
   <Rail />
@@ -40,10 +41,21 @@ const zielgruppen = (await getCollection('zielgruppen')).sort((a, b) => a.data.r
           Der Praxisname stand hier direkt unter dem Logo und war damit
           ohnehin doppelt. */}
       <p class="eyebrow rise"><b>01</b> <span>Understand</span></p>
-      {/* Zurueck auf Englisch. Der feste Umbruch ist wieder drin: bei den
-          deutschen Woertern war er falsch gesetzt (sie sind laenger),
-          bei den englischen sass er von Anfang an richtig. */}
-      <h1 class="display rise">UNDERSTAND. TREAT.<br>CONNECT.</h1>
+      {/* SUCHMASCHINEN: Der Claim bleibt optisch die groesste Zeile, ist
+          aber keine Ueberschrift mehr — er enthaelt kein einziges Wort,
+          nach dem jemand sucht. Google liest die h1 als wichtigste
+          Aussage der Seite; dort steht jetzt, was die Praxis ist und wo
+          sie liegt.
+
+          Ausgetauscht wurden nur die TAGS, nicht das Aussehen: .display
+          traegt die Gestaltung, nicht das h1. Darum sieht der Auftakt
+          genauso aus wie vorher.
+
+          Bewusst OHNE aria-hidden: Der Claim ist echter Inhalt, keine
+          Zierde. Versteckt haetten blinde Besucher die praegnanteste
+          Zeile der Seite gar nicht gehoert. */}
+      <p class="display rise">UNDERSTAND. TREAT.<br>CONNECT.</p>
+      <h1 class="h1-sachlich rise">Privatpraxis für Physiotherapie und Osteopathie in Bochum</h1>
       {/* Bleibt stehen und ist keine Dopplung mehr: Solange die
           Ueberschrift deutsch war, sagte diese Zeile dasselbe noch einmal
           — darum ging es Maik. Neben der englischen Ueberschrift ist sie
@@ -131,13 +143,38 @@ const zielgruppen = (await getCollection('zielgruppen')).sort((a, b) => a.data.r
       <Gallery />
     </Chapter>
 
-    <!-- ── 06 KONTAKT ─────────────────────────────────────── -->
+    <!-- ── 06 FRAGEN ──────────────────────────────────────── -->
+    {/* Haeufige Fragen, woertlich so gestellt, wie Leute sie tippen.
+        Zwei Gruende: Es beantwortet die Fragen, die sonst per Mail
+        kommen — und genau dieses Format uebernehmen Googles KI-Antworten
+        und Sprachmodelle am liebsten. Dazu die passenden strukturierten
+        Daten in Schema.astro. */}
+    <Chapter id="fragen" nr={5} bg="bg-05" grid wrapStyle="align-items:start">
+      <div>
+        <p class="eyebrow rise"><b>06</b> <span>Fragen</span></p>
+        <h2 class="display display--sm rise">Das werde ich<br>am häufigsten gefragt.</h2>
+        <p class="lead rise" style="margin-top:1.75rem">
+          Steht Deine Frage nicht dabei, schreib sie einfach ins Formular
+          darunter.
+        </p>
+      </div>
+      <div class="fragen rise">
+        {fragen.map((f) => (
+          <div class="frage">
+            <h3>{f.data.frage}</h3>
+            <p>{f.data.antwort}</p>
+          </div>
+        ))}
+      </div>
+    </Chapter>
+
+    <!-- ── 07 KONTAKT ─────────────────────────────────────── -->
     {/* Ohne Kapitelfoto: assets/06-kontakt.jpg existiert nicht. Der Verlauf
         .bg-06 trägt das Kapitel bereits — vorher erzeugte das fehlende Bild
         bei jedem Aufruf einen 404, den JS anschließend wieder aufräumte. */}
-    <Chapter id="kontakt" nr={5} bg="bg-06" grid wrapStyle="align-items:start">
+    <Chapter id="kontakt" nr={6} bg="bg-06" grid wrapStyle="align-items:start">
       <div>
-        <p class="eyebrow rise"><b>06</b> <span>Kontakt</span></p>
+        <p class="eyebrow rise"><b>07</b> <span>Kontakt</span></p>
         <h2 class="display display--sm rise">Sprechen wir<br>über Deinen Weg.</h2>
         <ContactList />
       </div>

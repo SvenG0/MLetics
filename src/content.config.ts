@@ -22,4 +22,18 @@ const zielgruppen = defineCollection({
   }),
 });
 
-export const collections = { leistungen, zielgruppen };
+/* Haeufige Fragen. Eigene Sammlung, weil sie an zwei Stellen gebraucht
+   werden: sichtbar im Kapitel „Fragen" und noch einmal als strukturierte
+   Daten (FAQPage). Genau dieses Format uebernehmen Googles KI-Antworten
+   und Sprachmodelle am liebsten — eine woertlich gestellte Frage mit
+   kurzer Antwort ist leichter zu zitieren als ein Fliesstext. */
+const fragen = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/fragen' }),
+  schema: z.object({
+    reihenfolge: z.number(),
+    frage: z.string(),
+    antwort: z.string(),
+  }),
+});
+
+export const collections = { leistungen, zielgruppen, fragen };

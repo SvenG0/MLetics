@@ -880,3 +880,37 @@ footer{position:relative;z-index:10;background:var(--bg);border-top:1px solid va
 /* "(optional)" in der Feldbeschriftung — leiser als das Feldwort selbst,
    aber im selben Element, damit Vorlesesoftware es mitliest. */
 .field label .freiwillig{text-transform:none;letter-spacing:0;color:var(--muted);opacity:.75}
+
+/* Die eigentliche Ueberschrift der Startseite. Sie muss da sein und
+   lesbar bleiben — den optischen Auftritt hat aber der Claim darueber.
+   Deshalb bewusst zurueckhaltend: etwas groesser als Fliesstext, in der
+   Auszeichnungsschrift, aber ohne das Gewicht von .display. */
+.h1-sachlich{
+  font-family:var(--f-display);font-weight:500;
+  font-variation-settings:'wdth' 95;
+  font-size:clamp(1.05rem,1.6vw,1.3rem);
+  line-height:1.35;letter-spacing:.005em;
+  color:var(--muted);
+  margin:1.1rem 0 0;max-width:34ch;
+}
+
+/* ── Haeufige Fragen ──────────────────────────────────────────────
+   Bewusst keine Aufklapp-Elemente: Was zugeklappt ist, liest niemand,
+   und Googles KI-Antworten greifen sichtbaren Text zuverlaessiger ab.
+   Sechs kurze Antworten passen auch offen auf den Schirm. */
+.fragen{display:flex;flex-direction:column;gap:1.6rem}
+.frage h3{
+  font-family:var(--f-display);font-weight:600;
+  font-variation-settings:'wdth' 92;
+  font-size:1.05rem;line-height:1.3;letter-spacing:-.005em;
+  color:var(--text);margin:0 0 .45rem;
+}
+.frage p{
+  color:var(--muted);font-size:.95rem;line-height:1.7;
+  margin:0;max-width:48ch;
+}
+.frage + .frage{border-top:1px solid var(--line);padding-top:1.6rem}
+@media(min-width:900px){
+  .fragen{gap:1.9rem}
+  .frage + .frage{padding-top:1.9rem}
+}
