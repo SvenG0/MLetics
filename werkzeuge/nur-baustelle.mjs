@@ -80,8 +80,13 @@ ErrorDocument 503 /index.html
 </IfModule>
 
 <IfModule mod_headers.c>
-  Header always set Retry-After "1209600"
-  Header always set Cache-Control "no-store, must-revalidate"
+  # Nur fuer die Baustelle, nicht fuer /vorschauM: Eine .htaccess im
+  # Wurzelverzeichnis gilt auch in Unterordnern. Ohne diese Einschraenkung
+  # bekam die Vorschau zwei widerspruechliche Cache-Control-Zeilen und ein
+  # Retry-After, das dort nichts zu suchen hat.
+  SetEnvIf Request_URI "^/vorschauM" IST_VORSCHAU
+  Header always set Retry-After "1209600" env=!IST_VORSCHAU
+  Header always set Cache-Control "no-store, must-revalidate" env=!IST_VORSCHAU
 </IfModule>
 `);
 

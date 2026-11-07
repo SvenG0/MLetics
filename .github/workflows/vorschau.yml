@@ -72,7 +72,31 @@ jobs:
       - name: lftp installieren
         run: sudo apt-get update -qq && sudo apt-get install -y lftp
 
-      - name: Hochladen
+      - name: Dateien hochladen (vor dem HTML)
+        env:
+          HOST: ${{ secrets.NETCUP_HOST }}
+          BENUTZER: ${{ secrets.NETCUP_BENUTZER }}
+          PASSWORT: ${{ secrets.NETCUP_PASSWORT }}
+          PFAD: ${{ secrets.NETCUP_PFAD }}
+        run: |
+          # Erst CSS, JS, Schriften und Bilder — ohne zu loeschen. Diese
+          # Stufe fehlte hier, waehrend sie im Hauptablauf laengst drin
+          # war: Dadurch lag ein bis zwei Minuten lang neues HTML oben,
+          # dessen CSS noch nicht hochgeladen oder schon geloescht war.
+          # Wer in diesem Fenster nachsah, bekam die Seite ohne jede
+          # Gestaltung.
+          lftp -c "
+            set ftp:ssl-force true;
+            set ftp:ssl-protect-data true;
+            set ssl:verify-certificate yes;
+            set net:max-retries 3;
+            open -u '$BENUTZER','$PASSWORT' ftp://$HOST;
+            mirror --reverse --parallel=4 \
+                   --exclude-glob *.html \
+                   dist/ '$PFAD/vorschauM';
+          "
+
+      - name: HTML hochladen und aufräumen
         env:
           HOST: ${{ secrets.NETCUP_HOST }}
           BENUTZER: ${{ secrets.NETCUP_BENUTZER }}
