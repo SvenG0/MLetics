@@ -895,22 +895,35 @@ footer{position:relative;z-index:10;background:var(--bg);border-top:1px solid va
 }
 
 /* ── Haeufige Fragen ──────────────────────────────────────────────
-   Bewusst keine Aufklapp-Elemente: Was zugeklappt ist, liest niemand,
-   und Googles KI-Antworten greifen sichtbaren Text zuverlaessiger ab.
-   Sechs kurze Antworten passen auch offen auf den Schirm. */
-.fragen{display:flex;flex-direction:column;gap:1.6rem}
+   Karten im Zweispalter, jede mit ihrer Nummer. Die Nummer links aussen
+   ist dasselbe Mittel, das die Kapitelmarken schon nutzen — sie gibt dem
+   Auge einen Ankerpunkt, damit sechs Karten nicht als Textwand wirken.
+
+   Kein Aufklappen: Was zugeklappt ist, liest niemand, und Googles
+   KI-Antworten greifen sichtbaren Text zuverlaessiger ab. */
+.fragen{display:grid;grid-template-columns:1fr;gap:1rem;margin-top:3rem}
+@media(min-width:768px){.fragen{grid-template-columns:1fr 1fr;gap:1.1rem}}
+
+.frage{
+  display:flex;gap:1.1rem;align-items:flex-start;
+  padding:1.5rem;border-radius:14px;
+  background:rgba(242,240,234,.045);
+  border:1px solid var(--line);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+}
+.frage__nr{
+  flex:0 0 auto;font-family:var(--f-body);font-weight:500;
+  font-size:.72rem;letter-spacing:.12em;color:var(--accent-text);
+  /* Auf die erste Zeile der Ueberschrift ausgerichtet statt auf die
+     Kastenkante — sonst schwebt die Zahl oberhalb des Textes. */
+  padding-top:.2rem;
+}
 .frage h3{
   font-family:var(--f-display);font-weight:600;
   font-variation-settings:'wdth' 92;
-  font-size:1.05rem;line-height:1.3;letter-spacing:-.005em;
-  color:var(--text);margin:0 0 .45rem;
+  font-size:1rem;line-height:1.3;letter-spacing:-.005em;
+  color:var(--text);margin:0 0 .5rem;
 }
 .frage p{
-  color:var(--muted);font-size:.95rem;line-height:1.7;
-  margin:0;max-width:48ch;
-}
-.frage + .frage{border-top:1px solid var(--line);padding-top:1.6rem}
-@media(min-width:900px){
-  .fragen{gap:1.9rem}
-  .frage + .frage{padding-top:1.9rem}
+  color:var(--muted);font-size:.9rem;line-height:1.65;margin:0;
 }
