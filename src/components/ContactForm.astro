@@ -1,10 +1,5 @@
 ---
-import { getCollection } from 'astro:content';
 import { pfad } from '../lib/pfad';
-
-// Die Auswahlliste „Anliegen" zieht die Leistungen aus derselben Quelle wie
-// die Karten im Kapitel Treat — neue Leistung anlegen genügt.
-const leistungen = (await getCollection('leistungen')).sort((a, b) => a.data.reihenfolge - b.data.reihenfolge);
 ---
 
 <form class="form" id="form" action={pfad('/kontakt.php')} method="post">
@@ -31,8 +26,10 @@ const leistungen = (await getCollection('leistungen')).sort((a, b) => a.data.rei
   <div class="field">
     <label for="f-art">Anliegen</label>
     <select id="f-art" name="anliegen">
+      {/* Zog vorher die drei Leistungen aus derselben Quelle wie die
+          Karten im Kapitel Treat. Auf Maiks Wunsch nur noch diese zwei —
+          worum es genau geht, steht ohnehin in der Nachricht. */}
       <option>Ersttermin</option>
-      {leistungen.map((l) => <option>{l.data.titel}</option>)}
       <option>Sonstiges</option>
     </select>
   </div>
