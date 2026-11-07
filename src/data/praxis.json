@@ -12,7 +12,8 @@
     "strasse": "An der Schalwiese 17d",
     "plz": "44789",
     "ort": "Bochum",
-    "land": "DE"
+    "land": "DE",
+    "stadtteil": "Wiemelhausen"
   },
   "termine": [
     "Termine nach Vereinbarung"
@@ -34,5 +35,18 @@
       "label": "Stationen",
       "wert": "Borussia Dortmund, FC St. Pauli, Eintracht Frankfurt, VfL Bochum"
     }
-  ]
+  ],
+  "geo": {
+    "breite": 51.4720235,
+    "laenge": 7.2286797
+  },
+  "einzugsgebiet": [
+    "Bochum",
+    "Witten",
+    "Hattingen",
+    "Herne",
+    "Essen"
+  ],
+  "profile": [],
+  "beschreibung": "Privatpraxis für Physiotherapie und Osteopathie in Bochum. Behandlung ohne ärztliche Verordnung, 16 Jahre Profisport-Erfahrung. Termine nach Vereinbarung."
 }

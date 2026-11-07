@@ -12,5 +12,6 @@ export const kapitel: Kapitel[] = [
   { id: 'connect', name: 'Connect' },
   { id: 'about',   name: 'Über Maik' },
   { id: 'galerie', name: 'Galerie' },
+  { id: 'fragen',  name: 'Fragen' },
   { id: 'kontakt', name: 'Kontakt' },
 ];

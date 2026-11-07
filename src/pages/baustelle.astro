@@ -1,0 +1,89 @@
+---
+/* Baustellenseite.
+
+   Bewusst NICHT ueber Base.astro: Dort haengen Kopfzeile, Fussleiste,
+   strukturierte Daten und das Kapitelskript dran — alles Dinge, die hier
+   nichts verloren haben. Diese Seite soll eine Sache tun.
+
+   Was sie trotzdem enthaelt und warum:
+   - Was MLetics ist. Wer hier landet, hat nach der Praxis gesucht; eine
+     Seite, die nur "kommt bald" sagt, laesst ihn ratlos zurueck.
+   - Die E-Mail-Adresse. Zwei Wochen ohne jede Kontaktmoeglichkeit sind
+     zwei Wochen ohne Anfragen.
+   - KEINE Rechtslinks, auf ausdruecklichen Wunsch. Siehe Anmerkung
+     unten — die Seiten selbst bleiben unter ihren Adressen erreichbar,
+     nur verlinkt wird hier nicht.
+   - noindex. Diese Seite soll nicht in die Suche.
+
+   ANMERKUNG zu den fehlenden Rechtslinks: § 5 DDG verlangt das
+   Impressum "leicht erkennbar und unmittelbar erreichbar" fuer
+   geschaeftsmaessige Angebote. Diese Seite nennt den Praxisnamen und
+   fordert zu Anfragen auf, ist also eines. Ohne sichtbaren Link ist die
+   Pflicht formal nicht erfuellt. Bewusste Entscheidung des Betreibers;
+   /impressum und /datenschutz bleiben unter ihren Adressen erreichbar,
+   damit die Rueckkehr eine Zeile ist. */
+import { Image } from 'astro:assets';
+import logo from '../assets/mletics-mark-dark.png';
+import praxis from '../data/praxis.json';
+import { pfad } from '../lib/pfad';
+import '../styles/fonts.css';
+import '../styles/global.css';
+---
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MLetics — die Seite entsteht gerade</title>
+<meta name="description" content="Die Website von MLetics wird gerade überarbeitet. Anfragen weiterhin per E-Mail.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href={pfad('/favicon.svg')} type="image/svg+xml">
+<meta name="theme-color" content="#0A0B0D">
+</head>
+<body>
+
+<main class="bau">
+  <div class="bau__inhalt wrap">
+    <Image class="bau__logo" src={logo} alt="MLetics" format="webp" />
+
+    <h1 class="bau__titel">Hier entsteht<br>etwas Neues.</h1>
+
+    <p class="bau__text">
+      Die Seite von MLetics wird gerade gebaut. Anfragen gehen in der
+      Zwischenzeit ganz normal per E-Mail.
+    </p>
+
+    <a class="btn btn--solid bau__cta" href={`mailto:${praxis.email}`}>{praxis.email}</a>
+
+  </div>
+</main>
+
+</body>
+</html>
+
+<style is:global>
+/* Ohne Foto und ohne Verlauf — nur der Seitengrund. Die Baustellenseite
+   soll nicht die Startseite imitieren, sondern erkennbar ein Zwischen-
+   zustand sein. Mittig gesetzt, weil es nichts gibt, woran sich eine
+   linksbuendige Spalte ausrichten koennte. */
+.bau{
+  min-height:100dvh;display:grid;place-items:center;
+  background:var(--bg);text-align:center;
+}
+.bau__inhalt{padding-block:4rem;display:flex;flex-direction:column;align-items:center}
+.bau__logo{height:56px;width:auto;display:block;margin-bottom:3.5rem}
+@media(min-width:768px){.bau__logo{height:72px}}
+
+.bau__titel{
+  font-family:var(--f-display);font-weight:700;
+  font-variation-settings:'wdth' 80;
+  font-size:clamp(2.3rem,7vw,4.5rem);line-height:1.04;letter-spacing:-.015em;
+  margin:0;
+}
+.bau__text{
+  color:var(--muted);font-size:clamp(1rem,1.2vw,1.1rem);line-height:1.75;
+  max-width:40ch;margin:1.75rem 0 0;
+}
+.bau__cta{margin-top:2.75rem}
+</style>

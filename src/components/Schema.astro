@@ -7,6 +7,7 @@ import { getCollection } from 'astro:content';
 // direkt aus und kann sie in der Suche und in Maps anzeigen.
 // Gespeist aus praxis.json und den Leistungen — eine Quelle, keine Dopplung.
 const leistungen = (await getCollection('leistungen')).sort((a, b) => a.data.reihenfolge - b.data.reihenfolge);
+const fragen = (await getCollection('fragen')).sort((a, b) => a.data.reihenfolge - b.data.reihenfolge);
 const basis = Astro.site?.toString().replace(/\/$/, '') ?? '';
 
 const daten = {
@@ -14,8 +15,12 @@ const daten = {
   '@type': 'Physiotherapy',
   name: praxis.name,
   alternateName: praxis.name,
-  description:
-    'Physiotherapie und Osteopathie von Maik Liesbrock in Bochum. 16 Jahre Erfahrung im Profisport. Privatleistung, Termine nach Vereinbarung.',
+  /* Sagt Google, dass die Praxis nicht auf Laufkundschaft ausgelegt ist,
+     sondern zu vereinbarten Terminen behandelt. */
+  isAcceptingNewPatients: true,
+  availableLanguage: ['de'],
+  medicalSpecialty: ['Physiotherapy', 'PhysicalTherapy'],
+  description: praxis.beschreibung,
   url: basis + '/',
   email: praxis.email,
   image: basis + '/og-bild.jpg',
@@ -26,7 +31,18 @@ const daten = {
     addressLocality: praxis.adresse.ort,
     addressCountry: praxis.adresse.land,
   },
-  areaServed: { '@type': 'City', name: praxis.adresse.ort },
+  /* Koordinaten: Fuer die Kartenbox bei Google ein echter Faktor — sie
+     verankern die Praxis an einem Punkt statt nur an einer Zeichenkette.
+     Einmalig aus der Anschrift ermittelt. */
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: praxis.geo.breite,
+    longitude: praxis.geo.laenge,
+  },
+  /* Vorher nur "Bochum". Wer aus Witten oder Hattingen kommt, faehrt
+     15 Minuten — das Einzugsgebiet ehrlich zu benennen schadet nicht
+     und hilft bei Suchen aus dem Umland. */
+  areaServed: praxis.einzugsgebiet.map((ort) => ({ '@type': 'City', name: ort })),
   // Keine festen Sprechzeiten — Termine ausschließlich nach Vereinbarung.
   // Ohne url: Die Leistungen haben bewusst keine eigenen Unterseiten. Ein
   // Verweis auf /physiotherapie/ o.ä. würde hier auf eine 404 zeigen —
@@ -36,6 +52,13 @@ const daten = {
     name: l.data.titel,
     description: l.data.kurz,
   })),
+  /* Verweise auf Profile derselben Person oder Praxis. Google verknuepft
+     darueber die Website mit der realen Person und erkennt beides als
+     dieselbe Entitaet — der staerkste verbliebene unsichtbare Hebel.
+     Nur ausgeben, wenn es welche gibt: Ein leeres Feld waere Ballast,
+     ein erfundenes schaedlich (Google prueft, ob das Profil
+     zurueckverweist). */
+  ...(praxis.profile.length ? { sameAs: praxis.profile } : {}),
   founder: {
     '@type': 'Person',
     name: praxis.inhaber,
@@ -44,6 +67,22 @@ const daten = {
     jobTitle: praxis.vita[0].wert,
   },
 };
+
+/* Haeufige Fragen noch einmal maschinenlesbar. Genau dieses Format
+   zitieren Googles KI-Antworten und Sprachmodelle — eine woertlich
+   gestellte Frage mit kurzer Antwort. Getrennter Block, weil Google die
+   Typen unabhaengig auswertet: Die Praxis ist ein Ort, die Fragen sind
+   ein Dokument. */
+const fragenDaten = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: fragen.map((f) => ({
+    '@type': 'Question',
+    name: f.data.frage,
+    acceptedAnswer: { '@type': 'Answer', text: f.data.antwort },
+  })),
+};
 ---
 
 <script type="application/ld+json" set:html={JSON.stringify(daten)} />
+<script type="application/ld+json" set:html={JSON.stringify(fragenDaten)} />

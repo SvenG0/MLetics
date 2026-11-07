@@ -29,6 +29,15 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      modus:
+        description: 'Was soll unter mletics.de stehen?'
+        type: choice
+        required: true
+        default: baustelle
+        options:
+          - baustelle
+          - echte-seite
 
 concurrency:
   group: veroeffentlichen
@@ -52,6 +61,30 @@ jobs:
 
       - name: Seite bauen
         run: npx astro build
+
+      # WARTUNGSMODUS. Laesst von der gebauten Seite nur die
+      # Baustellenseite uebrig — samt dem Wenigen, worauf sie verweist.
+      # Die fertigen Seiten und die Galeriebilder kommen damit gar nicht
+      # erst auf den Server; "nicht vorhanden" ist staerker als
+      # "umgeleitet". Das Werkzeug legt zugleich die .htaccess an, die
+      # alles mit Status 503 beantwortet.
+      #
+      # Bei einem gewoehnlichen Push greift der Modus, solange die Datei
+      # WARTUNG im Projekt liegt — sonst wuerde die naechste
+      # Textaenderung die Seite versehentlich wieder freischalten.
+      #
+      # Bewusst eine Datei und keine GitHub-Einstellung: Sie steht in der
+      # Versionsgeschichte, ist beim Durchsehen sichtbar und laesst sich
+      # mit einem Commit umlegen. Eine Einstellung im Weboberflaechen-
+      # Menue findet in zwei Wochen niemand wieder.
+      - name: Nur die Baustelle veröffentlichen
+        if: >-
+          (github.event_name == 'workflow_dispatch' && inputs.modus == 'baustelle')
+          || (github.event_name != 'workflow_dispatch' && hashFiles('WARTUNG') != '')
+        run: |
+          node werkzeuge/nur-baustelle.mjs
+          echo "── Was hochgeladen wird ──"
+          find dist -type f | sort
 
       # Bewusst kein fertiger Upload-Baustein aus dem Marktplatz: Ein solcher
       # bekäme das Passwort in die Hand, und was er damit tut, steht in
@@ -137,10 +170,13 @@ jobs:
           # Bilddatei einen Pruefcode im Namen; ohne das Aufraeumen blieben
           # alle frueheren Fassungen fuer immer liegen (rund 25 MB je Build).
           #
-          # .well-known ist ausgenommen: Dort legt Let's Encrypt die Dateien
-          # ab, mit denen es alle 90 Tage prueft, ob die Domain noch euch
-          # gehoert. Mitgeloescht hiesse: Zertifikat laeuft ab, Browser
-          # zeigen eine Sicherheitswarnung.
+          # Zwei Ausnahmen vom Aufraeumen:
+          #   .well-known — dort legt Let's Encrypt die Dateien ab, mit
+          #     denen es alle 90 Tage prueft, ob die Domain noch euch
+          #     gehoert. Mitgeloescht hiesse: Zertifikat laeuft ab.
+          #   vorschauM  — die Arbeitsfassung fuer Maik. Ohne diese Zeile
+          #     wuerde die naechste Veroeffentlichung sie loeschen; das
+          #     merkt man erst, wenn jemand den Link anklickt.
           lftp -c "
             set ftp:ssl-force true;
             set ftp:ssl-protect-data true;
@@ -149,6 +185,7 @@ jobs:
             open -u '$BENUTZER','$PASSWORT' ftp://$HOST;
             mirror --reverse --delete --parallel=4 --verbose \
                    --exclude-glob .well-known/ \
+                   --exclude-glob vorschauM/ \
                    dist/ '$PFAD';
           "
 
@@ -156,4 +193,9 @@ jobs:
         run: |
           code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 https://mletics.de/ || true)
           echo "mletics.de antwortet mit $code"
-          test "$code" = "200"
+          # 200 = echte Seite, 503 = Wartungsmodus. Beides ist richtig;
+          # alles andere ist ein Fehler.
+          case "$code" in
+            200|503) echo "In Ordnung." ;;
+            *) echo "Unerwartet."; exit 1 ;;
+          esac
