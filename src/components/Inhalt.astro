@@ -149,23 +149,32 @@ const fragen = (await getCollection('fragen')).sort((a, b) => a.data.reihenfolge
         kommen — und genau dieses Format uebernehmen Googles KI-Antworten
         und Sprachmodelle am liebsten. Dazu die passenden strukturierten
         Daten in Schema.astro. */}
-    <Chapter id="fragen" nr={5} bg="bg-05" grid wrapStyle="align-items:start">
-      <div>
-        <p class="eyebrow rise"><b>06</b> <span>Fragen</span></p>
-        <h2 class="display display--sm rise">Das werde ich<br>am häufigsten gefragt.</h2>
-        <p class="lead rise" style="margin-top:1.75rem">
-          Steht Deine Frage nicht dabei, schreib sie einfach ins Formular
-          darunter.
-        </p>
-      </div>
+    <Chapter id="fragen" nr={5} bg="bg-05">
+      <p class="eyebrow rise"><b>06</b> <span>Fragen</span></p>
+      <h2 class="display display--sm rise">Das werde ich<br>am häufigsten gefragt.</h2>
+
+      {/* Nummerierte Karten im Zweispalter statt einer Liste. Die Nummer
+          links aussen ist dasselbe Mittel, das die Kapitel schon nutzen —
+          sie gibt dem Auge einen Ankerpunkt und macht sechs Karten
+          ueberschaubar.
+
+          Kein Aufklappen: Was zugeklappt ist, liest niemand, und Googles
+          KI-Antworten greifen sichtbaren Text zuverlaessiger ab. */}
       <div class="fragen rise">
-        {fragen.map((f) => (
+        {fragen.map((f, i) => (
           <div class="frage">
-            <h3>{f.data.frage}</h3>
-            <p>{f.data.antwort}</p>
+            <span class="frage__nr" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <div>
+              <h3>{f.data.frage}</h3>
+              <p>{f.data.antwort}</p>
+            </div>
           </div>
         ))}
       </div>
+
+      <p class="lead rise" style="margin-top:2.5rem">
+        Steht Deine Frage nicht dabei? <a href="#kontakt">Schreib sie uns.</a>
+      </p>
     </Chapter>
 
     <!-- ── 07 KONTAKT ─────────────────────────────────────── -->
