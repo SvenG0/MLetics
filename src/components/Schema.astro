@@ -39,7 +39,9 @@ const daten = {
   founder: {
     '@type': 'Person',
     name: praxis.inhaber,
-    jobTitle: 'Staatlich anerkannter Physiotherapeut, Osteopath (B.Sc.), Sektoraler Heilpraktiker für Physiotherapie',
+    /* Aus praxis.json statt fest getippt — stand sonst noch auf der
+       alten Fassung und widersprach Vita und Impressum. */
+    jobTitle: praxis.vita[0].wert,
   },
 };
 ---
